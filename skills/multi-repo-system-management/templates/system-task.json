@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "system_task": "{{integration_project_id}}:TASK-{{task_id}}",
+  "system_id": "{{system_id}}",
+  "integration_project": "{{integration_project_id}}",
+  "components": [
+    {
+      "repository": "{{component_project_id}}",
+      "task": "{{component_project_id}}:TASK-{{component_task_id}}",
+      "repository_url": "{{repository_url}}",
+      "branch": "{{review_branch}}",
+      "revision": null,
+      "delivery_state": "pending"
+    }
+  ],
+  "integration": {
+    "state": "pending",
+    "validation_evidence": [],
+    "deployment_evidence": [],
+    "rollback": null
+  }
+}

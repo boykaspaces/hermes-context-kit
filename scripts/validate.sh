@@ -10,12 +10,48 @@ if [[ -n "$generated_path" ]]; then
   exit 1
 fi
 
-for skill in project-context-management skill-authoring; do
+for skill in project-context-management multi-repo-system-management skill-authoring; do
   test -f "$repo_root/skills/$skill/SKILL.md"
   grep -q '^name:' "$repo_root/skills/$skill/SKILL.md"
   grep -q '^description:' "$repo_root/skills/$skill/SKILL.md"
   test -f "$repo_root/skills/$skill/references/README.md"
 done
+
+ruby - "$repo_root" <<'RUBY'
+require "yaml"
+root = File.expand_path(ARGV.fetch(0))
+skills = Dir.glob(File.join(root, "skills", "*", "SKILL.md")).sort
+skills.each do |path|
+  text = File.read(path)
+  abort("#{path}: frontmatter must start at byte 0") unless text.start_with?("---\n")
+  parts = text.split(/^---\s*$\n/, 3)
+  abort("#{path}: malformed frontmatter") unless parts.length == 3
+  data = YAML.safe_load(parts.fetch(1), permitted_classes: [], aliases: false)
+  name = data.fetch("name")
+  description = data.fetch("description")
+  version = data.fetch("version")
+  abort("#{path}: name differs from directory") unless name == File.basename(File.dirname(path))
+  abort("#{path}: invalid skill name") unless name.match?(/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/) && name.length <= 64
+  abort("#{path}: description must be <= 60 characters and end with a period") unless description.length <= 60 && description.end_with?(".")
+  abort("#{path}: invalid semver") unless version.to_s.match?(/\A\d+\.\d+\.\d+\z/)
+  related = data.dig("metadata", "hermes", "related_skills") || []
+  abort("#{path}: related_skills must be a list") unless related.is_a?(Array)
+  abort("#{path}: invalid related skill name") unless related.all? { |related_name| related_name.match?(/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/) }
+end
+puts "hermes-skill-metadata-ok"
+RUBY
+
+python3 "$repo_root/skills/multi-repo-system-management/scripts/validate_multi_repo_context.py" \
+  --help >/dev/null
+python3 -m json.tool \
+  "$repo_root/skills/multi-repo-system-management/templates/system-task.json" >/dev/null
+python3 -m json.tool \
+  "$repo_root/skills/multi-repo-system-management/templates/component-handoff.json" >/dev/null
+python3 "$repo_root/skills/multi-repo-system-management/scripts/validate_multi_repo_context.py" \
+  repository --root "$repo_root"
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+  -s "$repo_root/skills/multi-repo-system-management/tests" \
+  -p 'test_*.py'
 
 if grep -R -n -E '(210122338617|i-[0-9a-f]{8,}|execute-api\.|@gmail\.com|personal-hermes-minimal)' \
   "$repo_root" --exclude-dir='.git' --exclude='validate.sh'; then

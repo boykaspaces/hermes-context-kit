@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "component": {
+    "repository": "{{component_project_id}}",
+    "task": "{{component_project_id}}:TASK-{{component_task_id}}"
+  },
+  "parent_system_task": "{{integration_project_id}}:TASK-{{parent_task_id}}",
+  "source": {
+    "repository_url": "{{repository_url}}",
+    "branch": "{{review_branch}}",
+    "revision": "{{full_commit_sha}}"
+  },
+  "validation": [
+    {
+      "command": "{{validation_command}}",
+      "result": "passed"
+    }
+  ],
+  "documentation_updated": true,
+  "integration_requirements": ["{{remaining_integration_action}}"],
+  "rollback_revision": "{{rollback_full_commit_sha}}",
+  "contains_secrets": false
+}

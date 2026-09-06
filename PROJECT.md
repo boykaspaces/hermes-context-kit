@@ -16,11 +16,22 @@ index-first Hermes project context and Skill authoring.
 - The matching `skills/<name>/references/` file owns detailed protocol rules.
 - `templates/` owns neutral bootstrap examples, not runtime state.
 - `docs/FILE_MAP.md` routes maintainers to the owning artifact.
+- `tasks/` and `.hermes/` own only this public repository's maintenance state.
+
+## Context entry points
+
+| Artifact | Purpose | Read when |
+|---|---|---|
+| [`.hermes/context-index.md`](./.hermes/context-index.md) | Current-first repository context | Starting or resuming maintenance |
+| [`.hermes/state.md`](./.hermes/state.md) | Current repository summary | Asking what work is active |
+| [`tasks/current.md`](./tasks/current.md) | Primary active Task pointer | Continuing current repository work |
+| [`docs/decisions/README.md`](./docs/decisions/README.md) | Repository decision index | Work depends on a durable local decision |
 
 ## Boundaries
 
-- Do not store a user's live `SOUL.md`, state, memory, Tasks, Checkpoints, or
-  workspace registry here.
+- Do not store a consuming user's live `SOUL.md`, state, memory, Tasks,
+  Checkpoints, or workspace registry here. Repository-maintenance context must
+  remain public and free of deployment-specific data.
 - Do not specialize reusable protocols with one deployment's paths or policy
   unless the path is explicitly a placeholder or example.
 - Preserve stable Skill names and reference routing when making compatible

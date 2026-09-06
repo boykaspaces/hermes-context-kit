@@ -12,6 +12,8 @@ and reusable Skill authoring without relying on conversation history.
 | [`skills/`](./skills/README.md) | Active index | Installable Hermes Skills and their routed references | Installing, reviewing, or changing protocol behavior |
 | [`templates/`](./templates/README.md) | Current index | Neutral workspace and project-context starting structures | Bootstrapping a deployment or project |
 | [`docs/`](./docs/README.md) | Current index | Architecture, adoption, security, and file ownership | Understanding or integrating the kit |
+| [`.hermes/context-index.md`](./.hermes/context-index.md) | Current index | This repository's own public maintenance context | Resuming repository maintenance |
+| [`tasks/`](./tasks/README.md) | Active index | This repository's development Tasks | Reviewing current or completed maintenance work |
 | [`PROJECT.md`](./PROJECT.md) | Stable identity | This repository's purpose and source-of-truth boundaries | Starting repository maintenance |
 | [`AGENTS.md`](./AGENTS.md) | Active instructions | Repository-wide AI editing and validation rules | Before changing this repository |
 | [`LICENSE`](./LICENSE) | Active | MIT license | Reusing or redistributing the kit |
@@ -28,8 +30,9 @@ and reusable Skill authoring without relying on conversation history.
 4. Bootstrap a project from [`templates/project-context/`](./templates/project-context/README.md).
 5. Replace every `{{placeholder}}` before enabling persistent mutations.
 
-The repository intentionally contains no live `SOUL.md`, project state,
-credentials, deployment identifiers, or user-specific context.
+The repository's own maintenance Tasks are public. It intentionally contains
+no consuming deployment's live `SOUL.md`, project state, credentials,
+deployment identifiers, or user-specific context.
 
 ## Compatibility
 

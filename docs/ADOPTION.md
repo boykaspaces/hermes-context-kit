@@ -21,8 +21,13 @@ Copy the required Skill directory without flattening it:
 
 ```text
 skills/project-context-management/ -> {{hermes_skill_root}}/project-context-management/
+skills/multi-repo-system-management/ -> {{hermes_skill_root}}/multi-repo-system-management/
 skills/skill-authoring/             -> {{hermes_skill_root}}/skill-authoring/
 ```
+
+Install `multi-repo-system-management` only for workspaces that coordinate
+more than one repository. It composes with, and does not replace,
+`project-context-management`.
 
 Use the Hermes-supported Skill installation or management operation for the
 target deployment. Do not assume that a repository checkout is itself the
@@ -55,3 +60,7 @@ Then exercise one happy path and one failure path in the real Hermes runtime:
 - happy path: create a Task and confirm its index/current pointer are updated;
 - failure path: remove or mismatch the workspace identity and confirm mutation
   is refused without creating a replacement registry.
+
+For multi-repository adoption, also validate one System Task manifest and one
+inaccessible-integration-repository Handoff before enabling automated lock or
+deployment changes.

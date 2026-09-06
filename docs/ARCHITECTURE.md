@@ -33,6 +33,15 @@ workspace registry
 The goal is deterministic reconstruction with the minimum sufficient context,
 not preservation of every prior conversation.
 
+## Multi-repository composition
+
+`project-context-management` remains the owner of each repository's local
+Task and State lifecycle. `multi-repo-system-management` adds an integration
+layer: Component Tasks remain local, while one integration repository owns the
+System Task manifest, immutable revision lock, integration evidence, and
+deployment truth. A validated Handoff crosses an access boundary without
+claiming that the receiving repository changed.
+
 ## Repository versus runtime
 
 This repository owns reusable sources and templates. A consuming deployment

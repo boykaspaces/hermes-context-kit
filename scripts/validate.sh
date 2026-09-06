@@ -3,7 +3,8 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-generated_path="$(find "$repo_root" \( -name .DS_Store -o -name '*.pyc' \) -print -quit)"
+generated_path="$(find "$repo_root" -path "$repo_root/.git" -prune -o \
+  \( -name .DS_Store -o -name '*.pyc' \) -print -quit)"
 if [[ -n "$generated_path" ]]; then
   printf 'generated file must not be committed: %s\n' "$generated_path" >&2
   exit 1
@@ -17,7 +18,7 @@ for skill in project-context-management skill-authoring; do
 done
 
 if grep -R -n -E '(210122338617|i-[0-9a-f]{8,}|execute-api\.|@gmail\.com|personal-hermes-minimal)' \
-  "$repo_root" --exclude='validate.sh'; then
+  "$repo_root" --exclude-dir='.git' --exclude='validate.sh'; then
   printf 'private deployment identifier detected\n' >&2
   exit 1
 fi

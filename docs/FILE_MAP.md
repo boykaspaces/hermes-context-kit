@@ -7,6 +7,7 @@ Status: Current index
 | `README.md` | Repository entry and quick start | Entering the repository |
 | `PROJECT.md` | Stable repository identity and boundaries | Maintaining the project |
 | `AGENTS.md` | AI editing and validation instructions | Before changing files |
+| `.github/workflows/validate.yml` | GitHub-hosted canonical repository validation | Configuring or auditing required status checks |
 | `.hermes/context-index.md` | This repository's current-first maintenance router | Resuming repository maintenance |
 | `tasks/` | Public repository-maintenance Task state | Reviewing or continuing protocol work |
 | `skills/README.md` | Skill routing index | Selecting a Skill |

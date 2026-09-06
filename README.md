@@ -14,6 +14,7 @@ and reusable Skill authoring without relying on conversation history.
 | [`docs/`](./docs/README.md) | Current index | Architecture, adoption, security, and file ownership | Understanding or integrating the kit |
 | [`.hermes/context-index.md`](./.hermes/context-index.md) | Current index | This repository's own public maintenance context | Resuming repository maintenance |
 | [`tasks/`](./tasks/README.md) | Active index | This repository's development Tasks | Reviewing current or completed maintenance work |
+| [`.github/workflows/validate.yml`](./.github/workflows/validate.yml) | Active automation | Read-only GitHub-hosted repository validation | Configuring or auditing required status checks |
 | [`PROJECT.md`](./PROJECT.md) | Stable identity | This repository's purpose and source-of-truth boundaries | Starting repository maintenance |
 | [`AGENTS.md`](./AGENTS.md) | Active instructions | Repository-wide AI editing and validation rules | Before changing this repository |
 | [`LICENSE`](./LICENSE) | Active | MIT license | Reusing or redistributing the kit |

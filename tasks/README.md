@@ -2,7 +2,9 @@
 
 ## In Progress
 
-None.
+| ID / File | Status | Title | Read when |
+|---|---|---|---|
+| [`TASK-003`](./TASK-003.md) | In Progress | Add repository validation CI | Adding or auditing the Ruleset-required status check |
 
 ## Blocked
 

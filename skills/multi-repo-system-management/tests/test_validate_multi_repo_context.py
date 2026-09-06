@@ -124,6 +124,39 @@ class MultiRepoValidatorTest(unittest.TestCase):
         with self.assertRaises(validator.ValidationError):
             validator.validate_system_task(self.root, "TASK-001", manifest_path, lock_path)
 
+    def test_unchanged_component_requires_source_system_task(self) -> None:
+        manifest = {
+            "schema_version": 1,
+            "system_task": "integration-project:TASK-001",
+            "system_id": "example-system",
+            "integration_project": "integration-project",
+            "components": [
+                {
+                    "repository": "component-a",
+                    "task": None,
+                    "task_absence_reason": "no-component-change",
+                    "source_system_task": "integration-project:TASK-000",
+                    "repository_url": "https://example.invalid/component-a.git",
+                    "branch": "main",
+                    "revision": "a" * 40,
+                    "delivery_state": "merged",
+                }
+            ],
+            "integration": {
+                "state": "pending",
+                "validation_evidence": [],
+                "deployment_evidence": [],
+                "rollback": None,
+            },
+        }
+        path = self.root / "tasks" / "system" / "TASK-001.json"
+        path.write_text(json.dumps(manifest), encoding="utf-8")
+        validator.validate_system_task(self.root, "TASK-001", path, None)
+        del manifest["components"][0]["source_system_task"]
+        path.write_text(json.dumps(manifest), encoding="utf-8")
+        with self.assertRaises(validator.ValidationError):
+            validator.validate_system_task(self.root, "TASK-001", path, None)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -9,7 +9,8 @@ Active Task: None
 The repository maintains three reusable Hermes Skills and neutral project
 templates. `multi-repo-system-management` v0.1.0 adds cross-repository
 System/Component Task coordination without changing the frozen
-`project-context-management` protocol.
+`project-context-management` protocol. Unchanged-component promotion is
+validated for ref-only merge, lock, and deployment work.
 
 ## Primary focus
 

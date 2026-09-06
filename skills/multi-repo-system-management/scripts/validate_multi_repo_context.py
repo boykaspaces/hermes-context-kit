@@ -241,8 +241,15 @@ def validate_system_task(
         require_string(item.get("branch"), f"{repository}.branch")
         task = item.get("task")
         if task is None:
-            if item.get("task_absence_reason") != "work-predates-protocol":
-                raise ValidationError(f"{repository}: missing Task without pre-protocol reason")
+            absence_reason = item.get("task_absence_reason")
+            if absence_reason not in {"work-predates-protocol", "no-component-change"}:
+                raise ValidationError(f"{repository}: missing Task without an allowed reason")
+            if absence_reason == "no-component-change":
+                require_string(
+                    item.get("source_system_task"),
+                    f"{repository}.source_system_task",
+                    CANONICAL_TASK_RE,
+                )
         else:
             canonical_task = require_string(task, f"{repository}.task", CANONICAL_TASK_RE)
             task_project, component_task_id = canonical_task.split(":", 1)

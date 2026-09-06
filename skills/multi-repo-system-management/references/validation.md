@@ -43,7 +43,8 @@ The system-task mode additionally verifies:
 - each declared Component Task exists in the supplied component checkout,
   declares `Type: Component`, and points back to the same parent System Task;
 - `handoff-ready` and later have full commit SHAs;
-- a missing Component Task has the explicit pre-protocol reason;
+- a missing Component Task has an allowed reason; unchanged-component
+  promotion also identifies the earlier source System Task;
 - `locked` and later match the supplied component lock;
 - verified/deployed integration states have evidence pointers;
 - deployed state has a rollback pointer.

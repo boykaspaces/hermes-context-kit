@@ -80,9 +80,16 @@ record the blocker and do not erase the failed evidence needed for recovery.
 - `verified` requires a cross-component validation evidence pointer.
 - `deployed` requires deployment evidence and an explicit rollback pointer.
 
-When work predates this protocol, `task` may be `null` only with
-`task_absence_reason: "work-predates-protocol"`. The immutable revision and
-all current acceptance gates remain required.
+A component entry may omit `task` only in these cases:
+
+| `task_absence_reason` | Additional requirement |
+|---|---|
+| `work-predates-protocol` | The implementation existed before protocol adoption |
+| `no-component-change` | `source_system_task` identifies the earlier System Task that delivered the unchanged revision |
+
+The immutable revision and all current acceptance gates remain required. A
+ref-only merge, lock promotion, or deployment must not create a fake Component
+Task when no component-owned file changes.
 
 ## System Task Procedure
 

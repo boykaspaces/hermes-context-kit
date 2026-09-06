@@ -1,6 +1,6 @@
 # TASK-003: Add Repository Validation CI
 
-Status: In Progress
+Status: Completed
 Type: Component
 Priority: High
 Parent System Task: personal-hermes-agent:TASK-008
@@ -15,11 +15,13 @@ least-privilege status check.
 
 - Defined a read-only GitHub Actions workflow around `scripts/validate.sh`.
 - Pinned the checkout action to an immutable upstream commit.
+- Published the workflow to `main` and confirmed GitHub-hosted run
+  `34034945784` completed successfully.
+- Established `repository-context` as the check name for the `main` Ruleset.
 
 ## Remaining
 
-- Validate and publish the workflow.
-- Confirm one successful GitHub-hosted run and record its check name.
+None.
 
 ## Blockers
 
@@ -32,5 +34,11 @@ None.
 
 ## Next Step
 
-Run local repository validation, commit the candidate, and publish it to
-`main` so the first GitHub-hosted `repository-context` check runs.
+None. The parent System Task can configure `repository-context` as a required
+status check when creating the `main` Ruleset.
+
+## Result
+
+Pull requests to `main` and pushes to `main` or `hermes/**` now run the
+canonical repository validator with read-only token permissions and an
+immutable checkout dependency.

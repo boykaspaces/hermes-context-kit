@@ -2,20 +2,21 @@
 
 Project: hermes-context-kit
 Status: Active
-Active Task: TASK-003
+Active Task: None
 
 ## Current summary
 
 The repository maintains three reusable Hermes Skills and neutral project
 templates. `multi-repo-system-management` v0.1.0 adds cross-repository
 System/Component Task coordination without changing the frozen
-`project-context-management` protocol. TASK-003 is adding the first
-GitHub-hosted validation check required by the controlled-coding Ruleset.
+`project-context-management` protocol. The read-only GitHub Actions workflow
+now supplies the successful `repository-context` check required by the
+controlled-coding Ruleset.
 
 ## Primary focus
 
-Complete [`TASK-003`](../tasks/TASK-003.md) by publishing the read-only CI
-workflow and verifying its first GitHub-hosted run.
+No active Task. The parent system can now require `repository-context` while
+configuring the `hermes-context-kit` Ruleset.
 
 ## Active constraints
 

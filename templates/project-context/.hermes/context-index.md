@@ -5,6 +5,7 @@ Project: {{project_id}}
 | ID or file | Status | Description | Read when |
 |---|---|---|---|
 | [`../PROJECT.md`](../PROJECT.md) | Active | Project identity and entry pointers | Entering the project |
+| [`context-kit.json`](./context-kit.json) | Pinned | Adopted protocol, release, profile, and features | Validating or upgrading context |
 | [`state.md`](./state.md) | Current | Project-level current summary | Asking for current state |
 | [`../tasks/current.md`](../tasks/current.md) | Current | Primary active Task pointer | Resuming current work |
 | [`../tasks/README.md`](../tasks/README.md) | Active index | Task routing | Reviewing or switching workstreams |

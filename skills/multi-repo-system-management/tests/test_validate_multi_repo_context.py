@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -292,6 +293,42 @@ class MultiRepoValidatorTest(unittest.TestCase):
         lock_path.write_text(rendered, encoding="utf-8")
         self.assertEqual(validator.load_lock(lock_path), {"component-a": "a" * 40})
 
+    def test_lock_allows_consumer_owned_metadata(self) -> None:
+        lock_path = self.root / "components" / "lock.yaml"
+        lock_path.parent.mkdir()
+        lock_path.write_text(
+            "schema_version: 1\n"
+            "project_id: integration-project\n"
+            "components:\n"
+            "  - name: component-a\n"
+            "    repository: https://example.invalid/component-a.git\n"
+            "    source_revision: " + "a" * 40 + "\n"
+            "    deployed:\n"
+            "      status: deployed\n"
+            "      revision: " + "a" * 40 + "\n"
+            "updated: 2026-09-07\n",
+            encoding="utf-8",
+        )
+        self.assertEqual(validator.load_lock(lock_path), {"component-a": "a" * 40})
+
+        json_path = self.root / "components.lock.json"
+        json_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "components": [
+                        {
+                            "name": "component-a",
+                            "source_revision": "a" * 40,
+                            "extensions": {"deployment": "consumer-owned"},
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.assertEqual(validator.load_lock(json_path), {"component-a": "a" * 40})
+
     def test_yaml_lock_rejects_malformed_or_incomplete_entries(self) -> None:
         lock_path = self.root / "components" / "lock.yaml"
         lock_path.parent.mkdir()
@@ -331,6 +368,18 @@ class MultiRepoValidatorTest(unittest.TestCase):
         canonical_path.write_text("{}", encoding="utf-8")
         with self.assertRaisesRegex(validator.ValidationError, "System Manifest must point"):
             validator.validate_system_task(self.root, "TASK-001", canonical_path, None)
+
+    def test_system_task_accepts_markdown_manifest_link(self) -> None:
+        task_path = self.root / "tasks" / "TASK-001.md"
+        task_path.write_text(
+            task_path.read_text().replace(
+                "`tasks/system/TASK-001.json`",
+                "[system/TASK-001.json](./system/TASK-001.json)",
+            ),
+            encoding="utf-8",
+        )
+        manifest_path = self._write_manifest(self._basic_manifest())
+        validator.validate_system_task(self.root, "TASK-001", manifest_path, None)
 
     def test_system_task_rejects_canonical_manifest_symlink(self) -> None:
         with tempfile.TemporaryDirectory() as outside:
@@ -453,11 +502,9 @@ class MultiRepoValidatorTest(unittest.TestCase):
             "https://example.com/result.json?raw=1#summary",
         )
 
-    def test_json_lock_rejects_unknown_or_incomplete_fields(self) -> None:
+    def test_json_lock_rejects_incomplete_core_fields(self) -> None:
         lock_path = self.root / "components.lock.json"
         invalid = [
-            {"components": [{"name": "component-a", "source_revision": "a" * 40}], "extra": True},
-            {"components": [{"name": "component-a", "source_revision": "a" * 40, "extra": True}]},
             {"components": [{"name": "component-a"}]},
         ]
         for lock in invalid:
@@ -735,6 +782,21 @@ class MultiRepoValidatorTest(unittest.TestCase):
                     self.root, "TASK-001", manifest_path, None, {"component-a": component}
                 )
 
+    @unittest.skipIf(os.name == "nt", "Windows symlink creation is permission-dependent")
+    def test_platform_symlink_ancestor_does_not_invalidate_checkout(self) -> None:
+        with tempfile.TemporaryDirectory() as outside:
+            outside_root = Path(outside)
+            real_parent = outside_root / "real"
+            checkout = real_parent / "checkout"
+            checkout.mkdir(parents=True)
+            alias_parent = outside_root / "alias"
+            alias_parent.symlink_to(real_parent, target_is_directory=True)
+            candidate = alias_parent / "checkout"
+            self.assertEqual(
+                validator.require_repository_directory(candidate, "integration root"),
+                candidate,
+            )
+
     def test_repository_relative_evidence_must_be_regular_integration_file(self) -> None:
         revision = "a" * 40
         manifest = self._basic_manifest(revision=revision, delivery_state="locked")
@@ -794,6 +856,164 @@ class MultiRepoValidatorTest(unittest.TestCase):
             args = validate.call_args.args
             self.assertEqual(args[3], self.root / "components/lock.yaml")
             self.assertEqual(args[4]["component-a"], Path("component-link"))
+
+    def test_v2_separates_deployment_applicability_from_acceptance(self) -> None:
+        revisions = {"runtime-a": "a" * 40, "governance-b": "b" * 40}
+        component_roots = {}
+        for repository, task_id in [("runtime-a", "TASK-002"), ("governance-b", "TASK-003")]:
+            component_root = self.root / repository
+            (component_root / "tasks").mkdir(parents=True)
+            (component_root / "PROJECT.md").write_text(
+                f"Project ID: {repository}\n", encoding="utf-8"
+            )
+            (component_root / "tasks" / f"{task_id}.md").write_text(
+                f"# {task_id}: Build\n\n"
+                "Status: Completed\n"
+                "Type: Component\n"
+                "Parent System Task: integration-project:TASK-001\n",
+                encoding="utf-8",
+            )
+            component_roots[repository] = component_root
+
+        manifest = {
+            "schema_version": 2,
+            "system_task": "integration-project:TASK-001",
+            "system_id": "example-system",
+            "integration_project": "integration-project",
+            "components": [
+                {
+                    "repository": "runtime-a",
+                    "task": "runtime-a:TASK-002",
+                    "repository_url": "https://example.invalid/runtime-a.git",
+                    "branch": "main",
+                    "revision": revisions["runtime-a"],
+                    "source_state": "merged",
+                    "acceptance_state": "verified",
+                    "deployment": {
+                        "applicability": "required",
+                        "state": "deployed",
+                        "evidence": [
+                            {
+                                "ref": "evidence/production-release.json",
+                                "summary": "Runtime A is deployed.",
+                            }
+                        ],
+                    },
+                    "extensions": {},
+                },
+                {
+                    "repository": "governance-b",
+                    "task": "governance-b:TASK-003",
+                    "repository_url": "https://example.invalid/governance-b.git",
+                    "branch": "main",
+                    "revision": revisions["governance-b"],
+                    "source_state": "merged",
+                    "acceptance_state": "locked",
+                    "deployment": {
+                        "applicability": "not-applicable",
+                        "state": "not-applicable",
+                        "evidence": [],
+                    },
+                    "extensions": {"role": "governance"},
+                },
+            ],
+            "integration": {
+                "verification_state": "verified",
+                "validation_evidence": [
+                    {
+                        "ref": "evidence/system-acceptance.txt",
+                        "summary": "The locked graph passed integration acceptance.",
+                    }
+                ],
+                "deployment_state": "deployed",
+                "deployment_evidence": [
+                    {"ref": "evidence/production-release.json"}
+                ],
+                "rollback": {"ref": "docs/rollback.md"},
+                "extensions": {},
+            },
+        }
+        manifest_path = self._write_manifest(manifest)
+        lock_path = self.root / "components" / "lock.json"
+        lock_path.parent.mkdir()
+        lock_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "components": [
+                        {"name": name, "source_revision": revision}
+                        for name, revision in revisions.items()
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        validator.validate_system_task(
+            self.root,
+            "TASK-001",
+            manifest_path,
+            lock_path,
+            component_roots,
+        )
+
+    def test_v2_rejects_false_deployed_integration(self) -> None:
+        component_root = self.root / "runtime-a"
+        (component_root / "tasks").mkdir(parents=True)
+        (component_root / "PROJECT.md").write_text(
+            "Project ID: runtime-a\n", encoding="utf-8"
+        )
+        (component_root / "tasks" / "TASK-002.md").write_text(
+            "# TASK-002: Build\n\n"
+            "Status: Completed\n"
+            "Type: Component\n"
+            "Parent System Task: integration-project:TASK-001\n",
+            encoding="utf-8",
+        )
+        manifest = {
+            "schema_version": 2,
+            "system_task": "integration-project:TASK-001",
+            "system_id": "example-system",
+            "integration_project": "integration-project",
+            "components": [
+                {
+                    "repository": "runtime-a",
+                    "task": "runtime-a:TASK-002",
+                    "repository_url": "https://example.invalid/runtime-a.git",
+                    "branch": "main",
+                    "revision": None,
+                    "source_state": "pending",
+                    "acceptance_state": "pending",
+                    "deployment": {
+                        "applicability": "required",
+                        "state": "pending",
+                        "evidence": [],
+                    },
+                }
+            ],
+            "integration": {
+                "verification_state": "pending",
+                "validation_evidence": [],
+                "deployment_state": "deployed",
+                "deployment_evidence": [
+                    {"ref": "evidence/production-release.json"}
+                ],
+                "rollback": {"ref": "docs/rollback.md"},
+            },
+        }
+        path = self._write_manifest(manifest)
+        with self.assertRaisesRegex(validator.ValidationError, "all required components"):
+            validator.validate_system_task(
+                self.root,
+                "TASK-001",
+                path,
+                None,
+                {"runtime-a": component_root},
+            )
+
+    def test_v2_evidence_requires_a_stable_ref(self) -> None:
+        value = {"summary": "A narrative is not evidence."}
+        with self.assertRaisesRegex(validator.ValidationError, "must contain ref"):
+            validator.require_evidence_v2(value, "evidence", self.root)
 
     def _basic_manifest(
         self,

@@ -56,7 +56,7 @@ The manifest must not duplicate the Task's status or narrative progress.
 
 ## Delivery States
 
-Delivery state is independent from Task status:
+Schema v1 used one delivery state independent from Task status:
 
 | State | Meaning |
 |---|---|
@@ -71,25 +71,16 @@ Advance one or more steps only when evidence supports the target state. A
 state may move backward when review, validation, or deployment disproves it;
 record the blocker and do not erase the failed evidence needed for recovery.
 
-Integration state constrains every component included in the manifest:
-
-- `integration.state: verified` requires every component to be `locked`,
-  `verified`, or `deployed` and requires cross-component validation evidence;
-- `integration.state: deployed` requires every component to be `deployed`,
-  requires deployment evidence, and requires an explicit rollback pointer.
-
-Do not leave an included component at `pending`, `handoff-ready`, or `merged`
-while claiming verified or deployed integration. A component that is unchanged
-still records its accepted immutable revision through the documented
-`no-component-change` path; it is not excluded by leaving it pending.
+New work uses System Task schema v2: source delivery, integration acceptance,
+and deployment applicability are separate facts. Schema v1 remains historical
+compatibility input and must not be silently reinterpreted as v2.
 
 ## Revision Rules
 
 - `handoff-ready` and later require a lowercase 40-character Git commit SHA.
 - A branch may be recorded as a review route but never replaces the SHA.
-- Whenever a component lock is supplied for validation, every manifest
-  component requires a full immutable revision equal to its lock entry,
-  regardless of delivery state.
+- In schema v2, `acceptance_state: locked` or later requires a full immutable
+  revision equal to the component lock.
 - `verified` requires a cross-component validation evidence pointer.
 - `deployed` requires deployment evidence and an explicit rollback pointer.
 
@@ -115,12 +106,8 @@ validate inaccessible component repositories or provenance chains. "Prior"
 is an explicit provenance relationship, not an ordering inferred from Task
 IDs, timestamps, or file modification times.
 
-Integration validation evidence, deployment evidence, and rollback are
-pointers, not prose status claims. Record each as an HTTP(S) URL or a
-repository-relative file pointer; do not use booleans, objects, null values, or
-uncited narrative strings. Repository-relative pointers resolve from the
-integration repository root and must name regular in-repository files without
-crossing symlinks; HTTP(S) pointers must have a valid authority and no userinfo.
+Schema v2 evidence uses an object with a required `ref` pointer and optional
+human `summary`. The pointer, not the summary, supports state advancement.
 
 ## System Task Procedure
 

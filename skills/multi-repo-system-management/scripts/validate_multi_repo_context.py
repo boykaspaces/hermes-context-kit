@@ -72,12 +72,15 @@ def lexical_absolute(path: Path) -> Path:
     return Path(os.path.abspath(path))
 
 
-def reject_symlink_segments(path: Path, label: str) -> None:
-    cursor = Path(path.anchor)
-    for part in path.parts[1:]:
-        cursor /= part
-        if cursor.is_symlink():
-            raise ValidationError(f"{label} must not use symlinks")
+def reject_symlink_path(path: Path, label: str) -> None:
+    """Reject a supplied trust-boundary path that is itself a symlink.
+
+    Parent directories are outside the repository trust boundary. Inspecting
+    them rejects legitimate platform aliases such as macOS /var -> /private/var
+    without improving protection for files reached inside the repository.
+    """
+    if path.is_symlink():
+        raise ValidationError(f"{label} must not use symlinks")
 
 
 def require_repository_file(root: Path, path: Path, label: str) -> Path:
@@ -88,7 +91,7 @@ def require_repository_file(root: Path, path: Path, label: str) -> Path:
         relative = candidate.relative_to(canonical_root)
     except ValueError as exc:
         raise ValidationError(f"{label} must be stored inside the repository") from exc
-    reject_symlink_segments(canonical_root, label)
+    reject_symlink_path(canonical_root, label)
     cursor = canonical_root
     for part in relative.parts:
         cursor = cursor / part
@@ -101,7 +104,7 @@ def require_repository_file(root: Path, path: Path, label: str) -> Path:
 
 def require_repository_directory(path: Path, label: str) -> Path:
     candidate = lexical_absolute(path)
-    reject_symlink_segments(candidate, label)
+    reject_symlink_path(candidate, label)
     if not candidate.is_dir():
         raise ValidationError(f"{label} must be a directory")
     return candidate
@@ -266,6 +269,37 @@ def require_pointer(value: Any, label: str, root: Path | None = None) -> str:
     return pointer
 
 
+def resolve_task_manifest_pointer(value: Any, task_path: Path, root: Path) -> str:
+    """Return one Task manifest pointer as a repository-relative path.
+
+    Task metadata may use a plain/code-spanned repository-relative path or a
+    Markdown link whose target is relative to the Task file.
+    """
+    raw = require_string(value, "System Manifest").strip()
+    if raw.startswith("`") and raw.endswith("`") and len(raw) > 2:
+        raw = raw[1:-1].strip()
+    markdown = re.fullmatch(r"\[[^\]]+\]\(([^)]+)\)", raw)
+    if markdown:
+        target = markdown.group(1).strip()
+        base = task_path.parent
+    else:
+        target = raw
+        base = root
+    if not target or any(character.isspace() for character in target):
+        raise ValidationError(f"{task_path}: invalid System Manifest pointer")
+    parsed = urlsplit(target)
+    if parsed.scheme or parsed.netloc or parsed.query or parsed.fragment:
+        raise ValidationError(f"{task_path}: System Manifest must be repository-relative")
+    candidate = lexical_absolute(base / target)
+    canonical_root = lexical_absolute(root)
+    try:
+        return candidate.relative_to(canonical_root).as_posix()
+    except ValueError as exc:
+        raise ValidationError(
+            f"{task_path}: System Manifest must be stored inside the repository"
+        ) from exc
+
+
 def reject_secrets(data: Any, label: str) -> None:
     rendered = json.dumps(data, sort_keys=True)
     for pattern in SECRET_PATTERNS:
@@ -361,18 +395,16 @@ def load_lock(path: Path) -> dict[str, str]:
     if path.suffix == ".json":
         data = load_json(path)
         components = data.get("components") if isinstance(data, dict) else None
-        if not isinstance(data, dict) or set(data) != {"components"}:
-            raise ValidationError("JSON lock must contain only the components key")
+        if not isinstance(data, dict):
+            raise ValidationError("JSON lock must be an object")
         if not isinstance(components, list):
             raise ValidationError("JSON lock has no components list")
         result = {}
         for item in components:
             if not isinstance(item, dict):
                 raise ValidationError("JSON lock component must be an object")
-            if set(item) != {"name", "source_revision"}:
-                raise ValidationError(
-                    "JSON lock component must contain exactly name and source_revision"
-                )
+            if not {"name", "source_revision"} <= set(item):
+                raise ValidationError("JSON lock component is missing a core field")
             name = require_string(
                 item.get("name"), "lock component name", PROJECT_ID_VALUE_RE
             )
@@ -386,6 +418,7 @@ def load_lock(path: Path) -> dict[str, str]:
     names: set[str] = set()
     current: str | None = None
     components_seen = False
+    in_components = False
     for line_number, line in enumerate(read_text(path).splitlines(), start=1):
         if not line.strip() or line.lstrip().startswith("#"):
             continue
@@ -393,6 +426,14 @@ def load_lock(path: Path) -> dict[str, str]:
             if components_seen or current is not None or names:
                 raise ValidationError(f"{path}:{line_number}: duplicate or misplaced components key")
             components_seen = True
+            in_components = True
+            continue
+        if not line.startswith(" ") and in_components:
+            if current is not None:
+                raise ValidationError(f"lock component {current} has no source_revision")
+            in_components = False
+            current = None
+        if not in_components:
             continue
         name_match = re.fullmatch(r"  - name:\s*([a-z0-9][a-z0-9-]*)\s*", line)
         if name_match:
@@ -412,12 +453,279 @@ def load_lock(path: Path) -> dict[str, str]:
             result[current] = revision_match.group(1)
             current = None
             continue
+        if line.startswith("    ") or line.startswith("      "):
+            continue
         raise ValidationError(f"{path}:{line_number}: unsupported component lock syntax")
     if current is not None:
         raise ValidationError(f"lock component {current} has no source_revision")
     if not components_seen or not result:
         raise ValidationError(f"no supported component revisions found in {path}")
     return result
+
+
+def require_evidence_v2(value: Any, label: str, root: Path) -> dict[str, Any]:
+    if not isinstance(value, dict) or not {"ref"} <= set(value) or not set(value) <= {
+        "ref",
+        "summary",
+    }:
+        raise ValidationError(f"{label} must contain ref and optional summary")
+    require_pointer(value.get("ref"), f"{label}.ref", root)
+    if value.get("summary") is not None:
+        require_string(value.get("summary"), f"{label}.summary")
+    return value
+
+
+def validate_system_task_v2(
+    root: Path,
+    task_id: str,
+    task_path: Path,
+    manifest_path: Path,
+    lock_path: Path | None,
+    component_roots: dict[str, Path],
+    data: dict[str, Any],
+    pid: str,
+) -> None:
+    expected_fields = {
+        "schema_version",
+        "system_task",
+        "system_id",
+        "integration_project",
+        "components",
+        "integration",
+    }
+    if set(data) != expected_fields:
+        raise ValidationError("v2 system manifest fields must exactly match the canonical schema")
+    expected = f"{pid}:{task_id}"
+    if data.get("system_task") != expected:
+        raise ValidationError(f"system_task must be {expected}")
+    if data.get("integration_project") != pid:
+        raise ValidationError(f"integration_project must be {pid}")
+    require_string(data.get("system_id"), "system_id")
+
+    components = data.get("components")
+    if not isinstance(components, list) or not components:
+        raise ValidationError("v2 system manifest must declare components")
+
+    locks: dict[str, str] = {}
+    if lock_path is not None:
+        expected_lock = lexical_absolute(root / "components" / "lock.json")
+        if lexical_absolute(lock_path) != expected_lock:
+            raise ValidationError("v2 component lock must be stored at components/lock.json")
+        lock_path = require_repository_file(root, expected_lock, "v2 component lock")
+        locks = load_lock(lock_path)
+
+    seen: set[str] = set()
+    acceptance_states: list[str] = []
+    deployments: list[dict[str, Any]] = []
+    for index, item in enumerate(components):
+        label = f"components[{index}]"
+        if not isinstance(item, dict):
+            raise ValidationError(f"{label} must be an object")
+        base_fields = {
+            "repository",
+            "task",
+            "repository_url",
+            "branch",
+            "revision",
+            "source_state",
+            "acceptance_state",
+            "deployment",
+        }
+        optional_fields = {"extensions"}
+        if item.get("task") is None:
+            optional_fields.add("task_absence_reason")
+            if item.get("task_absence_reason") == "no-component-change":
+                optional_fields.add("source_system_task")
+        if not base_fields <= set(item) or not set(item) <= base_fields | optional_fields:
+            raise ValidationError(f"{label} fields do not match the v2 component schema")
+        if item.get("extensions") is not None and not isinstance(item.get("extensions"), dict):
+            raise ValidationError(f"{label}.extensions must be an object")
+
+        repository = require_string(
+            item.get("repository"), f"{label}.repository", PROJECT_ID_VALUE_RE
+        )
+        if repository in seen:
+            raise ValidationError(f"duplicate system component {repository}")
+        seen.add(repository)
+        require_http_url(item.get("repository_url"), f"{repository}.repository_url")
+        require_string(item.get("branch"), f"{repository}.branch")
+
+        task = item.get("task")
+        if task is None:
+            reason = item.get("task_absence_reason")
+            if reason not in {"work-predates-protocol", "no-component-change"}:
+                raise ValidationError(f"{repository}: missing Task without an allowed reason")
+            if reason == "no-component-change":
+                source = require_string(
+                    item.get("source_system_task"),
+                    f"{repository}.source_system_task",
+                    CANONICAL_TASK_RE,
+                )
+                if source.split(":", 1)[0] != pid or source == expected:
+                    raise ValidationError(
+                        f"{repository}.source_system_task must identify another Task in {pid}"
+                    )
+        else:
+            canonical_task = require_string(task, f"{repository}.task", CANONICAL_TASK_RE)
+            task_project, component_task_id = canonical_task.split(":", 1)
+            if task_project != repository:
+                raise ValidationError(f"{repository}: Task project differs from component identity")
+            if repository not in component_roots:
+                raise ValidationError(
+                    f"{repository}: not_checked: component root is required to verify Task relationship"
+                )
+            component_root = require_repository_directory(
+                component_roots[repository], f"{repository}: component root"
+            )
+            component_project = require_repository_file(
+                component_root,
+                component_root / "PROJECT.md",
+                f"{repository}: component PROJECT.md",
+            )
+            if project_id(component_project.parent) != repository:
+                raise ValidationError(f"{repository}: component root Project ID differs")
+            component_task = require_repository_file(
+                component_root,
+                component_root / "tasks" / f"{component_task_id}.md",
+                f"{canonical_task}: Component Task",
+            )
+            component_fields = task_fields(component_task)
+            if component_fields.get("Type") != "Component":
+                raise ValidationError(f"{canonical_task}: child Task must declare Type: Component")
+            if component_fields.get("Parent System Task") != expected:
+                raise ValidationError(f"{canonical_task}: parent differs from {expected}")
+
+        source_state = item.get("source_state")
+        acceptance_state = item.get("acceptance_state")
+        if source_state not in {"pending", "handoff-ready", "merged"}:
+            raise ValidationError(f"{repository}: invalid source_state {source_state!r}")
+        if acceptance_state not in {"pending", "locked", "verified"}:
+            raise ValidationError(
+                f"{repository}: invalid acceptance_state {acceptance_state!r}"
+            )
+        revision = item.get("revision")
+        if source_state != "pending" or acceptance_state != "pending":
+            require_string(revision, f"{repository}.revision", SHA_RE)
+        if acceptance_state != "pending" and source_state == "pending":
+            raise ValidationError(
+                f"{repository}: accepted component cannot have pending source_state"
+            )
+        if acceptance_state in {"locked", "verified"}:
+            if lock_path is None:
+                raise ValidationError(
+                    f"{repository}: locked or verified acceptance requires a component lock"
+                )
+            if locks.get(repository) != revision:
+                raise ValidationError(
+                    f"{repository}: manifest revision differs from component lock"
+                )
+        acceptance_states.append(acceptance_state)
+
+        deployment = item.get("deployment")
+        if not isinstance(deployment, dict) or set(deployment) != {
+            "applicability",
+            "state",
+            "evidence",
+        }:
+            raise ValidationError(f"{repository}.deployment has invalid fields")
+        applicability = deployment.get("applicability")
+        deployment_state = deployment.get("state")
+        evidence = deployment.get("evidence")
+        if not isinstance(evidence, list):
+            raise ValidationError(f"{repository}.deployment.evidence must be a list")
+        for evidence_index, evidence_item in enumerate(evidence):
+            require_evidence_v2(
+                evidence_item,
+                f"{repository}.deployment.evidence[{evidence_index}]",
+                root,
+            )
+        if applicability == "not-applicable":
+            if deployment_state != "not-applicable" or evidence:
+                raise ValidationError(
+                    f"{repository}: not-applicable deployment must have no deployment evidence"
+                )
+        elif applicability == "required":
+            if deployment_state not in {"pending", "deployed"}:
+                raise ValidationError(f"{repository}: invalid required deployment state")
+            if deployment_state == "deployed" and not evidence:
+                raise ValidationError(
+                    f"{repository}: deployed component requires deployment evidence"
+                )
+        else:
+            raise ValidationError(f"{repository}: invalid deployment applicability")
+        deployments.append(deployment)
+
+    if lock_path is not None and set(locks) != seen:
+        raise ValidationError(
+            "v2 component lock must exactly match manifest components; "
+            f"missing={sorted(seen - set(locks))}, extra={sorted(set(locks) - seen)}"
+        )
+
+    integration = data.get("integration")
+    required_integration = {
+        "verification_state",
+        "validation_evidence",
+        "deployment_state",
+        "deployment_evidence",
+        "rollback",
+    }
+    if (
+        not isinstance(integration, dict)
+        or not required_integration <= set(integration)
+        or not set(integration) <= required_integration | {"extensions"}
+    ):
+        raise ValidationError("integration fields do not match the v2 schema")
+    if integration.get("extensions") is not None and not isinstance(
+        integration.get("extensions"), dict
+    ):
+        raise ValidationError("integration.extensions must be an object")
+    verification_state = integration.get("verification_state")
+    deployment_state = integration.get("deployment_state")
+    validation_evidence = integration.get("validation_evidence")
+    deployment_evidence = integration.get("deployment_evidence")
+    rollback = integration.get("rollback")
+    if verification_state not in {"pending", "verified"}:
+        raise ValidationError("invalid integration verification_state")
+    if deployment_state not in {"pending", "deployed", "not-applicable"}:
+        raise ValidationError("invalid integration deployment_state")
+    if not isinstance(validation_evidence, list) or not isinstance(
+        deployment_evidence, list
+    ):
+        raise ValidationError("integration evidence fields must be lists")
+    for index, evidence_item in enumerate(validation_evidence):
+        require_evidence_v2(evidence_item, f"integration.validation_evidence[{index}]", root)
+    for index, evidence_item in enumerate(deployment_evidence):
+        require_evidence_v2(evidence_item, f"integration.deployment_evidence[{index}]", root)
+    if rollback is not None:
+        require_evidence_v2(rollback, "integration.rollback", root)
+    if verification_state == "verified" and (
+        not validation_evidence
+        or any(state not in {"locked", "verified"} for state in acceptance_states)
+    ):
+        raise ValidationError(
+            "verified integration requires evidence and every component locked or verified"
+        )
+
+    required_deployments = [
+        deployment
+        for deployment in deployments
+        if deployment["applicability"] == "required"
+    ]
+    if deployment_state == "not-applicable" and required_deployments:
+        raise ValidationError(
+            "not-applicable integration deployment cannot contain required components"
+        )
+    if deployment_state == "deployed" and (
+        not required_deployments
+        or any(deployment["state"] != "deployed" for deployment in required_deployments)
+        or not deployment_evidence
+        or rollback is None
+    ):
+        raise ValidationError(
+            "deployed integration requires all required components deployed, evidence, and rollback"
+        )
+    reject_secrets(data, str(manifest_path))
+    print(f"system-task-v2-ok: {expected}")
 
 
 def validate_system_task(
@@ -443,11 +751,25 @@ def validate_system_task(
         root, expected_manifest_path, f"manifest storage at {relative_manifest}"
     )
     task_path = require_repository_file(root, task_path, "System Task")
-    declared_manifest = fields.get("System Manifest", "").strip("`")
+    declared_manifest = resolve_task_manifest_pointer(
+        fields.get("System Manifest"), task_path, root
+    )
     if declared_manifest != relative_manifest:
         raise ValidationError(f"{task_path}: System Manifest must point to {relative_manifest}")
 
     data = load_json(manifest_path)
+    if isinstance(data, dict) and data.get("schema_version") == 2:
+        validate_system_task_v2(
+            root,
+            task_id,
+            task_path,
+            manifest_path,
+            lock_path,
+            component_roots or {},
+            data,
+            pid,
+        )
+        return
     if not isinstance(data, dict) or set(data) != {
         "schema_version",
         "system_task",
@@ -530,7 +852,10 @@ def validate_system_task(
                         f"{repository}.source_system_task must reference a completed prior Task"
                     )
                 expected_source_manifest = f"tasks/system/{source_task_id}.json"
-                if source_fields.get("System Manifest", "").strip("`") != expected_source_manifest:
+                source_manifest_pointer = resolve_task_manifest_pointer(
+                    source_fields.get("System Manifest"), source_task_path, root
+                )
+                if source_manifest_pointer != expected_source_manifest:
                     raise ValidationError(
                         f"{repository}.source_system_task must declare {expected_source_manifest}"
                     )

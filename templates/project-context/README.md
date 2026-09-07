@@ -11,6 +11,7 @@ needed. Add the remaining navigation layers only when they have current value.
 |---|---|
 | `PROJECT.md` | Stable project identity and entry pointers |
 | `AGENTS.md` | Repository-local instructions and source-of-truth boundaries |
+| `.hermes/context-kit.json` | Adopted specification, Kit release, profile, and features |
 | `.hermes/context-index.md` | Current-first context router |
 | `.hermes/state.md` | Project-level current summary |
 | `.hermes/checkpoints/README.md` | Explicit current checkpoint pointer |
@@ -18,6 +19,8 @@ needed. Add the remaining navigation layers only when they have current value.
 | `tasks/current.md` | Primary active Task pointer |
 | `docs/decisions/README.md` | ADR index |
 
-Replace all `{{placeholder}}` values. When copying the full skeleton, remove any
-unused empty navigation layer before enabling mutations. Do not manufacture a
-Task, ADR, Checkpoint, or memory entry merely to fill an empty section.
+Prefer `python3 scripts/context_kit.py init` over copying this directory by
+hand. If adapting the example manually, replace all `{{placeholder}}` values
+and ensure the profile's feature list is correct. Remove any unused empty
+navigation layer before enabling mutations. Do not manufacture a Task, ADR,
+Checkpoint, or memory entry merely to fill an empty section.

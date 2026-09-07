@@ -1,7 +1,7 @@
 ---
 name: multi-repo-system-management
 description: "Use when coordinating Tasks across repositories."
-version: 0.1.1
+version: 0.2.0
 author: Boyka Chen, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -19,6 +19,11 @@ Coordinate one system whose implementation, integration state, and deployment
 truth are owned by different repositories. This skill composes with
 `project-context-management`; it does not replace that skill's Task statuses,
 project-scope guards, Checkpoint rules, or index semantics.
+
+New System Tasks use the separated schema v2 contract described in
+[`references/tasks-and-delivery.md`](references/tasks-and-delivery.md). Schema
+v1 remains readable for migration and historical validation; do not silently
+reinterpret its combined delivery state as v2 state.
 
 ## When to Load
 

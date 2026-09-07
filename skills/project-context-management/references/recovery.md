@@ -134,6 +134,23 @@ Start from Relevant Files listed in the current Task or latest checkpoint. Do no
 
 The repository is implementation truth. If persistent state and implementation obviously conflict — surface the inconsistency; verify; repair through the owning protocol. Do not silently trust the stale source.
 
+### Git Ref Currency Guard
+
+Project context read from a Git repository describes only the ref and worktree
+from which it was read. Before reporting whole-project current status, identify
+the checked-out branch, HEAD, and dirty state. Inspect other local worktrees or
+refs only when a currency signal exists: the user reports a later or different
+state, the checkout is dirty, a recorded branch/SHA disagrees with the checkout,
+or the active work uses a review branch or immutable candidate.
+
+Use branch and worktree metadata only to locate plausible refs, then read their
+explicit Task, State, checkpoint, or System Task artifacts from those refs
+through a non-mutating mechanism such as `git show`. Never infer currency or
+completion from a branch name, commit date, ref ordering, or Git log alone; do
+not checkout, reset, or clean merely to answer a status question. Report
+branch-scoped facts separately when they differ, such as checked-out state,
+candidate state, and merged or locked state.
+
 ---
 
 ## Optional Checkpoint
@@ -192,7 +209,8 @@ Recovery depth is determined by the request — not by the full ladder.
 
 **Current status question:**
 ```
-PROJECT.md → state.md → current task → STOP
+PROJECT.md → state.md → current task
+→ Git ref currency guard (when Git-backed) → STOP
 ```
 
 **Continue implementation:**

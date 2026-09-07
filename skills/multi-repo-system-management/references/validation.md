@@ -12,7 +12,7 @@ python3 scripts/validate_multi_repo_context.py system-task \
   --task TASK-014 \
   --manifest tasks/system/TASK-014.json \
   --component-root component-a=../component-a \
-  --lock components/lock.yaml
+  --lock components/lock.json
 ```
 
 Paths are resolved from the current working directory. The validator performs
@@ -35,7 +35,11 @@ bulk rewrite.
 
 ## System Task Check
 
-The system-task mode additionally verifies:
+The system-task mode detects schema v1 or v2 from the manifest. New System
+Tasks use v2 and `components/lock.json`. Historical v1 Tasks retain
+`components/lock.yaml` compatibility.
+
+The mode additionally verifies:
 
 - the Markdown Task is typed `System` or `Deployment`;
 - the manifest is stored at `tasks/system/<TASK-ID>.json` and the Markdown
@@ -53,15 +57,16 @@ The system-task mode additionally verifies:
   structurally valid canonical manifest owns the same accepted component
   revision; prior state is explicit provenance and is not inferred from Task
   IDs, timestamps, or file modification times;
-- whenever a lock is supplied, every manifest component has a full immutable
-  revision equal to its lock entry, regardless of delivery state;
-- a supplied lock is accepted only as the regular, non-symlinked integration
-  repository file `components/lock.yaml`;
+- v2 locked/verified acceptance has a full immutable revision equal to its
+  canonical `components/lock.json` entry;
+- a supplied lock is accepted only at the schema's canonical regular,
+  non-symlinked integration-repository path;
 - the lock contains exactly the manifest's component set and rejects malformed,
-  incomplete, duplicate, or unsupported entries;
-- verified integration has evidence and every component is at least `locked`;
-- deployed integration has deployment evidence and a rollback pointer, and
-  every component is `deployed`.
+  incomplete, or duplicate core entries while allowing consumer-owned metadata;
+- v2 verified integration has evidence and every component is at least locked;
+- v2 deployed integration requires every deployment-required component to be
+  deployed, plus deployment evidence and rollback; not-applicable components
+  do not create false deployment claims.
 
 Evidence and rollback values must be non-empty HTTP(S) URLs or
 repository-relative file pointers. Non-string values and uncited prose do not
@@ -74,8 +79,9 @@ The low-level lock parser accepts JSON for compatibility callers and the
 [`../templates/component-lock.yaml`](../templates/component-lock.yaml). The
 system-task command accepts only the canonical integration-repository
 `components/lock.yaml`. Copy that template there, replace every placeholder,
-and keep one unique entry per manifest component. YAML syntax should also be
-checked by the repository's native validator before semantic comparison.
+and keep one unique core entry per manifest component. Consumers may add
+project-owned metadata beside the core fields; their native validator owns
+those extensions and complete YAML syntax before semantic comparison.
 
 ## Acceptance Layers
 

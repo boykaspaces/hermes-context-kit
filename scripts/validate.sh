@@ -63,40 +63,29 @@ portable_roots.each do |portable_root|
   end
 end
 
-required = {
-  File.join(root, "skills", "project-context-management", "SKILL.md") => [
-    "archive / reactivate / state mutation",
-    "deprecate / reject",
-    "complete / cancel / reopen",
-    "resume / archive"
-  ],
-  File.join(root, "skills", "project-context-management", "references", "project-lifecycle.md") => [
-    "must not independently resolve project scope"
-  ],
-  File.join(root, "skills", "project-context-management", "references", "tasks.md") => [
-    "`current.md` is the canonical active-task pointer"
-  ]
-}
-required.each do |path, fragments|
-  text = File.read(path)
-  fragments.each do |fragment|
-    abort("#{path}: required protocol guard missing: #{fragment}") unless text.include?(fragment)
-  end
-end
-puts "deployment-portability-and-routing-ok"
+puts "deployment-portability-ok"
 RUBY
 
 python3 "$repo_root/skills/multi-repo-system-management/scripts/validate_multi_repo_context.py" \
   --help >/dev/null
+python3 "$repo_root/scripts/context_kit.py" --help >/dev/null
 python3 -m json.tool \
   "$repo_root/skills/multi-repo-system-management/templates/system-task.json" >/dev/null
 python3 -m json.tool \
   "$repo_root/skills/multi-repo-system-management/templates/component-handoff.json" >/dev/null
 python3 "$repo_root/skills/multi-repo-system-management/scripts/validate_multi_repo_context.py" \
   repository --root "$repo_root"
+python3 "$repo_root/scripts/context_kit.py" validate --root "$repo_root"
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
   -s "$repo_root/skills/multi-repo-system-management/tests" \
   -p 'test_*.py'
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+  -s "$repo_root/tests" \
+  -p 'test_*.py'
+
+for artifact in "$repo_root"/schemas/*.json "$repo_root"/profiles/*/profile.json; do
+  python3 -m json.tool "$artifact" >/dev/null
+done
 
 if grep -R -n -E '(210122338617|i-[0-9a-f]{8,}|execute-api\.|@gmail\.com|personal-hermes-minimal)' \
   "$repo_root" --exclude-dir='.git' --exclude='validate.sh'; then

@@ -107,6 +107,12 @@ Create a persistent project only when work will:
 
 Do not auto-create for one-off tasks.
 
+When starting from a Context Kit checkout, prefer the deterministic
+`scripts/context_kit.py init` flow described by the release's Adoption Guide.
+Review its dry-run before writing. The generated
+`.hermes/context-kit.json` records the explicit profile and enabled features;
+do not infer them from whichever template directories happen to exist.
+
 **Creation preflight:**
 1. Resolve the canonical workspace root, identity file and exact identity value, Workspace Registry, and default project root from `SOUL.md`.
 2. Verify the deployment-defined identity file exists and contains the exact configured value.
@@ -119,7 +125,8 @@ Do not auto-create for one-off tasks.
 **Creation flow:**
 1. Choose stable `project_id` and root path.
 2. Check Workspace Registry for duplicate `project_id`, path, or equivalent purpose.
-3. Create minimum project manifest: `PROJECT.md`, `.hermes/state.md`, `AGENTS.md` if needed.
+3. Create the minimum profile artifacts, including
+   `.hermes/context-kit.json` when adopting Context Kit.
 4. Register in `WORKSPACES.md`.
 5. Add further layers (`tasks/`, `decisions/`, `memory/`, `checkpoints/`) only when navigation value appears.
 

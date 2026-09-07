@@ -1,105 +1,102 @@
 # Adoption Guide
 
-## Prerequisites
+Hermes Context Kit is a public protocol and reference implementation for
+starting and maintaining agent-managed projects. A consuming agent needs only
+an explicit Context Kit release and access to the target project directory.
 
-The consuming Hermes deployment must provide:
+## Start a new project
 
-- a persistent workspace root visible to the agent's generic file tools;
-- an operator-provisioned workspace identity marker;
-- a canonical workspace registry with absolute project paths;
-- a global `SOUL.md` that defines those paths and forbids the agent from
-  creating substitute identities or registries;
-- a global Skill directory managed through the deployment's approved Skill
-  mechanism.
+Check out an immutable release or reviewed commit. Do not initialize from a
+mutable branch without recording its exact revision.
 
-Do not enable project-context mutations until the identity marker, registry,
-and file-tool visibility have been verified together.
-
-## Install or update Skills
-
-The repository checkout is the source; it is not the runtime Skill directory.
-Preserve each Skill directory without flattening it:
-
-```text
-skills/project-context-management/     -> {{hermes_skill_root}}/project-context-management/
-skills/multi-repo-system-management/   -> {{hermes_skill_root}}/multi-repo-system-management/
-skills/skill-authoring/                 -> {{hermes_skill_root}}/skill-authoring/
-```
-
-Install `multi-repo-system-management` only for workspaces that coordinate
-more than one repository. It composes with, and does not replace,
-`project-context-management`.
-
-Use this controlled workflow for both first installation and upgrades:
-
-1. Check out an explicit repository commit and run `./scripts/validate.sh`.
-2. Inspect the currently installed copy with `skill_view(name="<skill-name>")`.
-3. Before replacing an existing Skill, make a timestamped backup outside the
-   repository checkout and record the source commit and installed Skill version.
-4. Compare the source and Runtime Skill inventories. Submit the complete Skill
-   through one deployment-approved `skill_manage` batch: replace every current
-   file and include an explicit `remove_file` operation for every obsolete
-   Runtime `references/`, `templates/`, `scripts/`, or `assets/` file absent from
-   the incoming source. An upgrade is Incomplete while stale Runtime files remain.
-5. If Skill write approval is enabled, inspect the exact pending diff and approve
-   that pending ID through the runtime `/skills` approval flow. A chat message
-   saying "approve" does not apply a runtime pending write. Repeated submissions
-   create independent pending entries; approve or reject each obsolete entry
-   explicitly.
-6. Re-read the installed Skill with `skill_view`, confirm its version and linked
-   files, and exercise one happy path and one failure path.
-7. Keep the backup until the updated Runtime Skill has operated successfully.
-   Rollback through one approved batch that restores every backed-up file and
-   removes every Runtime file absent from the backup; then verify the restored
-   version and linked-file inventory with `skill_view`.
-
-Do not copy Skills into a project root, infer a runtime destination from the
-current container's home directory, or treat repository validation as proof
-that the host-side Runtime Skill was updated.
-
-## Configure the deployment contract
-
-Adapt [`../templates/SOUL.project-context.example.md`](../templates/SOUL.project-context.example.md)
-inside the deployment's operator-owned `SOUL.md`. Replace all placeholders,
-then verify that the runtime cannot silently fall back to a container-local or
-ephemeral path.
-
-The multi-repository routing sentence in the template is intentionally brief.
-Do not copy the complete multi-repository protocol into `SOUL.md`; the Skill
-remains the canonical owner of those procedures.
-
-## Bootstrap a project
-
-Choose one of two bootstrap modes:
-
-- **Minimum:** create `PROJECT.md`, `.hermes/state.md`, and `AGENTS.md` only when
-  repository-local instructions are needed. Add Task, ADR, Checkpoint, memory,
-  and context indexes only when they provide current navigation value.
-- **Full skeleton:** copy
-  [`../templates/project-context/`](../templates/project-context/README.md),
-  replace every placeholder, and remove any unused empty navigation layer before
-  enabling mutations.
-
-The full skeleton is a convenience layout, not a requirement to pre-create
-every index. Never manufacture an active Task, ADR, Checkpoint, or memory entry
-merely to populate the template.
-
-## Validate
-
-Run:
+Preview the write set:
 
 ```sh
-./scripts/validate.sh
+python3 scripts/context_kit.py init \
+  --root <target-project> \
+  --project-id <stable-project-id> \
+  --name "<project name>" \
+  --goal "<project goal>" \
+  --profile repository \
+  --dry-run
 ```
 
-Then exercise one happy path and one failure path in the real Hermes runtime:
+Run the same command without `--dry-run` after the target and profile are
+confirmed. Initialization never overwrites a different existing file. Validate
+the result:
 
-- happy path: create a Task and confirm its index/current pointer are updated;
-- failure path: remove or mismatch the workspace identity and confirm mutation
-  is refused without creating a replacement registry.
+```sh
+python3 scripts/context_kit.py validate --root <target-project>
+```
 
-For multi-repository adoption, also validate one System Task manifest, its
-component lock, and one inaccessible-integration-repository Handoff before
-enabling automated lock or deployment changes. Confirm that verified/deployed
-integration is rejected while any included component remains below the required
-delivery state.
+The generated `.hermes/context-kit.json` records the specification version,
+Kit release, profile, enabled features, and consumer extension namespace.
+
+## Choose a profile
+
+| Profile | Includes | Use when |
+|---|---|---|
+| `minimal` | Identity, local instructions, adoption metadata, current state | A small or new project does not yet need durable work indexes |
+| `repository` | Minimal + Tasks + decisions + context index | A repository needs multi-session maintenance |
+| `multi-repo` | Repository + System Task routing + component lock | One integration owner coordinates multiple repositories |
+
+The `repository` and `multi-repo` profiles may enable `checkpoints` or
+`memory` with repeatable `--feature` arguments. Do not enable an empty feature
+only to populate the tree.
+
+## Adopt an existing project
+
+Audit without mutation:
+
+```sh
+python3 scripts/context_kit.py migrate --root <project> --check
+```
+
+For minimal or repository projects, `--apply` adds the adoption manifest and
+then validates existing state. A legacy multi-repository project requires a
+reviewed lock/state migration before application; the tool reports this
+explicitly rather than duplicating or discarding its current lock.
+
+See [`UPGRADING.md`](./UPGRADING.md) for version changes and rollback.
+
+## Install Skills
+
+The checkout is the release source; it is not automatically the runtime Skill
+directory. Install only the required Skill directories through the consuming
+agent runtime's supported Skill mechanism:
+
+```text
+skills/project-context-management/
+skills/skill-authoring/
+skills/multi-repo-system-management/   # multi-repo profile only
+```
+
+Preserve each directory without flattening it. Record the exact Context Kit
+release, verify the installed file inventory, and keep the previous immutable
+version available for rollback. Do not infer a runtime Skill path from a
+container home directory or copy Skills into the project root.
+
+## Optional deployment workspace
+
+A long-running Hermes deployment may manage several projects through a
+workspace registry. In that case the operator defines the canonical workspace
+root, identity marker, registry, and runtime Skill root in its `SOUL.md` using
+[`../templates/SOUL.project-context.example.md`](../templates/SOUL.project-context.example.md).
+
+This deployment layer is optional. Repository-local adoption and validation do
+not depend on a global registry, a particular home directory, cloud provider,
+or private operations repository.
+
+## Acceptance
+
+Before treating a release as adopted:
+
+1. run Context Kit repository validation;
+2. validate the generated or migrated project;
+3. exercise recovery from `PROJECT.md` through the current pointers;
+4. run the consumer's native build/test validation;
+5. for multi-repository projects, verify exact component revisions and System
+   Task relationships using accessible component roots or reviewed Handoffs.
+
+An inaccessible repository is not checked and must never be reported as
+passed.

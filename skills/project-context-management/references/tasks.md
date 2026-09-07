@@ -49,6 +49,21 @@ Five valid statuses:
 
 No other statuses. If work is paused awaiting an external condition and still relevant — use **Blocked**.
 
+Task status and user attention are separate. When user action is required but
+independent work remains, keep `Status: In Progress` and record:
+
+```text
+Attention: User Action Required
+Waiting On: User
+Required Action: <specific action>
+Resume Evidence: <fact or pointer that confirms completion>
+```
+
+Use `Blocked` only when the Task itself cannot progress. On recovery or a
+status request, surface unresolved `User Action Required` before unrelated
+next steps. Clear it only after the required evidence is confirmed; a generic
+"continue" does not prove the action happened.
+
 ---
 
 ## Storage and Routing
@@ -178,6 +193,10 @@ Next Step:
 A Blocked task may still be the primary active task (`current.md` may point to it).
 
 **Unblock:** transition to In Progress only when the blocker is confirmed resolved. Do not auto-unblock because the user says "continue."
+
+If the blocker is owned by the user, keep `Waiting On`, `Required Action`, and
+`Resume Evidence` current so another session can issue the same concise
+reminder without relying on conversation history.
 
 ---
 

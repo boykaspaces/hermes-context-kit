@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "spec_version": 1,
+  "kit_version": "{{context_kit_version}}",
+  "profile": "repository",
+  "features": [
+    "tasks",
+    "decisions"
+  ],
+  "extensions": {}
+}

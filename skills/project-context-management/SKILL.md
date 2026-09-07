@@ -1,7 +1,7 @@
 ---
 name: project-context-management
 description: "Protocol for project state, tasks, ADRs and checkpoints."
-version: 1.3.1
+version: 1.4.0
 author: Boyka Chen, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -60,6 +60,11 @@ It is normally unnecessary for:
 **Unknown project scope write guard.** Never write project-scoped persistent context — Task, ADR, Checkpoint, Memory, Project State, or Index — when the target `project_id` is unresolved or ambiguous. Resolve project scope before any mutation. A read-only cross-project query does not require a project switch.
 
 **Persistent workspace boundary.** Resolve the canonical Workspace identity, Workspace Registry, and project path from the deployment contract in `SOUL.md`. Before a persistent read or mutation, verify the workspace identity and confirm that the target is accessible through the current file tools. Do not create the identity marker from inside the sandbox, silently substitute a container-local home path, or create a second registry. If the identity is absent or different, or a required canonical path is inaccessible, the operation is Incomplete.
+
+**Adoption contract.** When `.hermes/context-kit.json` exists, it owns the
+adopted specification version, immutable Kit version, profile, and enabled
+features. Do not infer adoption from stray files or silently upgrade the
+manifest during an ordinary context mutation.
 
 **Global Skill handoff.** Follow the canonical deployment scope in `SOUL.md`. This skill may classify a project-derived procedure and verify cross-project applicability, but `skill-authoring` owns all reusable Skill creation, destination, structure, and validation.
 

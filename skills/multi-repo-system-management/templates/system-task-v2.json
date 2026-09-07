@@ -1,0 +1,31 @@
+{
+  "schema_version": 2,
+  "system_task": "{{integration_project_id}}:TASK-{{task_id}}",
+  "system_id": "{{system_id}}",
+  "integration_project": "{{integration_project_id}}",
+  "components": [
+    {
+      "repository": "{{component_project_id}}",
+      "task": "{{component_project_id}}:TASK-{{component_task_id}}",
+      "repository_url": "{{component_repository_url}}",
+      "branch": "{{review_branch}}",
+      "revision": null,
+      "source_state": "pending",
+      "acceptance_state": "pending",
+      "deployment": {
+        "applicability": "not-applicable",
+        "state": "not-applicable",
+        "evidence": []
+      },
+      "extensions": {}
+    }
+  ],
+  "integration": {
+    "verification_state": "pending",
+    "validation_evidence": [],
+    "deployment_state": "not-applicable",
+    "deployment_evidence": [],
+    "rollback": null,
+    "extensions": {}
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "minimal",
+  "description": "Stable project identity and resumable current state.",
+  "features": [],
+  "optional_features": [],
+  "required_paths": [
+    "PROJECT.md",
+    "AGENTS.md",
+    ".hermes/context-kit.json",
+    ".hermes/state.md"
+  ]
+}

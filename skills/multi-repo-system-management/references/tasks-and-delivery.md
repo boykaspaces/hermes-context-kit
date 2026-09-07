@@ -56,7 +56,7 @@ The manifest must not duplicate the Task's status or narrative progress.
 
 ## Delivery States
 
-Delivery state is independent from Task status:
+Schema v1 used one delivery state independent from Task status:
 
 | State | Meaning |
 |---|---|
@@ -71,12 +71,16 @@ Advance one or more steps only when evidence supports the target state. A
 state may move backward when review, validation, or deployment disproves it;
 record the blocker and do not erase the failed evidence needed for recovery.
 
+New work uses System Task schema v2: source delivery, integration acceptance,
+and deployment applicability are separate facts. Schema v1 remains historical
+compatibility input and must not be silently reinterpreted as v2.
+
 ## Revision Rules
 
 - `handoff-ready` and later require a lowercase 40-character Git commit SHA.
 - A branch may be recorded as a review route but never replaces the SHA.
-- `locked` and later require equality with the integration repository's
-  component lock.
+- In schema v2, `acceptance_state: locked` or later requires a full immutable
+  revision equal to the component lock.
 - `verified` requires a cross-component validation evidence pointer.
 - `deployed` requires deployment evidence and an explicit rollback pointer.
 
@@ -90,6 +94,20 @@ A component entry may omit `task` only in these cases:
 The immutable revision and all current acceptance gates remain required. A
 ref-only merge, lock promotion, or deployment must not create a fake Component
 Task when no component-owned file changes.
+
+For `no-component-change`, `source_system_task` must identify a different,
+explicitly completed prior state in the same integration project and system,
+resolve to exactly one System or Deployment Task, and its canonical
+`tasks/system/<TASK-ID>.json` manifest must be structurally valid and record the
+same component, full revision, and an accepted delivery state of `locked` or
+later. Every source component must declare either a canonical `task` or an
+allowed `task_absence_reason`; this structural check does not recursively
+validate inaccessible component repositories or provenance chains. "Prior"
+is an explicit provenance relationship, not an ordering inferred from Task
+IDs, timestamps, or file modification times.
+
+Schema v2 evidence uses an object with a required `ref` pointer and optional
+human `summary`. The pointer, not the summary, supports state advancement.
 
 ## System Task Procedure
 

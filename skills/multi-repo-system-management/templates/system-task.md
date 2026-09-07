@@ -27,7 +27,7 @@ None.
 
 ## Relevant Files
 
-- `system/TASK-{{task_id}}.json`
+- `tasks/system/TASK-{{task_id}}.json`
 
 ## Next Step
 

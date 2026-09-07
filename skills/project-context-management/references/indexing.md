@@ -48,9 +48,9 @@ historical artifact — only if needed
 Indexes form a navigation hierarchy. Descend one layer at a time.
 
 ```
-/workspace/.hermes/WORKSPACES.md                 ← global workspace registry
+<deployment-workspace-registry>                  ← global workspace registry
   ↓
-/workspace/projects/<project_id>/PROJECT.md      ← project manifest
+<registered-project-path>/PROJECT.md             ← project manifest
   ↓
 project/.hermes/context-index.md                 ← project navigation router
   ↓

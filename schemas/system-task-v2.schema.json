@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/boykaspaces/hermes-context-kit/schemas/system-task-v2.schema.json",
+  "title": "Hermes Context Kit System Task manifest v2",
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "required": ["ref"],
+      "properties": {
+        "ref": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "summary": {"type": "string", "minLength": 1, "maxLength": 4096}
+      },
+      "additionalProperties": false
+    },
+    "deployment": {
+      "type": "object",
+      "required": ["applicability", "state", "evidence"],
+      "properties": {
+        "applicability": {"enum": ["required", "not-applicable"]},
+        "state": {"enum": ["pending", "deployed", "not-applicable"]},
+        "evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence"}
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema_version",
+    "system_task",
+    "system_id",
+    "integration_project",
+    "components",
+    "integration"
+  ],
+  "properties": {
+    "schema_version": {"const": 2},
+    "system_task": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*:TASK-[0-9]{3,}$"
+    },
+    "system_id": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "integration_project": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "repository",
+          "task",
+          "repository_url",
+          "branch",
+          "revision",
+          "source_state",
+          "acceptance_state",
+          "deployment"
+        ],
+        "properties": {
+          "repository": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "task": {
+            "type": ["string", "null"],
+            "pattern": "^[a-z0-9][a-z0-9-]*:TASK-[0-9]{3,}$"
+          },
+          "task_absence_reason": {
+            "enum": ["work-predates-protocol", "no-component-change"]
+          },
+          "source_system_task": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*:TASK-[0-9]{3,}$"
+          },
+          "repository_url": {"type": "string", "minLength": 1, "maxLength": 4096},
+          "branch": {"type": "string", "minLength": 1, "maxLength": 4096},
+          "revision": {
+            "type": ["string", "null"],
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "source_state": {
+            "enum": ["pending", "handoff-ready", "merged"]
+          },
+          "acceptance_state": {
+            "enum": ["pending", "locked", "verified"]
+          },
+          "deployment": {"$ref": "#/$defs/deployment"},
+          "extensions": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "integration": {
+      "type": "object",
+      "required": [
+        "verification_state",
+        "validation_evidence",
+        "deployment_state",
+        "deployment_evidence",
+        "rollback"
+      ],
+      "properties": {
+        "verification_state": {"enum": ["pending", "verified"]},
+        "validation_evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence"}
+        },
+        "deployment_state": {
+          "enum": ["pending", "deployed", "not-applicable"]
+        },
+        "deployment_evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence"}
+        },
+        "rollback": {
+          "oneOf": [
+            {"$ref": "#/$defs/evidence"},
+            {"type": "null"}
+          ]
+        },
+        "extensions": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "extensions": {"type": "object"}
+  },
+  "additionalProperties": false
+}

@@ -6,20 +6,21 @@ Active Task: None
 
 ## Current summary
 
-The repository maintains three reusable Hermes Skills and neutral project
-templates. `multi-repo-system-management` v0.1.0 adds cross-repository
-System/Component Task coordination without changing the frozen
-`project-context-management` protocol. The read-only GitHub Actions workflow
-now supplies the successful `repository-context` check required by the
-controlled-coding Ruleset.
+Context Kit 0.2.0 is a versioned, profile-based public project-management
+protocol with portable schemas, neutral templates, self-contained Skills, and
+deterministic init, validate, doctor, and migration tooling. Its release
+candidate is ready for consumer acceptance under System Task TASK-014.
 
 ## Primary focus
 
-No active Task. The parent system can now require `repository-context` while
-configuring the `hermes-context-kit` Ruleset.
+No active component Task. Consumer adoption and cross-repository acceptance are
+coordinated by `personal-hermes-agent:TASK-014`.
 
 ## Active constraints
 
 - Protocol rules have one canonical owning file.
 - Public artifacts contain no consuming deployment state or credentials.
-- `project-context-management` remains unchanged.
+- Breaking protocol changes require an explicit specification version and
+  migration path.
+- Existing consumer assumptions are evidence for fixtures, not universal
+  public requirements.

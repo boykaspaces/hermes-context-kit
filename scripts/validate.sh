@@ -41,17 +41,51 @@ end
 puts "hermes-skill-metadata-ok"
 RUBY
 
+ruby - "$repo_root" <<'RUBY'
+root = File.expand_path(ARGV.fetch(0))
+portable_roots = [
+  File.join(root, "skills", "project-context-management"),
+  File.join(root, "skills", "skill-authoring")
+]
+forbidden = [
+  "/workspace",
+  "hermes-default",
+  "/home/hermes/.hermes/skills",
+  "~/.hermes/skills"
+]
+portable_roots.each do |portable_root|
+  Dir.glob(File.join(portable_root, "**", "*")).sort.each do |path|
+    next unless File.file?(path)
+    text = File.read(path)
+    forbidden.each do |value|
+      abort("#{path}: deployment-specific value is not portable: #{value}") if text.include?(value)
+    end
+  end
+end
+
+puts "deployment-portability-ok"
+RUBY
+
 python3 "$repo_root/skills/multi-repo-system-management/scripts/validate_multi_repo_context.py" \
   --help >/dev/null
+python3 "$repo_root/scripts/context_kit.py" --help >/dev/null
 python3 -m json.tool \
   "$repo_root/skills/multi-repo-system-management/templates/system-task.json" >/dev/null
 python3 -m json.tool \
   "$repo_root/skills/multi-repo-system-management/templates/component-handoff.json" >/dev/null
 python3 "$repo_root/skills/multi-repo-system-management/scripts/validate_multi_repo_context.py" \
   repository --root "$repo_root"
+python3 "$repo_root/scripts/context_kit.py" validate --root "$repo_root"
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
   -s "$repo_root/skills/multi-repo-system-management/tests" \
   -p 'test_*.py'
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+  -s "$repo_root/tests" \
+  -p 'test_*.py'
+
+for artifact in "$repo_root"/schemas/*.json "$repo_root"/profiles/*/profile.json; do
+  python3 -m json.tool "$artifact" >/dev/null
+done
 
 if grep -R -n -E '(210122338617|i-[0-9a-f]{8,}|execute-api\.|@gmail\.com|personal-hermes-minimal)' \
   "$repo_root" --exclude-dir='.git' --exclude='validate.sh'; then

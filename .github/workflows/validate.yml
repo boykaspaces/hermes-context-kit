@@ -29,3 +29,34 @@ jobs:
           persist-credentials: false
       - name: Validate repository context
         run: ./scripts/validate.sh
+
+  macos-conformance:
+    name: macos-conformance
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate macOS behavior
+        run: ./scripts/validate.sh
+
+  windows-conformance:
+    name: windows-conformance
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate Python contracts
+        shell: pwsh
+        run: |
+          $env:PYTHONDONTWRITEBYTECODE = "1"
+          python -m unittest discover -s tests -p "test_*.py"
+          python -m unittest discover -s skills/multi-repo-system-management/tests -p "test_*.py"
+          Get-ChildItem schemas/*.json, profiles/*/profile.json | ForEach-Object {
+            python -m json.tool $_.FullName | Out-Null
+          }

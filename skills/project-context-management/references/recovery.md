@@ -44,7 +44,7 @@ If recovering a project requires "I remember from yesterday's conversation..." �
 Project scope is resolved by `references/project-lifecycle.md`. Recovery begins once scope is known.
 
 If a Workspace Registry is needed:
-- Read `/workspace/.hermes/WORKSPACES.md`.
+- Resolve and read the canonical Workspace Registry declared by `SOUL.md`.
 - Resolve the target by exact `project_id` or an unambiguous registered name.
 - Validate that the registered path is accessible through the current file tools.
 - Validate the project is Active or Paused (Archived must not silently become Active).
@@ -103,7 +103,9 @@ If `current.md` pointer is valid, the full Task Index is usually not needed.
 **Guards:**
 - No Active Task is a valid recovered state. Do not auto-select a Completed or Cancelled task.
 - A Blocked task remains Blocked unless the blocker is confirmed resolved.
-- If `state.md` and `tasks/current.md` point to different tasks — do not resolve by mtime. Identify authoritative current intent, then repair.
+- `tasks/current.md` is the canonical active-task pointer. If it names an existing In Progress or Blocked Task, use it and repair stale mirrors such as `state.md`.
+- If `tasks/current.md` is missing or invalid and exactly one explicit current-task candidate can be established from valid project artifacts, repair the pointer to that Task.
+- If `tasks/current.md` is missing or invalid and multiple plausible candidates remain, stop before Task mutation and ask the user to identify the current Task. Never resolve the conflict by mtime, Task ID magnitude, or conversational recency.
 
 Task mutation and lifecycle details are owned by `references/tasks.md`.
 
@@ -131,6 +133,23 @@ For ADR mutation and status rules, follow `references/decisions.md`.
 Start from Relevant Files listed in the current Task or latest checkpoint. Do not scan the entire repository to rediscover the working set.
 
 The repository is implementation truth. If persistent state and implementation obviously conflict — surface the inconsistency; verify; repair through the owning protocol. Do not silently trust the stale source.
+
+### Git Ref Currency Guard
+
+Project context read from a Git repository describes only the ref and worktree
+from which it was read. Before reporting whole-project current status, identify
+the checked-out branch, HEAD, and dirty state. Inspect other local worktrees or
+refs only when a currency signal exists: the user reports a later or different
+state, the checkout is dirty, a recorded branch/SHA disagrees with the checkout,
+or the active work uses a review branch or immutable candidate.
+
+Use branch and worktree metadata only to locate plausible refs, then read their
+explicit Task, State, checkpoint, or System Task artifacts from those refs
+through a non-mutating mechanism such as `git show`. Never infer currency or
+completion from a branch name, commit date, ref ordering, or Git log alone; do
+not checkout, reset, or clean merely to answer a status question. Report
+branch-scoped facts separately when they differ, such as checked-out state,
+candidate state, and merged or locked state.
 
 ---
 
@@ -190,7 +209,8 @@ Recovery depth is determined by the request — not by the full ladder.
 
 **Current status question:**
 ```
-PROJECT.md → state.md → current task → STOP
+PROJECT.md → state.md → current task
+→ Git ref currency guard (when Git-backed) → STOP
 ```
 
 **Continue implementation:**
@@ -224,7 +244,7 @@ Check:
 
 **Stale index:** verify the current owner artifact, repair the minimal pointer/index, then continue.
 
-**State/current-task conflict:** identify authoritative current intent; repair the stale representation; do not resolve by mtime.
+**State/current-task conflict:** treat a valid `tasks/current.md` as authoritative and repair stale mirrors. If that pointer is missing or invalid and multiple plausible candidates remain, stop before mutation and ask the user. Do not resolve by mtime, Task ID magnitude, or conversational recency.
 
 Index repair details are owned by `references/indexing.md`.
 

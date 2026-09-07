@@ -11,6 +11,10 @@ index-first Hermes project context and Skill authoring.
 
 ## Sources of truth
 
+- `spec/` owns versioned public artifact and state contracts.
+- `profiles/` owns coherent adoption requirements.
+- `.hermes/context-kit.json` owns this repository's accepted Kit version,
+  profile, and enabled features.
 - `skills/<name>/SKILL.md` owns each Skill's trigger, guards, and operation
   routing.
 - The matching `skills/<name>/references/` file owns detailed protocol rules.
@@ -26,6 +30,8 @@ index-first Hermes project context and Skill authoring.
 | [`.hermes/state.md`](./.hermes/state.md) | Current repository summary | Asking what work is active |
 | [`tasks/current.md`](./tasks/current.md) | Primary active Task pointer | Continuing current repository work |
 | [`docs/decisions/README.md`](./docs/decisions/README.md) | Repository decision index | Work depends on a durable local decision |
+| [`spec/README.md`](./spec/README.md) | Public specification index | Work changes portable contract semantics |
+| [`profiles/README.md`](./profiles/README.md) | Adoption profile index | Bootstrapping or migrating a project |
 
 ## Boundaries
 

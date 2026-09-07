@@ -1,7 +1,7 @@
 ---
 name: project-context-management
 description: "Protocol for project state, tasks, ADRs and checkpoints."
-version: 1.3.0
+version: 1.4.0
 author: Boyka Chen, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -61,6 +61,11 @@ It is normally unnecessary for:
 
 **Persistent workspace boundary.** Resolve the canonical Workspace identity, Workspace Registry, and project path from the deployment contract in `SOUL.md`. Before a persistent read or mutation, verify the workspace identity and confirm that the target is accessible through the current file tools. Do not create the identity marker from inside the sandbox, silently substitute a container-local home path, or create a second registry. If the identity is absent or different, or a required canonical path is inaccessible, the operation is Incomplete.
 
+**Adoption contract.** When `.hermes/context-kit.json` exists, it owns the
+adopted specification version, immutable Kit version, profile, and enabled
+features. Do not infer adoption from stray files or silently upgrade the
+manifest during an ordinary context mutation.
+
 **Global Skill handoff.** Follow the canonical deployment scope in `SOUL.md`. This skill may classify a project-derived procedure and verify cross-project applicability, but `skill-authoring` owns all reusable Skill creation, destination, structure, and validation.
 
 **Protocol Maintenance Candidate.** If execution reveals a suspected missing, ambiguous, conflicting, or unsafe project-context protocol rule that cannot be safely resolved by the current owning reference, treat it as a Protocol Maintenance Candidate. Do not modify the protocol; load `references/MAINTENANCE.md` only for read-only diagnosis and the user-approval maintenance workflow.
@@ -73,11 +78,11 @@ Identify the operation, then load only the matching reference.
 
 | Operation | Load |
 |---|---|
-| Project create / switch / resume / pause / archive | `references/project-lifecycle.md` |
+| Project create / switch / resume / pause / archive / reactivate / state mutation | `references/project-lifecycle.md` |
 | Index create / update / navigation / repair | `references/indexing.md` |
-| ADR / decision create / supersede / deprecate | `references/decisions.md` |
-| Task create / update / switch / complete | `references/tasks.md` |
-| Checkpoint create / resume | `references/checkpoints.md` |
+| ADR / decision create / supersede / deprecate / reject | `references/decisions.md` |
+| Task create / update / switch / complete / cancel / reopen | `references/tasks.md` |
+| Checkpoint create / resume / archive | `references/checkpoints.md` |
 | Project memory persistence | `references/memory.md` |
 | Context consolidation | `references/consolidation.md` |
 | Project-derived procedure classification / global Skill eligibility | `references/consolidation.md`, then hand off to `skill-authoring` |

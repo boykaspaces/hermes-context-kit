@@ -1,7 +1,7 @@
 ---
 name: skill-authoring
 description: "Use when creating, refactoring, or auditing Hermes Skills."
-version: 1.1.0
+version: 1.1.1
 author: Boyka Chen, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -13,7 +13,7 @@ metadata:
 
 # Skill Authoring
 
-Meta-skill for designing, creating, refactoring, and auditing personal Hermes Skills under `~/.hermes/skills/`.
+Meta-skill for designing, creating, refactoring, and auditing personal Hermes Skills under the deployment-defined canonical user-local Skill root.
 This skill is **authoring-time only** — it is not a dependency of any target skill at runtime.
 
 ## When to Load

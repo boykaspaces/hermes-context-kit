@@ -1,9 +1,10 @@
 # Hermes Context Kit
 
-Reusable, index-first context protocols for Hermes agents. This repository
-contains the maintained Skill sources and neutral templates required to manage
-project identity, state, Tasks, ADRs, Checkpoints, memory, indexes, recovery,
-and reusable Skill authoring without relying on conversation history.
+A versioned, profile-based public protocol and reference implementation for
+agent-managed projects. It provides maintained Skills, machine-readable
+schemas, neutral templates, deterministic lifecycle tooling, and conformance
+fixtures for project identity, state, Tasks, ADRs, recovery, multi-repository
+coordination, and reusable Skill authoring.
 
 ## Repository map
 
@@ -11,6 +12,9 @@ and reusable Skill authoring without relying on conversation history.
 |---|---|---|---|
 | [`skills/`](./skills/README.md) | Active index | Installable Hermes Skills and their routed references | Installing, reviewing, or changing protocol behavior |
 | [`templates/`](./templates/README.md) | Current index | Neutral workspace and project-context starting structures | Bootstrapping a deployment or project |
+| [`spec/`](./spec/README.md) | Normative index | Versioned portable project and multi-repository contracts | Implementing or reviewing protocol behavior |
+| [`profiles/`](./profiles/README.md) | Active definitions | Minimal, repository, and multi-repository adoption requirements | Selecting project complexity |
+| [`schemas/`](./schemas/) | Machine-readable contract | Adoption, component-lock, and System Task structures | Building validators or integrations |
 | [`docs/`](./docs/README.md) | Current index | Architecture, adoption, security, and file ownership | Understanding or integrating the kit |
 | [`.hermes/context-index.md`](./.hermes/context-index.md) | Current index | This repository's own public maintenance context | Resuming repository maintenance |
 | [`tasks/`](./tasks/README.md) | Active index | This repository's development Tasks | Reviewing current or completed maintenance work |
@@ -21,15 +25,11 @@ and reusable Skill authoring without relying on conversation history.
 
 ## Quick start
 
-1. Read [`docs/ADOPTION.md`](./docs/ADOPTION.md).
-2. Install only the required directories from `skills/` into the deployment's
-   Hermes Skill root.
-3. Define the deployment's canonical workspace identity and registry in its
-   operator-owned `SOUL.md`; use
-   [`templates/SOUL.project-context.example.md`](./templates/SOUL.project-context.example.md)
-   as a placeholder-based example.
-4. Bootstrap a project from [`templates/project-context/`](./templates/project-context/README.md).
-5. Replace every `{{placeholder}}` before enabling persistent mutations.
+1. Check out an immutable release or reviewed commit.
+2. Read [`docs/ADOPTION.md`](./docs/ADOPTION.md) and choose a profile.
+3. Preview initialization with `python3 scripts/context_kit.py init ... --dry-run`.
+4. Initialize, then run `python3 scripts/context_kit.py validate --root <project>`.
+5. Install only the Skills needed by the selected profile.
 
 The repository's own maintenance Tasks are public. It intentionally contains
 no consuming deployment's live `SOUL.md`, project state, credentials,
@@ -37,6 +37,7 @@ deployment identifiers, or user-specific context.
 
 ## Compatibility
 
-The Skills use Hermes Skill metadata and Markdown references. Deployment paths
-and file-tool behavior are supplied by the consuming Hermes instance, not by
-this repository.
+The protocol and CLI require Python 3 and repository-local files only. Skills
+use Hermes-compatible metadata and Markdown references. Runtime Skill paths,
+global workspaces, and file-tool behavior are supplied by the consuming agent
+or deployment, not by this repository.

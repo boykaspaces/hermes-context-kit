@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "name": "multi-repo",
+  "description": "Integration context with System Tasks and component locks.",
+  "features": [
+    "tasks",
+    "decisions",
+    "multi-repo"
+  ],
+  "optional_features": [
+    "checkpoints",
+    "memory"
+  ],
+  "required_paths": [
+    "PROJECT.md",
+    "AGENTS.md",
+    ".hermes/context-kit.json",
+    ".hermes/state.md",
+    ".hermes/context-index.md",
+    "tasks/README.md",
+    "tasks/current.md",
+    "tasks/system/README.md",
+    "docs/decisions/README.md",
+    "components/lock.json"
+  ]
+}

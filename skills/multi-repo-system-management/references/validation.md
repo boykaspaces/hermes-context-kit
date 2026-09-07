@@ -38,20 +38,44 @@ bulk rewrite.
 The system-task mode additionally verifies:
 
 - the Markdown Task is typed `System` or `Deployment`;
+- the manifest is stored at `tasks/system/<TASK-ID>.json` and the Markdown
+  Task's `System Manifest` field points to that canonical path; manifest
+  storage must remain inside the repository and must not use symlinks;
 - manifest identity matches the integration project's `Project ID:`;
 - component identities and delivery states are unique and valid;
 - each declared Component Task exists in the supplied component checkout,
   declares `Type: Component`, and points back to the same parent System Task;
+- supplied component checkouts and Component Task paths must not use symlinks;
 - `handoff-ready` and later have full commit SHAs;
 - a missing Component Task has an allowed reason; unchanged-component
-  promotion also identifies the earlier source System Task;
-- `locked` and later match the supplied component lock;
-- verified/deployed integration states have evidence pointers;
-- deployed state has a rollback pointer.
+  promotion resolves a different, explicitly completed prior
+  System/Deployment Task in the same integration project and system whose
+  structurally valid canonical manifest owns the same accepted component
+  revision; prior state is explicit provenance and is not inferred from Task
+  IDs, timestamps, or file modification times;
+- whenever a lock is supplied, every manifest component has a full immutable
+  revision equal to its lock entry, regardless of delivery state;
+- a supplied lock is accepted only as the regular, non-symlinked integration
+  repository file `components/lock.yaml`;
+- the lock contains exactly the manifest's component set and rejects malformed,
+  incomplete, duplicate, or unsupported entries;
+- verified integration has evidence and every component is at least `locked`;
+- deployed integration has deployment evidence and a rollback pointer, and
+  every component is `deployed`.
 
-The supported lock input is JSON or the `components` list shape used by the
-neutral lock template. YAML syntax should also be checked by the repository's
-native validator before semantic comparison.
+Evidence and rollback values must be non-empty HTTP(S) URLs or
+repository-relative file pointers. Non-string values and uncited prose do not
+count as evidence. Repository-relative pointers must resolve to regular files
+inside the integration repository without crossing a symlink. HTTP(S) pointers
+and repository URLs are structurally validated and must not contain userinfo.
+
+The low-level lock parser accepts JSON for compatibility callers and the
+`components` list YAML shape shown in
+[`../templates/component-lock.yaml`](../templates/component-lock.yaml). The
+system-task command accepts only the canonical integration-repository
+`components/lock.yaml`. Copy that template there, replace every placeholder,
+and keep one unique entry per manifest component. YAML syntax should also be
+checked by the repository's native validator before semantic comparison.
 
 ## Acceptance Layers
 

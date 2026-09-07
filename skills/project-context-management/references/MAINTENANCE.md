@@ -1,6 +1,6 @@
 # Project Context Management — Maintenance Policy
 
-Version: 1.3.0
+Version: 1.3.1
 Status: Frozen
 
 ---
@@ -294,7 +294,7 @@ Cosmetic edits alone do not require a version increment.
 The current protocol baseline is:
 
 ```
-Version: 1.3.0
+Version: 1.3.1
 Status:  Frozen
 ```
 

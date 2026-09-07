@@ -71,12 +71,25 @@ Advance one or more steps only when evidence supports the target state. A
 state may move backward when review, validation, or deployment disproves it;
 record the blocker and do not erase the failed evidence needed for recovery.
 
+Integration state constrains every component included in the manifest:
+
+- `integration.state: verified` requires every component to be `locked`,
+  `verified`, or `deployed` and requires cross-component validation evidence;
+- `integration.state: deployed` requires every component to be `deployed`,
+  requires deployment evidence, and requires an explicit rollback pointer.
+
+Do not leave an included component at `pending`, `handoff-ready`, or `merged`
+while claiming verified or deployed integration. A component that is unchanged
+still records its accepted immutable revision through the documented
+`no-component-change` path; it is not excluded by leaving it pending.
+
 ## Revision Rules
 
 - `handoff-ready` and later require a lowercase 40-character Git commit SHA.
 - A branch may be recorded as a review route but never replaces the SHA.
-- `locked` and later require equality with the integration repository's
-  component lock.
+- Whenever a component lock is supplied for validation, every manifest
+  component requires a full immutable revision equal to its lock entry,
+  regardless of delivery state.
 - `verified` requires a cross-component validation evidence pointer.
 - `deployed` requires deployment evidence and an explicit rollback pointer.
 
@@ -90,6 +103,24 @@ A component entry may omit `task` only in these cases:
 The immutable revision and all current acceptance gates remain required. A
 ref-only merge, lock promotion, or deployment must not create a fake Component
 Task when no component-owned file changes.
+
+For `no-component-change`, `source_system_task` must identify a different,
+explicitly completed prior state in the same integration project and system,
+resolve to exactly one System or Deployment Task, and its canonical
+`tasks/system/<TASK-ID>.json` manifest must be structurally valid and record the
+same component, full revision, and an accepted delivery state of `locked` or
+later. Every source component must declare either a canonical `task` or an
+allowed `task_absence_reason`; this structural check does not recursively
+validate inaccessible component repositories or provenance chains. "Prior"
+is an explicit provenance relationship, not an ordering inferred from Task
+IDs, timestamps, or file modification times.
+
+Integration validation evidence, deployment evidence, and rollback are
+pointers, not prose status claims. Record each as an HTTP(S) URL or a
+repository-relative file pointer; do not use booleans, objects, null values, or
+uncited narrative strings. Repository-relative pointers resolve from the
+integration repository root and must name regular in-repository files without
+crossing symlinks; HTTP(S) pointers must have a valid authority and no userinfo.
 
 ## System Task Procedure
 

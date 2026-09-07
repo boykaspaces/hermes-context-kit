@@ -307,14 +307,16 @@ For the full project recovery ladder, follow `references/recovery.md`.
 
 **Resolve:**
 ```
-identify authoritative current intent (task file is Task detail SOT)
+validate tasks/current.md (canonical active-task pointer)
   ↓
-repair narrowest affected pointer / index
+if valid, use it and repair stale mirrors
+  ↓
+if missing or invalid, use exactly one explicit candidate or ask the user
   ↓
 continue
 ```
 
-Task file is the source of truth for Task content. `current.md` is the primary-focus pointer. Task Index is routing metadata. Do not resolve conflicts by recency, mtime, or TASK ID magnitude.
+Task file is the source of truth for Task content. `current.md` is the canonical active-task pointer. Task Index, project state, and Workspace Registry are routing mirrors. If `current.md` is missing or invalid and exactly one explicit In Progress or Blocked candidate can be established from valid project artifacts, repair the pointer to that Task. If multiple plausible candidates remain, stop before Task mutation and ask the user to identify the current Task. Do not resolve conflicts by recency, mtime, conversational context, or TASK ID magnitude.
 
 **Mutation consistency:** When completing, starting, or cancelling a Task, the operation affects: TASK file + Task Index + `current.md` + project state (if exposed). If a key update fails, the operation is **Incomplete**. General atomicity rules are owned by `references/indexing.md`.
 

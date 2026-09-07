@@ -27,3 +27,8 @@ Load `project-context-management` before creating, switching, resuming, or
 mutating project state, Tasks, ADRs, Checkpoints, project memory, or indexes.
 Use index-first progressive retrieval and update every affected pointer when a
 navigation relationship changes.
+
+For work spanning two or more repositories, a component lock, integration,
+deployment, or rollback, load `project-context-management` first and then load
+`multi-repo-system-management`. Keep the detailed multi-repository procedure in
+that Skill rather than duplicating it in `SOUL.md`.

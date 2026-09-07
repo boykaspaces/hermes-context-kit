@@ -1,7 +1,7 @@
 ---
 name: project-context-management
 description: "Protocol for project state, tasks, ADRs and checkpoints."
-version: 1.3.0
+version: 1.3.1
 author: Boyka Chen, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -73,11 +73,11 @@ Identify the operation, then load only the matching reference.
 
 | Operation | Load |
 |---|---|
-| Project create / switch / resume / pause / archive | `references/project-lifecycle.md` |
+| Project create / switch / resume / pause / archive / reactivate / state mutation | `references/project-lifecycle.md` |
 | Index create / update / navigation / repair | `references/indexing.md` |
-| ADR / decision create / supersede / deprecate | `references/decisions.md` |
-| Task create / update / switch / complete | `references/tasks.md` |
-| Checkpoint create / resume | `references/checkpoints.md` |
+| ADR / decision create / supersede / deprecate / reject | `references/decisions.md` |
+| Task create / update / switch / complete / cancel / reopen | `references/tasks.md` |
+| Checkpoint create / resume / archive | `references/checkpoints.md` |
 | Project memory persistence | `references/memory.md` |
 | Context consolidation | `references/consolidation.md` |
 | Project-derived procedure classification / global Skill eligibility | `references/consolidation.md`, then hand off to `skill-authoring` |

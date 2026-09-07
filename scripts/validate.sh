@@ -41,6 +41,51 @@ end
 puts "hermes-skill-metadata-ok"
 RUBY
 
+ruby - "$repo_root" <<'RUBY'
+root = File.expand_path(ARGV.fetch(0))
+portable_roots = [
+  File.join(root, "skills", "project-context-management"),
+  File.join(root, "skills", "skill-authoring")
+]
+forbidden = [
+  "/workspace",
+  "hermes-default",
+  "/home/hermes/.hermes/skills",
+  "~/.hermes/skills"
+]
+portable_roots.each do |portable_root|
+  Dir.glob(File.join(portable_root, "**", "*")).sort.each do |path|
+    next unless File.file?(path)
+    text = File.read(path)
+    forbidden.each do |value|
+      abort("#{path}: deployment-specific value is not portable: #{value}") if text.include?(value)
+    end
+  end
+end
+
+required = {
+  File.join(root, "skills", "project-context-management", "SKILL.md") => [
+    "archive / reactivate / state mutation",
+    "deprecate / reject",
+    "complete / cancel / reopen",
+    "resume / archive"
+  ],
+  File.join(root, "skills", "project-context-management", "references", "project-lifecycle.md") => [
+    "must not independently resolve project scope"
+  ],
+  File.join(root, "skills", "project-context-management", "references", "tasks.md") => [
+    "`current.md` is the canonical active-task pointer"
+  ]
+}
+required.each do |path, fragments|
+  text = File.read(path)
+  fragments.each do |fragment|
+    abort("#{path}: required protocol guard missing: #{fragment}") unless text.include?(fragment)
+  end
+end
+puts "deployment-portability-and-routing-ok"
+RUBY
+
 python3 "$repo_root/skills/multi-repo-system-management/scripts/validate_multi_repo_context.py" \
   --help >/dev/null
 python3 -m json.tool \

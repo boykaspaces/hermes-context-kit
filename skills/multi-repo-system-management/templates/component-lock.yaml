@@ -1,0 +1,6 @@
+# Replace every placeholder before use. Each component name must match the
+# repository identity in the System Task manifest; source_revision must be the
+# exact accepted lowercase 40-character Git commit SHA.
+components:
+  - name: {{component_project_id}}
+    source_revision: {{full_40_character_commit_sha}}

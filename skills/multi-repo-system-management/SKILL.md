@@ -1,7 +1,7 @@
 ---
 name: multi-repo-system-management
 description: "Use when coordinating Tasks across repositories."
-version: 0.1.0
+version: 0.1.1
 author: Boyka Chen, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]

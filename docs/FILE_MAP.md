@@ -15,7 +15,7 @@ Status: Current index
 | `skills/project-context-management/references/` | Project lifecycle, indexes, Tasks, ADRs, Checkpoints, memory, consolidation, recovery, and protocol maintenance | Changing one routed project-context domain |
 | `skills/multi-repo-system-management/SKILL.md` | Cross-repository trigger, guards, and operation router | Coordinating System and Component Tasks |
 | `skills/multi-repo-system-management/references/` | Repository roles, delivery lifecycle, Handoffs, and validation | Changing one cross-repository domain |
-| `skills/multi-repo-system-management/templates/` | Neutral System Task, Component Task, Handoff, and Checkpoint templates | Creating cross-repository artifacts |
+| `skills/multi-repo-system-management/templates/` | Neutral System Task, Component Task, component lock, Handoff, and Checkpoint templates | Creating cross-repository artifacts |
 | `skills/multi-repo-system-management/scripts/validate_multi_repo_context.py` | Offline repository/Handoff/System Task validator | Checking protocol consistency |
 | `skills/multi-repo-system-management/tests/` | Validator happy/failure path tests | Changing validation behavior |
 | `skills/skill-authoring/SKILL.md` | Skill-authoring trigger and operation router | Creating or changing reusable Skills |

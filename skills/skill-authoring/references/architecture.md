@@ -1,6 +1,6 @@
 # Skill Architecture Reference
 
-Defines skill qualification, complexity levels, file structure, and canonical ownership rules for personal Hermes skills under `~/.hermes/skills/`.
+Defines skill qualification, complexity levels, file structure, and canonical ownership rules for personal Hermes Skills under the deployment-defined user-local Skill root.
 
 ---
 
@@ -44,7 +44,7 @@ Choose the smallest tier that fits. Do not pre-create references for future comp
 ## File Structure
 
 ```
-~/.hermes/skills/
+<canonical-skill-root>/
 └── <skill-name>/
     ├── SKILL.md              ← entry point; router or self-contained
     └── references/
@@ -62,25 +62,26 @@ Optional supporting directories (create only when needed):
 
 ## Skill Destination Resolution
 
-Resolve the target Skill root before any persistent creation.
-
-All newly created personal Skills must be direct children of the user-local Skill root. In this deployment, the canonical destination is:
+Resolve the approved Skill management mechanism and canonical user-local Skill
+root from the deployment contract in `SOUL.md` before any persistent creation.
+Do not hardcode or infer the root from a username, home directory, sandbox, or
+repository checkout. All newly created global personal Skills must be direct
+children of that deployment-defined root:
 
 ```
-/home/hermes/.hermes/skills/<skill-name>/
+<canonical-skill-root>/<skill-name>/
 ```
-
-Equivalent shorthand for the `hermes` user is `~/.hermes/skills/<skill-name>/`.
 
 Do not create, infer, or pass a category subdirectory during Skill creation. Existing nested Skills may remain where they are; do not move them as a side effect of this rule.
 
 Before creation:
 
 1. Identify the Skill name.
-2. Resolve and state the expected canonical Skill root.
+2. Resolve and state the expected canonical Skill root from `SOUL.md`.
 3. If the user specifies that exact root, honor it.
 4. If the user specifies a different path or a category, do not create the Skill and do not silently rewrite the destination. Report the conflict and obtain explicit direction.
-5. If the user specifies no path, make the canonical destination explicit before writing.
+5. If the user specifies no path, use the deployment-defined canonical destination and make it explicit before writing.
+6. If the deployment contract does not define an approved mechanism and canonical root, stop and report Skill creation as Incomplete.
 
 Create the Skill with `skill_manage(action='create', name='<skill-name>', content='<full SKILL.md>')` and omit the `category` argument. Do not use the generic sandboxed `write_file` tool for initial Skill creation.
 
@@ -88,7 +89,7 @@ After creation, verify:
 
 | Field | Value |
 |---|---|
-| Expected Skill root | `/home/hermes/.hermes/skills/<skill-name>/` |
+| Expected Skill root | `<canonical-skill-root>/<skill-name>/` |
 | Actual Skill root | `<canonical realpath returned or resolved by the host-side Skill runtime>` |
 | Match | YES / NO |
 

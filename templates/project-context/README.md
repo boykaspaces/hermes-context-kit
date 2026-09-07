@@ -1,6 +1,9 @@
 # Project Context Template
 
-This is a neutral skeleton for one project under the canonical workspace.
+This is an optional full skeleton for one project under the canonical
+workspace. A minimum bootstrap may start with only `PROJECT.md`,
+`.hermes/state.md`, and `AGENTS.md` when repository-local instructions are
+needed. Add the remaining navigation layers only when they have current value.
 
 ## Map
 
@@ -15,5 +18,6 @@ This is a neutral skeleton for one project under the canonical workspace.
 | `tasks/current.md` | Primary active Task pointer |
 | `docs/decisions/README.md` | ADR index |
 
-Replace all `{{placeholder}}` values. Do not manufacture a Task, ADR, or
-Checkpoint merely to fill an empty section.
+Replace all `{{placeholder}}` values. When copying the full skeleton, remove any
+unused empty navigation layer before enabling mutations. Do not manufacture a
+Task, ADR, Checkpoint, or memory entry merely to fill an empty section.

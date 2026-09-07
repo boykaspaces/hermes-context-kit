@@ -24,7 +24,7 @@ Every persistent project has a stable, unique `project_id`.
 ```
 project_id: stock-assistant    ← stable; assigned once; never changes
 Name:       Investment Assistant  ← may change freely
-Path:       /workspace/projects/stock-assistant  ← may change; update registry
+Path:       <registered-project-path>  ← may change; update registry
 ```
 
 Rules:
@@ -46,30 +46,39 @@ Resolve current project in this priority order. Use the highest-priority signal 
 3. Managed working directory / repository context
 4. `PROJECT.md` declared `project_id`
 5. Existing routing/state evidence
-6. Conversation context only as last fallback
+
+Conversation context may help formulate a clarification question, but it must not independently resolve project scope or authorize a project-scoped mutation.
+If the signals above do not resolve exactly one `project_id`, stop before any
+mutation and ask the user to identify the target project.
 
 ---
 
 ## Workspace Registry
 
-The canonical project routing index for this deployment is `/workspace/.hermes/WORKSPACES.md`.
+Resolve the canonical workspace root, identity file and exact identity value,
+Workspace Registry, and default project root from the deployment contract in
+`SOUL.md`. Do not hardcode or infer these values from the current user, home
+directory, container, or repository checkout.
 
-Registry paths must be absolute, canonical, and accessible through the current file tools. The default root for newly managed projects is `/workspace/projects/<project_id>/`.
+Registry paths must be absolute, canonical, and accessible through the current
+file tools. The workspace identity marker is provisioned by the host deployment
+or an authorized operator. Sandbox file tools must never create or repair it.
 
-The canonical workspace must first be authenticated by `/workspace/.hermes/WORKSPACE_ID` with exact content `hermes-default`. This marker is provisioned by the host deployment or an authorized operator. Sandbox file tools must never create or repair it.
-
-Do not create or fall back to `~/.hermes/WORKSPACES.md`. If the workspace identity is absent or different, or the canonical registry is required but inaccessible, stop the lifecycle mutation and report it as Incomplete.
+Do not create or fall back to another registry. If the deployment contract is
+missing or ambiguous, the workspace identity is absent or different, or the
+canonical registry is required but inaccessible, stop the lifecycle mutation
+and report it as Incomplete.
 
 | Project ID | Name | Path | Status | Active Task |
 |---|---|---|---|---|
-| stock-assistant | Stock Assistant | /workspace/projects/stock-assistant | Active | TASK-014 |
-| old-demo | Old Demo | /workspace/projects/old-demo | Archived | — |
+| stock-assistant | Stock Assistant | <registered-project-path> | Active | TASK-014 |
+| old-demo | Old Demo | <registered-archived-project-path> | Archived | — |
 
 Routing index only — do not copy architecture, decisions, task details, memory, or checkpoint content into it.
 
 **Source-of-truth boundaries:**
 - `PROJECT.md` owns `project_id`, name, goal, and project status.
-- `/workspace/.hermes/WORKSPACES.md` owns the current routing path and mirrors name, status, and active task for navigation.
+- The deployment-defined Workspace Registry owns the current routing path and mirrors name, status, and active task for navigation.
 - `tasks/current.md` owns the current active task pointer; the registry only mirrors it.
 - Avoid recording an absolute project path in `PROJECT.md`; if one exists for compatibility, keep it synchronized until it can be removed safely.
 
@@ -99,12 +108,13 @@ Create a persistent project only when work will:
 Do not auto-create for one-off tasks.
 
 **Creation preflight:**
-1. Verify `/workspace/.hermes/WORKSPACE_ID` exists and its exact content is `hermes-default`.
-2. Verify `/workspace` is accessible through the current file tools.
-3. Verify or create `/workspace/.hermes/WORKSPACES.md` only after the workspace identity matches.
-4. Resolve the proposed project root explicitly.
-5. Verify the resolved path is inside the authenticated, accessible persistent workspace.
-6. If the user specified an exact path, do not silently rewrite it. If it is inaccessible, stop and request an accessible path or mount.
+1. Resolve the canonical workspace root, identity file and exact identity value, Workspace Registry, and default project root from `SOUL.md`.
+2. Verify the deployment-defined identity file exists and contains the exact configured value.
+3. Verify the canonical workspace root is accessible through the current file tools.
+4. Verify or create the deployment-defined Workspace Registry only after the workspace identity matches.
+5. Resolve the proposed project root explicitly.
+6. Verify the resolved path is inside the authenticated, accessible persistent workspace.
+7. If the user specified an exact path, do not silently rewrite it. If it is inaccessible, stop and request an accessible path or mount.
 
 **Creation flow:**
 1. Choose stable `project_id` and root path.

@@ -77,8 +77,10 @@ and repository URLs are structurally validated and must not contain userinfo.
 
 Completed schema v1 Tasks may retain their original non-empty narrative
 evidence so a protocol upgrade does not rewrite history. This compatibility
-rule is validation-only: active v1 Tasks and all v2 Tasks require stable
-pointers, and historical prose cannot advance a new state.
+rule also preserves their previously accepted combined delivery/integration
+state relationship. It is validation-only: active v1 Tasks and all v2 Tasks
+require stable pointers and current state invariants, and historical records
+cannot advance a new state.
 
 The low-level lock parser retains the historical `components` list YAML shape
 shown in [`../templates/component-lock.yaml`](../templates/component-lock.yaml)

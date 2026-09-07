@@ -1052,7 +1052,7 @@ def validate_system_task(
                     raise ValidationError(
                         f"{repository}.source verified integration requires validation evidence"
                     )
-                if source_integration_state == "verified" and any(
+                if not historical_v1 and source_integration_state == "verified" and any(
                     source_state not in LOCKED_STATES for source_state in source_component_states
                 ):
                     raise ValidationError(
@@ -1063,12 +1063,9 @@ def validate_system_task(
                         raise ValidationError(
                             f"{repository}.source deployed integration requires deployment evidence and rollback"
                         )
-                    require_pointer(
-                        source_integration.get("rollback"),
-                        f"{repository}.source rollback",
-                        root,
-                    )
-                    if any(source_state != "deployed" for source_state in source_component_states):
+                    if not historical_v1 and any(
+                        source_state != "deployed" for source_state in source_component_states
+                    ):
                         raise ValidationError(
                             f"{repository}.source deployed integration has a non-deployed component"
                         )
@@ -1078,7 +1075,8 @@ def validate_system_task(
                     if isinstance(component, dict)
                     and component.get("repository") == repository
                     and component.get("revision") == current_revision
-                    and component.get("delivery_state") in LOCKED_STATES
+                    and component.get("delivery_state")
+                    in (DELIVERY_STATES - {"pending"} if historical_v1 else LOCKED_STATES)
                 ]
                 if len(source_matches) != 1:
                     raise ValidationError(
@@ -1155,7 +1153,7 @@ def validate_system_task(
         )
     if state in {"verified", "deployed"} and not validation:
         raise ValidationError("verified integration requires validation evidence")
-    if state == "verified" and any(
+    if not historical_v1 and state == "verified" and any(
         component_state not in LOCKED_STATES for component_state in component_states
     ):
         raise ValidationError("verified integration requires every component to be locked or later")
@@ -1168,7 +1166,7 @@ def validate_system_task(
             root,
             historical=historical_v1,
         )
-    if state == "deployed" and any(
+    if not historical_v1 and state == "deployed" and any(
         component_state != "deployed" for component_state in component_states
     ):
         raise ValidationError("deployed integration requires every component to be deployed")

@@ -10,6 +10,14 @@ if [[ -n "$generated_path" ]]; then
   exit 1
 fi
 
+legacy_core_template="$(find "$repo_root/templates/project-context" \
+  -type f -path '*/.hermes/*' -print -quit)"
+if [[ -n "$legacy_core_template" ]]; then
+  printf 'runtime-specific namespace found in core scaffold: %s\n' \
+    "$legacy_core_template" >&2
+  exit 1
+fi
+
 for skill in project-context-management multi-repo-system-management skill-authoring; do
   test -f "$repo_root/skills/$skill/SKILL.md"
   grep -q '^name:' "$repo_root/skills/$skill/SKILL.md"

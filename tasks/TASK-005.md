@@ -28,6 +28,8 @@ require a recursive post-merge pull request.
   written into a consumer project by the core CLI.
 - Updated schemas, profiles, templates, all three Skills, and repository state
   to the neutral contract.
+- Added a validation guard that rejects legacy `.hermes/` paths from the core
+  project scaffold.
 - Added guarded init and migration behavior covering adapter selection,
   extension preservation, full checkpoint/memory copying, path safety,
   conflict detection, rollback, and legacy v1 diagnosis.

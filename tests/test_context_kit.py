@@ -115,6 +115,15 @@ class ContextKitCliTest(unittest.TestCase):
                     self.assertFalse((self.root / "AGENTS.md").exists())
                     self.assertFalse((self.root / ".hermes").exists())
 
+    def test_core_scaffold_has_no_legacy_runtime_namespace(self) -> None:
+        scaffold = context_kit.KIT_ROOT / "templates" / "project-context"
+        legacy_paths = [
+            str(path.relative_to(scaffold))
+            for path in scaffold.rglob("*")
+            if path.is_file() and ".hermes" in path.relative_to(scaffold).parts
+        ]
+        self.assertEqual(legacy_paths, [])
+
     def test_init_dry_run_does_not_write(self) -> None:
         output = io.StringIO()
         with redirect_stdout(output):

@@ -1164,10 +1164,14 @@ def validate_system_task(
             if locks[repository] != revision:
                 raise ValidationError(f"{repository}: manifest revision differs from component lock")
 
-    if lock_path is not None and set(locks) != seen:
+    if lock_path is not None:
         missing = sorted(seen - set(locks))
         extra = sorted(set(locks) - seen)
-        raise ValidationError(f"component lock must exactly match manifest components; missing={missing}, extra={extra}")
+        if missing or (extra and not historical_v1):
+            raise ValidationError(
+                "component lock must exactly match manifest components; "
+                f"missing={missing}, extra={extra}"
+            )
 
     if any(component_state in LOCKED_STATES for component_state in component_states) and lock_path is None:
         raise ValidationError("locked or later component state requires a component lock")

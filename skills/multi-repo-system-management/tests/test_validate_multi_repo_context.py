@@ -208,6 +208,8 @@ class MultiRepoValidatorTest(unittest.TestCase):
         lock_path.write_text(
             "components:\n  - name: component-a\n    source_revision: "
             + "a" * 40
+            + "\n  - name: historical-extra\n    source_revision: "
+            + "b" * 40
             + "\n",
             encoding="utf-8",
         )

@@ -269,6 +269,15 @@ def require_pointer(value: Any, label: str, root: Path | None = None) -> str:
     return pointer
 
 
+def require_v1_evidence(
+    value: Any, label: str, root: Path, *, historical: bool
+) -> str:
+    """Validate v1 evidence without rewriting completed historical claims."""
+    if historical:
+        return require_string(value, label)
+    return require_pointer(value, label, root)
+
+
 def resolve_task_manifest_pointer(value: Any, task_path: Path, root: Path) -> str:
     """Return one Task manifest pointer as a repository-relative path.
 
@@ -815,6 +824,7 @@ def validate_system_task(
     require_string(data.get("system_id"), "system_id")
     components = data.get("components")
     resolved_component_roots = component_roots or {}
+    historical_v1 = fields.get("Status") == "Completed"
     if not isinstance(components, list) or not components:
         raise ValidationError("system manifest must declare components")
     locks: dict[str, str] = {}
@@ -1018,16 +1028,25 @@ def validate_system_task(
                 source_validation = source_integration.get("validation_evidence")
                 source_deployment = source_integration.get("deployment_evidence")
                 for index, pointer in enumerate(source_validation):
-                    require_pointer(
-                        pointer, f"{repository}.source validation_evidence[{index}]", root
+                    require_v1_evidence(
+                        pointer,
+                        f"{repository}.source validation_evidence[{index}]",
+                        root,
+                        historical=historical_v1,
                     )
                 for index, pointer in enumerate(source_deployment):
-                    require_pointer(
-                        pointer, f"{repository}.source deployment_evidence[{index}]", root
+                    require_v1_evidence(
+                        pointer,
+                        f"{repository}.source deployment_evidence[{index}]",
+                        root,
+                        historical=historical_v1,
                     )
                 if source_integration.get("rollback") is not None:
-                    require_pointer(
-                        source_integration.get("rollback"), f"{repository}.source rollback", root
+                    require_v1_evidence(
+                        source_integration.get("rollback"),
+                        f"{repository}.source rollback",
+                        root,
+                        historical=historical_v1,
                     )
                 if source_integration_state in {"verified", "deployed"} and not source_validation:
                     raise ValidationError(
@@ -1121,9 +1140,19 @@ def validate_system_task(
     if not isinstance(validation, list) or not isinstance(deployment, list):
         raise ValidationError("integration evidence fields must be lists")
     for index, pointer in enumerate(validation):
-        require_pointer(pointer, f"integration.validation_evidence[{index}]", root)
+        require_v1_evidence(
+            pointer,
+            f"integration.validation_evidence[{index}]",
+            root,
+            historical=historical_v1,
+        )
     for index, pointer in enumerate(deployment):
-        require_pointer(pointer, f"integration.deployment_evidence[{index}]", root)
+        require_v1_evidence(
+            pointer,
+            f"integration.deployment_evidence[{index}]",
+            root,
+            historical=historical_v1,
+        )
     if state in {"verified", "deployed"} and not validation:
         raise ValidationError("verified integration requires validation evidence")
     if state == "verified" and any(
@@ -1133,7 +1162,12 @@ def validate_system_task(
     if state == "deployed" and (not deployment or not integration.get("rollback")):
         raise ValidationError("deployed integration requires deployment evidence and rollback")
     if integration.get("rollback") is not None:
-        require_pointer(integration.get("rollback"), "integration.rollback", root)
+        require_v1_evidence(
+            integration.get("rollback"),
+            "integration.rollback",
+            root,
+            historical=historical_v1,
+        )
     if state == "deployed" and any(
         component_state != "deployed" for component_state in component_states
     ):

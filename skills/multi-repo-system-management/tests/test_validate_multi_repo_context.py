@@ -195,8 +195,8 @@ class MultiRepoValidatorTest(unittest.TestCase):
                 }
             ],
             "integration": {
-                "state": "pending",
-                "validation_evidence": [],
+                "state": "verified",
+                "validation_evidence": ["historical validation summary"],
                 "deployment_evidence": [],
                 "rollback": None,
             },

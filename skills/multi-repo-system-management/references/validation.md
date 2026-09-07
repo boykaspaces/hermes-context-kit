@@ -75,6 +75,11 @@ count as evidence. Repository-relative pointers must resolve to regular files
 inside the integration repository without crossing a symlink. HTTP(S) pointers
 and repository URLs are structurally validated and must not contain userinfo.
 
+Completed schema v1 Tasks may retain their original non-empty narrative
+evidence so a protocol upgrade does not rewrite history. This compatibility
+rule is validation-only: active v1 Tasks and all v2 Tasks require stable
+pointers, and historical prose cannot advance a new state.
+
 The low-level lock parser retains the historical `components` list YAML shape
 shown in [`../templates/component-lock.yaml`](../templates/component-lock.yaml)
 for schema v1 Tasks. A completed v1 Task may validate against its matching

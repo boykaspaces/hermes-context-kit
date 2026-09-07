@@ -819,10 +819,20 @@ def validate_system_task(
         raise ValidationError("system manifest must declare components")
     locks: dict[str, str] = {}
     if lock_path is not None:
-        expected_lock_path = lexical_absolute(root / "components" / "lock.yaml")
-        if lexical_absolute(lock_path) != expected_lock_path:
-            raise ValidationError("component lock must be stored at components/lock.yaml")
-        lock_path = require_repository_file(root, expected_lock_path, "component lock")
+        current_lock_path = lexical_absolute(root / "components" / "lock.yaml")
+        snapshot_lock_path = lexical_absolute(
+            root / "components" / "locks" / f"{task_id}.yaml"
+        )
+        provided_lock_path = lexical_absolute(lock_path)
+        allowed_paths = {current_lock_path}
+        if fields.get("Status") == "Completed":
+            allowed_paths.add(snapshot_lock_path)
+        if provided_lock_path not in allowed_paths:
+            raise ValidationError(
+                "schema v1 component lock must be components/lock.yaml or the "
+                "matching completed-Task snapshot"
+            )
+        lock_path = require_repository_file(root, provided_lock_path, "component lock")
         locks = load_lock(lock_path)
     seen: set[str] = set()
     component_states: list[str] = []

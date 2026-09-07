@@ -77,7 +77,9 @@ and repository URLs are structurally validated and must not contain userinfo.
 
 The low-level lock parser retains the historical `components` list YAML shape
 shown in [`../templates/component-lock.yaml`](../templates/component-lock.yaml)
-for schema v1 Tasks. New schema v2 Tasks use the canonical
+for schema v1 Tasks. A completed v1 Task may validate against its matching
+`components/locks/TASK-NNN.yaml` snapshot after the rolling lock migrates to
+v2. New schema v2 Tasks use the canonical
 `components/lock.json` template, whose portable core is component name,
 repository URL, and immutable revision. Consumers may add project-owned
 metadata beside the core fields; their native validator owns those extensions.

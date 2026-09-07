@@ -170,6 +170,51 @@ class MultiRepoValidatorTest(unittest.TestCase):
         with self.assertRaises(validator.ValidationError):
             validator.validate_system_task(self.root, "TASK-001", manifest_path, lock_path)
 
+    def test_completed_v1_task_accepts_matching_lock_snapshot(self) -> None:
+        task_path = self.root / "tasks" / "TASK-001.md"
+        task_path.write_text(
+            task_path.read_text(encoding="utf-8").replace(
+                "Status: Blocked", "Status: Completed"
+            ),
+            encoding="utf-8",
+        )
+        manifest = {
+            "schema_version": 1,
+            "system_task": "integration-project:TASK-001",
+            "system_id": "example-system",
+            "integration_project": "integration-project",
+            "components": [
+                {
+                    "repository": "component-a",
+                    "task": None,
+                    "task_absence_reason": "work-predates-protocol",
+                    "repository_url": "https://example.invalid/component-a.git",
+                    "branch": "main",
+                    "revision": "a" * 40,
+                    "delivery_state": "locked",
+                }
+            ],
+            "integration": {
+                "state": "pending",
+                "validation_evidence": [],
+                "deployment_evidence": [],
+                "rollback": None,
+            },
+        }
+        manifest_path = self.root / "tasks" / "system" / "TASK-001.json"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        lock_path = self.root / "components" / "locks" / "TASK-001.yaml"
+        lock_path.parent.mkdir(parents=True)
+        lock_path.write_text(
+            "components:\n  - name: component-a\n    source_revision: "
+            + "a" * 40
+            + "\n",
+            encoding="utf-8",
+        )
+        validator.validate_system_task(
+            self.root, "TASK-001", manifest_path, lock_path
+        )
+
     def test_verified_integration_rejects_pending_component(self) -> None:
         manifest = {
             "schema_version": 1,

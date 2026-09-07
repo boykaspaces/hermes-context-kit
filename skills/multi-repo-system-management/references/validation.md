@@ -61,8 +61,9 @@ The mode additionally verifies:
   canonical `components/lock.json` entry;
 - a supplied lock is accepted only at the schema's canonical regular,
   non-symlinked integration-repository path;
-- the lock contains exactly the manifest's component set and rejects malformed,
-  incomplete, or duplicate core entries while allowing consumer-owned metadata;
+- the lock contains exactly the manifest's component set, its repository URLs
+  agree with the manifest, and it rejects malformed, incomplete, or duplicate
+  core entries while allowing consumer-owned metadata;
 - v2 verified integration has evidence and every component is at least locked;
 - v2 deployed integration requires every deployment-required component to be
   deployed, plus deployment evidence and rollback; not-applicable components
@@ -74,14 +75,12 @@ count as evidence. Repository-relative pointers must resolve to regular files
 inside the integration repository without crossing a symlink. HTTP(S) pointers
 and repository URLs are structurally validated and must not contain userinfo.
 
-The low-level lock parser accepts JSON for compatibility callers and the
-`components` list YAML shape shown in
-[`../templates/component-lock.yaml`](../templates/component-lock.yaml). The
-system-task command accepts only the canonical integration-repository
-`components/lock.yaml`. Copy that template there, replace every placeholder,
-and keep one unique core entry per manifest component. Consumers may add
-project-owned metadata beside the core fields; their native validator owns
-those extensions and complete YAML syntax before semantic comparison.
+The low-level lock parser retains the historical `components` list YAML shape
+shown in [`../templates/component-lock.yaml`](../templates/component-lock.yaml)
+for schema v1 Tasks. New schema v2 Tasks use the canonical
+`components/lock.json` template, whose portable core is component name,
+repository URL, and immutable revision. Consumers may add project-owned
+metadata beside the core fields; their native validator owns those extensions.
 
 ## Acceptance Layers
 

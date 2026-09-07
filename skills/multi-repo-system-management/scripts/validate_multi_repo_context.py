@@ -391,28 +391,41 @@ def validate_handoff(path: Path) -> None:
     print(f"handoff-ok: {path}")
 
 
+def load_json_lock(path: Path) -> dict[str, dict[str, str]]:
+    data = load_json(path)
+    if not isinstance(data, dict) or data.get("schema_version") != 1:
+        raise ValidationError("JSON lock must be a schema v1 object")
+    components = data.get("components")
+    if not isinstance(components, list):
+        raise ValidationError("JSON lock has no components list")
+    result: dict[str, dict[str, str]] = {}
+    for item in components:
+        if not isinstance(item, dict):
+            raise ValidationError("JSON lock component must be an object")
+        if not {"name", "repository_url", "source_revision"} <= set(item):
+            raise ValidationError("JSON lock component is missing a core field")
+        name = require_string(item.get("name"), "lock component name", PROJECT_ID_VALUE_RE)
+        repository_url = require_http_url(
+            item.get("repository_url"), f"lock repository URL for {name}"
+        )
+        revision = require_string(
+            item.get("source_revision"), f"lock revision for {name}", SHA_RE
+        )
+        if name in result:
+            raise ValidationError(f"duplicate lock component {name}")
+        result[name] = {
+            "repository_url": repository_url,
+            "source_revision": revision,
+        }
+    return result
+
+
 def load_lock(path: Path) -> dict[str, str]:
     if path.suffix == ".json":
-        data = load_json(path)
-        components = data.get("components") if isinstance(data, dict) else None
-        if not isinstance(data, dict):
-            raise ValidationError("JSON lock must be an object")
-        if not isinstance(components, list):
-            raise ValidationError("JSON lock has no components list")
-        result = {}
-        for item in components:
-            if not isinstance(item, dict):
-                raise ValidationError("JSON lock component must be an object")
-            if not {"name", "source_revision"} <= set(item):
-                raise ValidationError("JSON lock component is missing a core field")
-            name = require_string(
-                item.get("name"), "lock component name", PROJECT_ID_VALUE_RE
-            )
-            revision = require_string(item.get("source_revision"), f"lock revision for {name}", SHA_RE)
-            if name in result:
-                raise ValidationError(f"duplicate lock component {name}")
-            result[name] = revision
-        return result
+        return {
+            name: record["source_revision"]
+            for name, record in load_json_lock(path).items()
+        }
 
     result: dict[str, str] = {}
     names: set[str] = set()
@@ -507,12 +520,19 @@ def validate_system_task_v2(
         raise ValidationError("v2 system manifest must declare components")
 
     locks: dict[str, str] = {}
+    lock_repositories: dict[str, str] = {}
     if lock_path is not None:
         expected_lock = lexical_absolute(root / "components" / "lock.json")
         if lexical_absolute(lock_path) != expected_lock:
             raise ValidationError("v2 component lock must be stored at components/lock.json")
         lock_path = require_repository_file(root, expected_lock, "v2 component lock")
-        locks = load_lock(lock_path)
+        lock_records = load_json_lock(lock_path)
+        locks = {
+            name: record["source_revision"] for name, record in lock_records.items()
+        }
+        lock_repositories = {
+            name: record["repository_url"] for name, record in lock_records.items()
+        }
 
     seen: set[str] = set()
     acceptance_states: list[str] = []
@@ -547,7 +567,13 @@ def validate_system_task_v2(
         if repository in seen:
             raise ValidationError(f"duplicate system component {repository}")
         seen.add(repository)
-        require_http_url(item.get("repository_url"), f"{repository}.repository_url")
+        repository_url = require_http_url(
+            item.get("repository_url"), f"{repository}.repository_url"
+        )
+        if lock_path is not None and lock_repositories.get(repository) != repository_url:
+            raise ValidationError(
+                f"{repository}: manifest repository URL differs from component lock"
+            )
         require_string(item.get("branch"), f"{repository}.branch")
 
         task = item.get("task")

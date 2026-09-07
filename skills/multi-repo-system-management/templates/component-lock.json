@@ -3,6 +3,7 @@
   "components": [
     {
       "name": "{{component_project_id}}",
+      "repository_url": "{{component_repository_url}}",
       "source_revision": "{{full_40_character_commit_sha}}"
     }
   ],

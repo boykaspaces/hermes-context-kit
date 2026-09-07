@@ -164,6 +164,20 @@ class ContextKitCliTest(unittest.TestCase):
         with self.assertRaisesRegex(context_kit.ContextKitError, "differs from validator"):
             context_kit.validate_project(self.root)
 
+    def test_multi_repo_lock_requires_portable_repository_url(self) -> None:
+        context_kit.init_project(self.init_args("multi-repo"))
+        lock_path = self.root / "components" / "lock.json"
+        lock = context_kit.load_json(lock_path)
+        lock["components"] = [
+            {"name": "component-a", "source_revision": "a" * 40}
+        ]
+        lock_path.write_text(
+            context_kit.json.dumps(lock, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        with self.assertRaisesRegex(context_kit.ContextKitError, "invalid component"):
+            context_kit.validate_project(self.root)
+
     def test_legacy_multi_repo_migration_requires_manual_lock_split(self) -> None:
         self.root.mkdir()
         (self.root / "PROJECT.md").write_text(

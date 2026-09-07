@@ -10,6 +10,7 @@ import re
 import sys
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 
 KIT_ROOT = Path(__file__).resolve().parents[1]
@@ -63,6 +64,25 @@ def kit_version() -> str:
     if not VERSION_RE.fullmatch(value):
         raise ContextKitError(f"{KIT_ROOT / 'VERSION'}: invalid release version")
     return value
+
+
+def is_http_url(value: Any) -> bool:
+    if not isinstance(value, str) or any(character.isspace() for character in value):
+        return False
+    try:
+        parsed = urlsplit(value)
+        hostname = parsed.hostname
+        parsed.port
+    except ValueError:
+        return False
+    return (
+        parsed.scheme in {"http", "https"}
+        and bool(parsed.netloc)
+        and hostname is not None
+        and hostname.isascii()
+        and parsed.username is None
+        and parsed.password is None
+    )
 
 
 def profile_definition(name: str) -> dict[str, Any]:
@@ -366,9 +386,10 @@ def validate_project(root_arg: Path) -> None:
         for component in components:
             if (
                 not isinstance(component, dict)
-                or not {"name", "source_revision"} <= set(component)
+                or not {"name", "repository_url", "source_revision"} <= set(component)
                 or not isinstance(component["name"], str)
                 or not re.fullmatch(r"[a-z0-9][a-z0-9-]*", component["name"])
+                or not is_http_url(component["repository_url"])
                 or not isinstance(component["source_revision"], str)
                 or not SHA_RE.fullmatch(component["source_revision"])
             ):

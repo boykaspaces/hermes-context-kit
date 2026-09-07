@@ -17,12 +17,17 @@
         "type": "object",
         "required": [
           "name",
+          "repository_url",
           "source_revision"
         ],
         "properties": {
           "name": {
             "type": "string",
             "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "repository_url": {
+            "type": "string",
+            "pattern": "^https?://[^\\s]+$"
           },
           "source_revision": {
             "type": "string",

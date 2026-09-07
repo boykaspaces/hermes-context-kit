@@ -319,6 +319,7 @@ class MultiRepoValidatorTest(unittest.TestCase):
                     "components": [
                         {
                             "name": "component-a",
+                            "repository_url": "https://example.invalid/component-a.git",
                             "source_revision": "a" * 40,
                             "extensions": {"deployment": "consumer-owned"},
                         }
@@ -505,7 +506,12 @@ class MultiRepoValidatorTest(unittest.TestCase):
     def test_json_lock_rejects_incomplete_core_fields(self) -> None:
         lock_path = self.root / "components.lock.json"
         invalid = [
-            {"components": [{"name": "component-a"}]},
+            {
+                "schema_version": 1,
+                "components": [
+                    {"name": "component-a", "source_revision": "a" * 40}
+                ],
+            },
         ]
         for lock in invalid:
             with self.subTest(lock=lock):
@@ -834,7 +840,18 @@ class MultiRepoValidatorTest(unittest.TestCase):
     def test_json_lock_rejects_malformed_component_identity(self) -> None:
         path = self.root / "components.lock.json"
         path.write_text(
-            json.dumps({"components": [{"name": "../component-a", "source_revision": "a" * 40}]}),
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "components": [
+                        {
+                            "name": "../component-a",
+                            "repository_url": "https://example.invalid/component-a.git",
+                            "source_revision": "a" * 40,
+                        }
+                    ],
+                }
+            ),
             encoding="utf-8",
         )
         with self.assertRaisesRegex(validator.ValidationError, "invalid format"):
@@ -941,7 +958,11 @@ class MultiRepoValidatorTest(unittest.TestCase):
                 {
                     "schema_version": 1,
                     "components": [
-                        {"name": name, "source_revision": revision}
+                        {
+                            "name": name,
+                            "repository_url": f"https://example.invalid/{name}.git",
+                            "source_revision": revision,
+                        }
                         for name, revision in revisions.items()
                     ],
                 }

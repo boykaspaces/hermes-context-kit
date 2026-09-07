@@ -12,6 +12,7 @@ python3 scripts/validate_multi_repo_context.py system-task \
   --task TASK-014 \
   --manifest tasks/system/TASK-014.json \
   --component-root component-a=../component-a \
+  --verify-component-git \
   --lock components/lock.json
 ```
 
@@ -50,6 +51,8 @@ The mode additionally verifies:
 - each declared Component Task exists in the supplied component checkout,
   declares `Type: Component`, and points back to the same parent System Task;
 - supplied component checkouts and Component Task paths must not use symlinks;
+- when `--verify-component-git` is selected for v2 acceptance, every supplied
+  checkout is clean and its Git HEAD exactly matches the manifest and lock;
 - `handoff-ready` and later have full commit SHAs;
 - a missing Component Task has an allowed reason; unchanged-component
   promotion resolves a different, explicitly completed prior

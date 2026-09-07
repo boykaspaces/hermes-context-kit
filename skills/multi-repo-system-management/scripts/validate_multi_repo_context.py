@@ -8,6 +8,7 @@ import ipaddress
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -497,6 +498,31 @@ def require_evidence_v2(value: Any, label: str, root: Path) -> dict[str, Any]:
     return value
 
 
+def verify_git_checkout(root: Path, expected_revision: str, label: str) -> None:
+    def run_git(*arguments: str) -> str:
+        try:
+            completed = subprocess.run(
+                ["git", "-C", str(root), *arguments],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+        except OSError as exc:
+            raise ValidationError(f"{label}: not_checked: cannot execute Git: {exc}") from exc
+        if completed.returncode != 0:
+            detail = completed.stderr.strip() or completed.stdout.strip()
+            raise ValidationError(f"{label}: not_checked: Git inspection failed: {detail}")
+        return completed.stdout.strip()
+
+    actual_revision = run_git("rev-parse", "HEAD")
+    if actual_revision != expected_revision:
+        raise ValidationError(
+            f"{label}: checkout revision {actual_revision} differs from {expected_revision}"
+        )
+    if run_git("status", "--porcelain", "--untracked-files=all"):
+        raise ValidationError(f"{label}: component checkout is dirty")
+
+
 def validate_system_task_v2(
     root: Path,
     task_id: str,
@@ -506,6 +532,7 @@ def validate_system_task_v2(
     component_roots: dict[str, Path],
     data: dict[str, Any],
     pid: str,
+    verify_component_git: bool,
 ) -> None:
     expected_fields = {
         "schema_version",
@@ -656,6 +683,18 @@ def validate_system_task_v2(
                 raise ValidationError(
                     f"{repository}: manifest revision differs from component lock"
                 )
+        if verify_component_git:
+            if repository not in component_roots:
+                raise ValidationError(
+                    f"{repository}: not_checked: component root is required for Git verification"
+                )
+            expected_revision = require_string(
+                revision, f"{repository}.revision", SHA_RE
+            )
+            checkout_root = require_repository_directory(
+                component_roots[repository], f"{repository}: component root"
+            )
+            verify_git_checkout(checkout_root, expected_revision, repository)
         acceptance_states.append(acceptance_state)
 
         deployment = item.get("deployment")
@@ -771,6 +810,7 @@ def validate_system_task(
     manifest_path: Path,
     lock_path: Path | None,
     component_roots: dict[str, Path] | None = None,
+    verify_component_git: bool = False,
 ) -> None:
     root = require_repository_directory(root, "integration root")
     pid = project_id(root)
@@ -805,6 +845,7 @@ def validate_system_task(
             component_roots or {},
             data,
             pid,
+            verify_component_git,
         )
         return
     if not isinstance(data, dict) or set(data) != {
@@ -1195,6 +1236,11 @@ def main() -> int:
         metavar="PROJECT_ID=PATH",
         help="component checkout used to verify a child Task relationship",
     )
+    system.add_argument(
+        "--verify-component-git",
+        action="store_true",
+        help="require every v2 component root to be clean and at its exact manifest revision",
+    )
     args = parser.parse_args()
 
     try:
@@ -1219,6 +1265,7 @@ def main() -> int:
                 args.manifest,
                 args.lock if args.lock else None,
                 component_roots,
+                args.verify_component_git,
             )
     except ValidationError as exc:
         print(f"validation failed: {exc}", file=sys.stderr)

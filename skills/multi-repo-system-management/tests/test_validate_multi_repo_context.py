@@ -574,6 +574,27 @@ class MultiRepoValidatorTest(unittest.TestCase):
         with self.assertRaisesRegex(validator.ValidationError, "duplicate JSON key"):
             validator.load_lock(lock_path)
 
+    def test_git_verification_requires_exact_clean_checkout(self) -> None:
+        revision = "a" * 40
+        clean_head = mock.Mock(returncode=0, stdout=revision + "\n", stderr="")
+        clean_status = mock.Mock(returncode=0, stdout="", stderr="")
+        with mock.patch.object(
+            validator.subprocess, "run", side_effect=[clean_head, clean_status]
+        ):
+            validator.verify_git_checkout(self.root, revision, "component-a")
+
+        wrong_head = mock.Mock(returncode=0, stdout="b" * 40 + "\n", stderr="")
+        with mock.patch.object(validator.subprocess, "run", return_value=wrong_head):
+            with self.assertRaisesRegex(validator.ValidationError, "differs"):
+                validator.verify_git_checkout(self.root, revision, "component-a")
+
+        dirty_status = mock.Mock(returncode=0, stdout=" M PROJECT.md\n", stderr="")
+        with mock.patch.object(
+            validator.subprocess, "run", side_effect=[clean_head, dirty_status]
+        ):
+            with self.assertRaisesRegex(validator.ValidationError, "dirty"):
+                validator.verify_git_checkout(self.root, revision, "component-a")
+
     def test_unchanged_component_rejects_noncompleted_or_invalid_source(self) -> None:
         self.test_unchanged_component_accepts_completed_prior_state_without_id_ordering()
         source_task = self.root / "tasks" / "TASK-999.md"

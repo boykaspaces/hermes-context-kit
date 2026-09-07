@@ -1,0 +1,13 @@
+{
+  "extensions": {},
+  "features": [
+    "tasks",
+    "decisions"
+  ],
+  "kit_version": "{{kit_version}}",
+  "profile": "repository",
+  "runtime_adapters": [],
+  "schema_version": 2,
+  "spec_version": 2,
+  "workflow_adapter": null
+}

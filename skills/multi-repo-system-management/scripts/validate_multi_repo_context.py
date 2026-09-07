@@ -174,7 +174,9 @@ def validate_repository(root: Path) -> None:
             raise ValidationError(f"{current_path}: unresolved active Task {active!r}")
         if seen[active]["Status"] not in {"In Progress", "Blocked"}:
             raise ValidationError(f"{current_path}: active Task has terminal/non-active status")
-    state_path = root / ".hermes" / "state.md"
+    state_path = root / ".context-kit" / "state.md"
+    if not state_path.is_file():
+        state_path = root / ".hermes" / "state.md"
     if state_path.is_file():
         state_match = re.search(r"^Active Task:\s*(\S+)\s*$", read_text(state_path), re.MULTILINE)
         if not state_match or state_match.group(1) != active:

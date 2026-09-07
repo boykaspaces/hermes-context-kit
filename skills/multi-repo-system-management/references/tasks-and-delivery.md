@@ -119,13 +119,22 @@ human `summary`. The pointer, not the summary, supports state advancement.
 4. Create Component Tasks only in repositories that require new work.
 5. Record candidate SHAs after component validation, initially as
    `handoff-ready`.
-6. After review/merge, update the accepted SHA and state to `merged`.
+6. Accept Component proposals first. Update the still-open System proposal with
+   each exact accepted SHA and advance its source state to `merged`.
 7. Advance the component lock in the integration repository, validate exact
    equality, then set `locked`.
 8. Run system acceptance and record evidence before `verified`.
 9. Record real deployment evidence and rollback before `deployed`.
-10. Complete the System Task only when its own Goal is satisfied; synchronize
-    all local pointers and indexes through `project-context-management`.
+10. Complete the System Task in that same final System proposal when its own
+    Goal is satisfied; synchronize all local pointers and indexes through
+    `project-context-management`.
+11. Accept the System proposal last. Its acceptance activates the completed
+    state; do not create a second proposal merely to record that acceptance.
+
+If the workflow rewrites a Component revision, refresh and revalidate the
+still-open System proposal before accepting it. A post-acceptance repair is
+required only when the accepted facts differ from the candidate, not as a
+normal lifecycle step.
 
 ## Component Task Procedure
 

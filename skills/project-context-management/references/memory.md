@@ -151,7 +151,7 @@ Keep entries small: fact/lesson, scope, applicability, evidence if useful, relat
 Recommended structure (create only when retrieval value justifies it):
 
 ```
-project/.hermes/memory/
+project/.context-kit/memory/
 ├── README.md       ← Memory Index
 ├── facts.md
 └── lessons.md

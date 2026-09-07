@@ -9,12 +9,13 @@ Status: Current index
 | `PROJECT.md` | Stable repository identity and boundaries | Maintaining the project |
 | `AGENTS.md` | AI editing and validation instructions | Before changing files |
 | `.github/workflows/validate.yml` | GitHub-hosted canonical repository validation | Configuring or auditing required status checks |
-| `.hermes/context-index.md` | This repository's current-first maintenance router | Resuming repository maintenance |
+| `.context-kit/index.md` | This repository's current-first maintenance router | Resuming repository maintenance |
 | `tasks/` | Public repository-maintenance Task state | Reviewing or continuing protocol work |
 | `docs/decisions/` | Durable Context Kit architecture decisions | Work depends on protocol architecture |
 | `spec/` | Versioned portable protocol contracts | Changing observable artifact or state semantics |
 | `schemas/` | Machine-readable adoption, lock, and System Task structures | Implementing or integrating validators |
-| `profiles/` | Required paths and features for each adoption level | Bootstrapping or upgrading a project |
+| `profiles/` | Required logical artifacts and features for each adoption level | Bootstrapping or upgrading a project |
+| `adapters/` | Runtime and workflow bindings, templates, and integration guidance | Integrating a specific agent or forge |
 | `skills/README.md` | Skill routing index | Selecting a Skill |
 | `skills/project-context-management/SKILL.md` | Project-context trigger, guards, and operation router | Performing or changing persistent context operations |
 | `skills/project-context-management/references/` | Project lifecycle, indexes, Tasks, ADRs, Checkpoints, memory, consolidation, recovery, and protocol maintenance | Changing one routed project-context domain |
@@ -25,8 +26,7 @@ Status: Current index
 | `skills/multi-repo-system-management/tests/` | Validator happy/failure path tests | Changing validation behavior |
 | `skills/skill-authoring/SKILL.md` | Skill-authoring trigger and operation router | Creating or changing reusable Skills |
 | `skills/skill-authoring/references/` | Skill architecture, validation, and maintenance | Changing one routed authoring domain |
-| `templates/SOUL.project-context.example.md` | Placeholder deployment contract | Integrating project context into a deployment |
-| `templates/project-context/` | Neutral project skeleton | Bootstrapping a project |
+| `templates/project-context/` | Neutral v2 project skeleton | Bootstrapping a project |
 | `docs/ADOPTION.md` | Installation and runtime verification | Adopting the kit |
 | `docs/ARCHITECTURE.md` | Ownership and retrieval model | Understanding the design |
 | `docs/SECURITY.md` | Trust and publication boundaries | Reviewing risk |

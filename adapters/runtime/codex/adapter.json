@@ -1,0 +1,14 @@
+{
+  "description": "Bind Context Kit to Codex repository instructions.",
+  "kind": "runtime",
+  "name": "codex",
+  "operator_templates": [],
+  "project_templates": [
+    {
+      "source": "templates/AGENTS.project-context.md",
+      "target": "AGENTS.md"
+    }
+  ],
+  "schema_version": 1,
+  "version": 1
+}

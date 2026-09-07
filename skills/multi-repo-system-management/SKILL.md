@@ -1,12 +1,12 @@
 ---
 name: multi-repo-system-management
 description: "Use when coordinating Tasks across repositories."
-version: 0.2.0
-author: Boyka Chen, Hermes Agent
 license: MIT
-platforms: [linux, macos, windows]
 metadata:
-  hermes:
+  context-kit:
+    version: 0.3.0
+    author: Boyka Chen
+    platforms: [linux, macos, windows]
     tags: [multi-repo, tasks, integration, handoff, version-locking]
     related_skills: [project-context-management]
 ---

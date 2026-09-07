@@ -6,10 +6,14 @@ Context Kit conformance tests observable contracts rather than exact prose.
 
 - All JSON schemas and profile definitions parse.
 - A fresh minimal, repository, and multi-repository project initializes and
-  validates without network access.
+  validates without network access or an agent-specific instruction file.
+- Hermes and Codex adapter fixtures validate independently; selecting one does
+  not change core Task or State semantics.
 - Initialization dry-run performs no writes and normal initialization never
   overwrites different existing content.
 - Previous-version fixtures produce deterministic migration reports.
+- GitHub workflow guidance makes the final System proposal the activation
+  boundary and does not require routine post-merge reconciliation.
 - Project identity, active Task ownership, component revisions, evidence, and
   deployment applicability reject false claims.
 - Repository-internal symlink escapes are rejected while platform-owned parent

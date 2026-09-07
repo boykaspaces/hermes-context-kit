@@ -1,0 +1,14 @@
+{
+  "description": "Bind Context Kit to a Hermes deployment contract.",
+  "kind": "runtime",
+  "name": "hermes",
+  "operator_templates": [
+    {
+      "source": "templates/SOUL.project-context.example.md",
+      "target": "SOUL.md"
+    }
+  ],
+  "project_templates": [],
+  "schema_version": 1,
+  "version": 1
+}

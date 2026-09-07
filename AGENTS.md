@@ -2,9 +2,9 @@
 
 ## Entry and retrieval
 
-- Start with `README.md`; use `.hermes/context-index.md` for repository
+- Start with `README.md`; use `.context-kit/index.md` for repository
   maintenance state.
-- Read `.hermes/context-kit.json` before changing adopted project context.
+- Read `.context-kit/manifest.json` before changing adopted project context.
 - Follow the narrowest `Read when` route.
 - Read a Skill's complete `SKILL.md` before changing that Skill.
 - Load only the reference files required by the operation being changed.
@@ -22,7 +22,8 @@
 ## Editing boundaries
 
 - `spec/` owns versioned public contracts; `profiles/` owns adoption feature
-  sets; Skills own agent operating behavior.
+  sets; `adapters/` owns runtime/workflow bindings; Skills own common agent
+  operating behavior.
 - Preserve one owning file for each protocol rule.
 - Update affected indexes when paths, names, status, or routing change.
 - Keep templates neutral and use `{{placeholder}}` for deployment values.

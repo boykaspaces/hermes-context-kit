@@ -15,7 +15,7 @@ tools.
 
 Do not commit:
 
-- live `SOUL.md` content;
+- live runtime instruction or operator binding content, including `SOUL.md`;
 - workspace registries or identity files;
 - project state, memory, Tasks, ADRs, or Checkpoints from a consuming
   deployment; this repository's public maintenance context is allowed;

@@ -64,6 +64,24 @@ status request, surface unresolved `User Action Required` before unrelated
 next steps. Clear it only after the required evidence is confirmed; a generic
 "continue" does not prove the action happened.
 
+## Accepted State and Change Proposals
+
+The repository's accepted integration ref owns canonical Task state. A change
+proposal may contain the complete candidate transition—Task status, Result,
+indexes, active pointer, and project State—that will become canonical together
+when the proposal is accepted.
+
+It is valid for a proposal branch to contain `Status: Completed` once the Goal
+and validation are satisfied. Before acceptance, describe that state as the
+candidate outcome; do not report it as current accepted state. Acceptance
+activates the transition and does not require a second proposal merely to say
+that the first proposal was accepted. The workflow adapter owns the acceptance
+event.
+
+Do not make a proposal record its own acceptance as a completion prerequisite.
+That condition is self-referential. Create a repair proposal only when the
+accepted result differs materially from the candidate state.
+
 ---
 
 ## Storage and Routing
@@ -238,6 +256,10 @@ Before marking Completed, verify:
 - Blockers resolved or irrelevant
 - Required validation performed (if part of the goal)
 
+When completion is delivered through a change proposal, prepare the full
+completion flow in that proposal. It becomes canonical when the accepted ref
+contains it; no post-acceptance metadata-only proposal is required.
+
 **Completion flow:**
 1. Set `Status: Completed`.
 2. Record concise Result.
@@ -350,3 +372,4 @@ Task file is the source of truth for Task content. `current.md` is the canonical
 - **Blocked work may remain the primary active Task.**
 - **Completing or cancelling the current Task requires updating `current.md`.**
 - **Reopen only when the original goal was not truly complete; new scope gets a new Task.**
+- **Proposal state is candidate state; acceptance activates it on the canonical ref.**

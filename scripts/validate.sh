@@ -29,16 +29,16 @@ skills.each do |path|
   data = YAML.safe_load(parts.fetch(1), permitted_classes: [], aliases: false)
   name = data.fetch("name")
   description = data.fetch("description")
-  version = data.fetch("version")
+  version = data.dig("metadata", "context-kit", "version")
   abort("#{path}: name differs from directory") unless name == File.basename(File.dirname(path))
   abort("#{path}: invalid skill name") unless name.match?(/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/) && name.length <= 64
   abort("#{path}: description must be <= 60 characters and end with a period") unless description.length <= 60 && description.end_with?(".")
-  abort("#{path}: invalid semver") unless version.to_s.match?(/\A\d+\.\d+\.\d+\z/)
-  related = data.dig("metadata", "hermes", "related_skills") || []
+  abort("#{path}: invalid metadata.context-kit.version") unless version.to_s.match?(/\A\d+\.\d+\.\d+\z/)
+  related = data.dig("metadata", "context-kit", "related_skills") || []
   abort("#{path}: related_skills must be a list") unless related.is_a?(Array)
   abort("#{path}: invalid related skill name") unless related.all? { |related_name| related_name.match?(/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/) }
 end
-puts "hermes-skill-metadata-ok"
+puts "context-kit-skill-metadata-ok"
 RUBY
 
 ruby - "$repo_root" <<'RUBY'
@@ -51,7 +51,11 @@ forbidden = [
   "/workspace",
   "hermes-default",
   "/home/hermes/.hermes/skills",
-  "~/.hermes/skills"
+  "~/.hermes/skills",
+  "SOUL.md",
+  "AGENTS.md",
+  "metadata.hermes",
+  "Hermes"
 ]
 portable_roots.each do |portable_root|
   Dir.glob(File.join(portable_root, "**", "*")).sort.each do |path|
@@ -83,7 +87,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
   -s "$repo_root/tests" \
   -p 'test_*.py'
 
-for artifact in "$repo_root"/schemas/*.json "$repo_root"/profiles/*/profile.json; do
+for artifact in "$repo_root"/schemas/*.json "$repo_root"/profiles/*/profile.json \
+  "$repo_root"/adapters/runtime/*/adapter.json \
+  "$repo_root"/adapters/workflow/*/adapter.json; do
   python3 -m json.tool "$artifact" >/dev/null
 done
 
@@ -111,4 +117,4 @@ abort(errors.join("\n")) unless errors.empty?
 puts "markdown-relative-links-ok"
 RUBY
 
-printf 'hermes-context-kit validation passed\n'
+printf 'context-kit validation passed\n'

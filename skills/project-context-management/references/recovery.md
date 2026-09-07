@@ -44,13 +44,15 @@ If recovering a project requires "I remember from yesterday's conversation..." â
 Project scope is resolved by `references/project-lifecycle.md`. Recovery begins once scope is known.
 
 If a Workspace Registry is needed:
-- Resolve and read the canonical Workspace Registry declared by `SOUL.md`.
+- For cross-project recovery, resolve and read the canonical Workspace Registry
+  supplied by the selected runtime adapter's operator-owned binding.
 - Resolve the target by exact `project_id` or an unambiguous registered name.
 - Validate that the registered path is accessible through the current file tools.
 - Validate the project is Active or Paused (Archived must not silently become Active).
 - Do not guess another path or consult a second registry when resolution fails.
 
-Then load: `PROJECT.md` + active project instructions + `context-index.md` if present.
+Then load: `PROJECT.md` + active runtime-adapter instructions +
+`.context-kit/index.md` if present.
 
 **PROJECT.md missing guard:** If `PROJECT.md` is absent, do not reconstruct project truth from old sessions. Use existing managed index/state evidence to determine whether this is an established persistent project. Create or repair `PROJECT.md` only when necessary through the appropriate lifecycle/index protocol.
 

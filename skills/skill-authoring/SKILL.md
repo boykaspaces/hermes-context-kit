@@ -1,19 +1,21 @@
 ---
 name: skill-authoring
-description: "Use when creating, refactoring, or auditing Hermes Skills."
-version: 1.1.1
-author: Boyka Chen, Hermes Agent
+description: "Use when creating, refactoring, or auditing agent Skills."
 license: MIT
-platforms: [linux, macos, windows]
 metadata:
-  hermes:
+  context-kit:
+    version: 2.0.0
+    author: Boyka Chen
+    platforms: [linux, macos, windows]
     tags: [skills, authoring, meta, methodology, architecture]
-    related_skills: [hermes-agent-skill-authoring]
+    related_skills: []
 ---
 
 # Skill Authoring
 
-Meta-skill for designing, creating, refactoring, and auditing personal Hermes Skills under the deployment-defined canonical user-local Skill root.
+Meta-skill for designing, creating, refactoring, and auditing reusable agent
+Skills. Runtime adapters own platform-specific packaging, destination, and
+installation behavior.
 This skill is **authoring-time only** — it is not a dependency of any target skill at runtime.
 
 ## When to Load
@@ -31,8 +33,7 @@ Load this skill when:
 Do **not** load for:
 - Ordinary use of any existing skill — use that skill directly
 - Project context operations that do not create or modify a reusable Skill — use `project-context-management`
-- In-repo hermes-agent skill contributions — use `hermes-agent-skill-authoring`
-- General Hermes configuration — use `hermes-agent`
+- Runtime configuration that does not create or modify a reusable Skill
 
 > This skill exits after the target skill is created or validated.
 
@@ -40,7 +41,11 @@ Do **not** load for:
 
 `project-context-management` owns project scope, project artifacts, and the classification of project-derived procedures. This skill owns reusable Skill content, structure, destination, creation, and validation.
 
-Follow the canonical deployment scope in `SOUL.md`. When project work produces a proven cross-project reusable procedure, finish classification through `project-context-management`, then load this skill and create a global personal Skill under the canonical user-local Skill root.
+When project work produces a proven cross-project reusable procedure, finish
+classification through `project-context-management`, then select the target
+runtime adapter. The adapter owns the approved management mechanism, canonical
+destination, and platform-specific metadata; this Skill owns the portable
+content and validation criteria.
 
 ## Operation Router
 
@@ -57,7 +62,8 @@ Load **only the reference required for the current operation**.
 
 **One canonical owner per rule.** Do not duplicate normative rules across reference files.
 
-**Description limit.** ≤ 60 characters. System prompt truncates at 57 + `...` — trigger must be self-contained in that window.
+**Discoverable description.** Keep the trigger concise and self-contained.
+Follow the selected runtime adapter's field and display limits.
 
 **Frontmatter first.** SKILL.md must start with `---` at byte 0. No leading blank lines.
 

@@ -1,6 +1,6 @@
 # Project Context Management — Maintenance Policy
 
-Version: 1.4.0
+Version: 2.0.0
 Status: Frozen
 
 ---
@@ -61,7 +61,7 @@ Do not escalate to Protocol Maintenance for:
 
 ### Step 2 — Automatic Diagnosis (Read-Only)
 
-Hermes may automatically perform this step without asking the user first.
+An agent may automatically perform this step without asking the user first.
 
 1. Load `MAINTENANCE.md`.
 2. Identify the suspected canonical owning file.
@@ -90,7 +90,7 @@ Every diagnosed issue must be classified as one of:
 
 ### Step 4 — User Approval Gate
 
-If Diagnosis concludes **Patch Recommended: YES**, Hermes must stop before editing any protocol file and present one compact approval request in this format:
+If Diagnosis concludes **Patch Recommended: YES**, the agent must stop before editing any protocol file and present one compact approval request in this format:
 
 ```
 Protocol Maintenance Candidate
@@ -119,7 +119,7 @@ Approval applies only to the patch scope presented in the latest request. It is 
 
 ### Step 5 — Execute After Approval
 
-Once the user approves, Hermes executes automatically without asking the user to restate the plan:
+Once the user approves, the agent executes automatically without asking the user to restate the plan:
 
 1. Re-verify the target wording has not materially changed.
 2. Apply the smallest surgical patch.
@@ -133,7 +133,7 @@ If execution discovers that the approved patch requires additional files, archit
 
 ### Proactive Reporting Threshold
 
-Hermes should proactively surface a Protocol Maintenance Candidate when it encounters:
+The agent should proactively surface a Protocol Maintenance Candidate when it encounters:
 - HIGH or CRITICAL issue
 - Repeated MEDIUM issue
 - Persistent-state corruption risk
@@ -142,7 +142,7 @@ Hermes should proactively surface a Protocol Maintenance Candidate when it encou
 - Conflicting protocol instructions
 - Common workflow that current protocol cannot safely resolve
 
-Hermes should **not** interrupt the user for:
+The agent should **not** interrupt the user for:
 - LOW wording issues
 - Cosmetic imprecision
 - Isolated explanation errors
@@ -152,9 +152,9 @@ Hermes should **not** interrupt the user for:
 
 ## No Autonomous Protocol Editing
 
-> Hermes may autonomously detect, investigate, classify, and propose protocol maintenance.
+> An agent may autonomously detect, investigate, classify, and propose protocol maintenance.
 >
-> Hermes must not autonomously modify the protocol.
+> An agent must not autonomously modify the protocol.
 >
 > Every protocol modification requires explicit user approval for the specific patch scope.
 
@@ -162,7 +162,10 @@ This applies even to HIGH and CRITICAL issues.
 
 For **CRITICAL** issues: stop the unsafe affected behavior, report the issue, prepare the patch, request approval — but do not modify protocol files before approval.
 
-Protocol modifications include any edit to: `SOUL.md`, `SKILL.md`, `MAINTENANCE.md`, `references/*.md`, or any change to protocol semantics. Project-state repair is **not** a protocol modification and does not require approval.
+Protocol modifications include any edit to a runtime instruction entry point,
+`SKILL.md`, `MAINTENANCE.md`, `references/*.md`, or any change to protocol
+semantics. Project-state repair is **not** a protocol modification and does not
+require approval.
 
 ---
 
@@ -229,7 +232,8 @@ A maintenance patch should:
 - change the smallest possible number of files;
 - modify the canonical owning file rather than duplicating rules elsewhere;
 - avoid adding new sections when one sentence or guard is sufficient;
-- avoid expanding SOUL.md or SKILL.md unless the issue belongs to their canonical scope;
+- avoid expanding a runtime instruction entry point or `SKILL.md` unless the
+  issue belongs to its canonical scope;
 - preserve progressive disclosure and narrow reference loading;
 - avoid creating new references for isolated edge cases.
 
@@ -294,11 +298,13 @@ Cosmetic edits alone do not require a version increment.
 The current protocol baseline is:
 
 ```
-Version: 1.4.0
+Version: 2.0.0
 Status:  Frozen
 ```
 
-The `SKILL.md` frontmatter version is the canonical runtime version. This header and baseline must match it before a protocol release is considered complete.
+`metadata.context-kit.version` in `SKILL.md` is this repository's canonical
+runtime version. This header and baseline must match it before a protocol
+release is considered complete.
 
 ---
 
@@ -309,7 +315,7 @@ Normal project operations must not load this maintenance file.
 The runtime path remains:
 
 ```
-SOUL.md
+runtime adapter binding
   ↓
 SKILL.md
   ↓

@@ -101,7 +101,7 @@ Before writing to Memory, Checkpoint, or any supporting layer, check:
 
 Formal project choices belong in ADRs. Implementation truth belongs in the repository. Current work belongs in Tasks. Do not create a second source of truth for facts that are already owned.
 
-Permitted duplication: pointer-only routing metadata (e.g., `state.md: Active Task: TASK-014`, `context-index.md → TASK-014`, `tasks/current.md → TASK-014`). Full Task content must not be copied into state, checkpoint, or memory.
+Permitted duplication: pointer-only routing metadata (e.g., `state.md: Active Task: TASK-014`, `.context-kit/index.md → TASK-014`, `tasks/current.md → TASK-014`). Full Task content must not be copied into state, checkpoint, or memory.
 
 ---
 
@@ -159,7 +159,7 @@ When a candidate's destination is identified:
 | ADR | Use ADR lifecycle; create/supersede through Decision Index. Follow `references/decisions.md`. |
 | Checkpoint | Only if Task/State is insufficient for resume. Follow `references/checkpoints.md`. |
 | Project Memory | Only if eligibility test passes. Follow `references/memory.md`. |
-| Project-specific procedure | Keep as project documentation or Project Memory; reusable Skill destination follows `SOUL.md` and `skill-authoring`. |
+| Project-specific procedure | Keep as project documentation or Project Memory; reusable Skill destination follows the selected runtime adapter and `skill-authoring`. |
 | Global Memory | Only when cross-project applicability is demonstrated; hand off to the built-in `memory` tool with the semantic target (`user` or `memory`). |
 | Global Skill | Only when cross-project applicability and a repeatable trigger + steps + result are demonstrated; then load `skill-authoring`. |
 

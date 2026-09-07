@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "name": "multi-repo",
   "description": "Integration context with System Tasks and component locks.",
   "features": [
@@ -11,16 +11,15 @@
     "checkpoints",
     "memory"
   ],
-  "required_paths": [
-    "PROJECT.md",
-    "AGENTS.md",
-    ".hermes/context-kit.json",
-    ".hermes/state.md",
-    ".hermes/context-index.md",
-    "tasks/README.md",
-    "tasks/current.md",
-    "tasks/system/README.md",
-    "docs/decisions/README.md",
-    "components/lock.json"
+  "required_artifacts": [
+    "project",
+    "manifest",
+    "state",
+    "context-index",
+    "task-index",
+    "current-task",
+    "system-task-index",
+    "decision-index",
+    "component-lock"
   ]
 }

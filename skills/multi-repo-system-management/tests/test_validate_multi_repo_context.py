@@ -942,6 +942,7 @@ class MultiRepoValidatorTest(unittest.TestCase):
             "system_task": "integration-project:TASK-001",
             "system_id": "example-system",
             "integration_project": "integration-project",
+            "extensions": {"owner": "integration-test"},
             "components": [
                 {
                     "repository": "runtime-a",

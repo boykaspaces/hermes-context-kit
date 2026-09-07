@@ -515,8 +515,10 @@ def validate_system_task_v2(
         "components",
         "integration",
     }
-    if set(data) != expected_fields:
+    if not expected_fields <= set(data) or not set(data) <= expected_fields | {"extensions"}:
         raise ValidationError("v2 system manifest fields must exactly match the canonical schema")
+    if data.get("extensions") is not None and not isinstance(data.get("extensions"), dict):
+        raise ValidationError("v2 system manifest extensions must be an object")
     expected = f"{pid}:{task_id}"
     if data.get("system_task") != expected:
         raise ValidationError(f"system_task must be {expected}")

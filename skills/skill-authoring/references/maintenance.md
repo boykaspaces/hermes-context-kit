@@ -1,6 +1,7 @@
 # Skill Maintenance Reference
 
-Defines versioning policy, freeze semantics, patch approval workflow, and deprecation rules for personal Hermes skills.
+Defines runtime-neutral versioning, freeze semantics, patch approval, and
+deprecation rules for agent Skills.
 
 ---
 
@@ -24,13 +25,16 @@ Major  (v0.x.0 → v1.0.0):   initial stable release, or breaking changes to can
 
 - New skills start at `v0.1.0`.
 - Cosmetic wording edits alone do not require a version increment.
-- Increment version in SKILL.md frontmatter when the change affects behavior.
+- Increment `metadata.context-kit.version` in this repository's SKILL.md when
+  the change affects behavior. Other distributions follow their adapter's
+  version field.
 
 ---
 
 ## Freeze Rule
 
-A frozen skill (`version: ≥ 1.0.0`) is considered stable.
+A frozen Context Kit skill (`metadata.context-kit.version: ≥ 1.0.0`) is
+considered stable. Other distributions follow their adapter's stability rule.
 
 Do **not** modify a frozen skill for:
 - Wording preferences or cosmetic cleanup
@@ -110,7 +114,8 @@ If during execution the approved patch requires additional files not listed in t
 ## Deprecation and Deletion
 
 **Deprecate** when a skill is superseded but may still be referenced:
-- Add `status: Deprecated` to frontmatter.
+- Add `metadata.context-kit.status: Deprecated` for Context Kit publication,
+  or the selected adapter's equivalent metadata.
 - Add a note in SKILL.md pointing to the replacement.
 - Do not delete until no active references remain.
 

@@ -1,0 +1,22 @@
+{
+  "extensions": {},
+  "features": [
+    "tasks",
+    "decisions",
+    "checkpoints"
+  ],
+  "kit_version": "0.3.0",
+  "profile": "repository",
+  "runtime_adapters": [
+    {
+      "name": "codex",
+      "version": 1
+    }
+  ],
+  "schema_version": 2,
+  "spec_version": 2,
+  "workflow_adapter": {
+    "name": "github",
+    "version": 1
+  }
+}

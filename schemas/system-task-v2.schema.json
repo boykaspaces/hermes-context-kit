@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/boykaspaces/hermes-context-kit/schemas/system-task-v2.schema.json",
-  "title": "Hermes Context Kit System Task manifest v2",
+  "title": "Context Kit System Task manifest v2",
   "$defs": {
     "evidence": {
       "type": "object",

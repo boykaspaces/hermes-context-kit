@@ -29,7 +29,8 @@ The repository mode verifies:
 - Component Tasks with a parent use canonical `<project-id>:TASK-NNN` form;
 - `tasks/current.md` points only to an In Progress or Blocked Task;
 - every Task file is routed from `tasks/README.md` with matching status;
-- `.hermes/state.md`, when present, agrees with the current Task pointer.
+- `.context-kit/state.md`, or the explicit legacy `.hermes/state.md`, agrees
+  with the current Task pointer when present.
 
 Legacy Tasks may omit `Type`. Enrollment is explicit rather than a historical
 bulk rewrite.

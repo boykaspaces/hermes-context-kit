@@ -1,6 +1,6 @@
 # Adoption Guide
 
-Hermes Context Kit is a public protocol and reference implementation for
+Context Kit is a public protocol and reference implementation for
 starting and maintaining agent-managed projects. A consuming agent needs only
 an explicit Context Kit release and access to the target project directory.
 
@@ -18,6 +18,8 @@ python3 scripts/context_kit.py init \
   --name "<project name>" \
   --goal "<project goal>" \
   --profile repository \
+  --runtime-adapter codex \
+  --workflow-adapter github \
   --dry-run
 ```
 
@@ -29,14 +31,18 @@ the result:
 python3 scripts/context_kit.py validate --root <target-project>
 ```
 
-The generated `.hermes/context-kit.json` records the specification version,
-Kit release, profile, enabled features, and consumer extension namespace.
+The generated `.context-kit/manifest.json` records the specification version,
+Kit release, profile, enabled features, selected runtime adapters, and consumer
+extension namespace. Omit `--runtime-adapter` for a neutral CLI-only project;
+repeat it only when more than one runtime genuinely shares the project.
+Omit `--workflow-adapter` when repository policy supplies the acceptance
+boundary without a packaged adapter.
 
 ## Choose a profile
 
 | Profile | Includes | Use when |
 |---|---|---|
-| `minimal` | Identity, local instructions, adoption metadata, current state | A small or new project does not yet need durable work indexes |
+| `minimal` | Identity, adoption metadata, current state | A small or new project does not yet need durable work indexes |
 | `repository` | Minimal + Tasks + decisions + context index | A repository needs multi-session maintenance |
 | `multi-repo` | Repository + System Task routing + component lock | One integration owner coordinates multiple repositories |
 
@@ -49,13 +55,14 @@ only to populate the tree.
 Audit without mutation:
 
 ```sh
-python3 scripts/context_kit.py migrate --root <project> --check
+python3 scripts/context_kit.py migrate --root <project> --to-spec 2 --check
 ```
 
-For minimal or repository projects, `--apply` adds the adoption manifest and
-then validates existing state. A legacy multi-repository project requires a
-reviewed lock/state migration before application; the tool reports this
-explicitly rather than duplicating or discarding its current lock.
+For minimal or repository projects, `--apply` writes the neutral namespace and
+then validates existing state. Version 1 `.hermes/` files are retained for
+reviewed removal rather than silently deleted. A legacy multi-repository
+project requires a reviewed lock/state migration before application; the tool
+reports this explicitly rather than discarding its current lock.
 
 See [`UPGRADING.md`](./UPGRADING.md) for version changes and rollback.
 
@@ -78,10 +85,11 @@ container home directory or copy Skills into the project root.
 
 ## Optional deployment workspace
 
-A long-running Hermes deployment may manage several projects through a
-workspace registry. In that case the operator defines the canonical workspace
-root, identity marker, registry, and runtime Skill root in its `SOUL.md` using
-[`../templates/SOUL.project-context.example.md`](../templates/SOUL.project-context.example.md).
+A long-running runtime may manage several projects through a workspace
+registry. Its selected adapter defines where the operator supplies the
+canonical workspace root, identity marker, registry, and Skill root. See the
+[`Hermes`](../adapters/runtime/hermes/README.md) and
+[`Codex`](../adapters/runtime/codex/README.md) reference adapters.
 
 This deployment layer is optional. Repository-local adoption and validation do
 not depend on a global registry, a particular home directory, cloud provider,
@@ -97,6 +105,8 @@ Before treating a release as adopted:
 4. run the consumer's native build/test validation;
 5. for multi-repository projects, verify exact component revisions and System
    Task relationships using accessible component roots or reviewed Handoffs.
+6. verify each selected runtime adapter's instruction entry point and one
+   runtime-specific failure path.
 
 An inaccessible repository is not checked and must never be reported as
 passed.

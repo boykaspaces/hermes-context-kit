@@ -1,21 +1,23 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/boykaspaces/hermes-context-kit/schemas/context-kit-adoption.schema.json",
-  "title": "Hermes Context Kit adoption manifest",
+  "title": "Context Kit adoption manifest v2",
   "type": "object",
   "required": [
     "schema_version",
     "spec_version",
     "kit_version",
     "profile",
-    "features"
+    "features",
+    "runtime_adapters",
+    "workflow_adapter"
   ],
   "properties": {
     "schema_version": {
-      "const": 1
+      "const": 2
     },
     "spec_version": {
-      "const": 1
+      "const": 2
     },
     "kit_version": {
       "type": "string",
@@ -40,6 +42,33 @@
         ]
       },
       "uniqueItems": true
+    },
+    "runtime_adapters": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["name", "version"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+          "version": {"type": "integer", "minimum": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "workflow_adapter": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+            "version": {"type": "integer", "minimum": 1}
+          },
+          "additionalProperties": false
+        },
+        {"type": "null"}
+      ]
     },
     "extensions": {
       "type": "object"

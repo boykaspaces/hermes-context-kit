@@ -5,7 +5,7 @@ Project: hermes-context-kit
 | ID or file | Status | Description | Read when |
 |---|---|---|---|
 | [`../PROJECT.md`](../PROJECT.md) | Active | Repository identity and boundaries | Entering the project |
-| [`context-kit.json`](./context-kit.json) | Pinned | Adopted protocol, release, profile, and features | Validating or upgrading context |
+| [`manifest.json`](./manifest.json) | Pinned | Adopted protocol, release, profile, features, and adapters | Validating or upgrading context |
 | [`state.md`](./state.md) | Current | Repository maintenance summary | Asking what is active now |
 | [`../tasks/current.md`](../tasks/current.md) | Current | Primary active Task pointer | Resuming repository work |
 | [`../tasks/README.md`](../tasks/README.md) | Active index | Development Task routing | Reviewing workstreams |

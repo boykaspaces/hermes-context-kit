@@ -63,7 +63,7 @@ Create a checkpoint only when meaningful resumable state exists that Task and Pr
 ## Storage and Lifecycle
 
 ```
-project/.hermes/checkpoints/
+project/.context-kit/checkpoints/
 ├── README.md       ← Checkpoint Index
 ├── latest.md       ← Current resumable snapshot (Status: Current)
 └── archive/        ← Historical snapshots (Status: Archived)
@@ -75,7 +75,7 @@ project/.hermes/checkpoints/
 
 **After task completion:** Archive or replace `latest.md` if it still describes completed work as in-progress. Do not leave a stale snapshot that implies an old task is still active.
 
-**Checkpoint Index** (`.hermes/checkpoints/README.md`) — keep minimal:
+**Checkpoint Index** (`.context-kit/checkpoints/README.md`) — keep minimal:
 
 ```markdown
 # Checkpoint Index
@@ -205,7 +205,7 @@ For code projects, record the Git and validation snapshot relevant to resume.
 4. Capture Git/validation state if relevant.
 5. Archive previous `latest.md` if it has historical value.
 6. Write new `latest.md` with `Status: Current`.
-7. Update `.hermes/checkpoints/README.md`.
+7. Update `.context-kit/checkpoints/README.md`.
 8. Update `context-index` pointer if it references the checkpoint.
 
 Leave affected checkpoint pointers and indexes consistent. If an index update fails, the operation is Incomplete. Use `references/indexing.md` when detailed index mutation rules are needed.

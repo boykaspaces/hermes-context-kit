@@ -1,6 +1,6 @@
 # Public Protocol Specification
 
-This directory owns the portable contracts implemented by Hermes Context Kit.
+This directory owns the portable contracts implemented by Context Kit.
 Specifications describe observable project behavior and machine-readable
 artifacts; Skills explain when and how an agent applies those contracts.
 
@@ -8,8 +8,11 @@ artifacts; Skills explain when and how an agent applies those contracts.
 
 | Contract | Version | Owns |
 |---|---:|---|
-| [Project adoption](./project/v1.md) | 1 | Adoption identity, profiles, features, and core project ownership |
+| [Project adoption](./project/v2.md) | 2 | Neutral namespace, adapters, canonical state, and proposal activation |
 | [Multi-repository coordination](./multi-repo/v2.md) | 2 | Component acceptance, verification, deployment applicability, and evidence |
+
+Project adoption [v1](./project/v1.md) remains an explicit legacy migration
+input; it is not the default for new projects.
 
 Published specification versions are immutable. Compatible clarification may
 improve prose or implementation without changing required behavior. A change

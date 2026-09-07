@@ -1,6 +1,7 @@
 # Skill Validation Reference
 
-Defines frontmatter rules, trigger precision standards, and happy/failure path requirements for personal Hermes skills.
+Defines portable frontmatter, trigger precision, and behavioral validation for
+agent Skills. Runtime adapters may add compatible platform-specific fields.
 
 ---
 
@@ -23,30 +24,29 @@ Required fields:
 ```yaml
 ---
 name: skill-name              # lowercase, hyphens only, ≤ 64 chars
-description: "One sentence."  # ≤ 60 chars; see Description Rules
-version: 0.1.0                # semver; new skills start at 0.1.0
-author: Author Name, Hermes Agent
-license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [tag1, tag2]
-    related_skills: []
+description: "One concise trigger sentence."
 ---
 ```
+
+Version, author, platforms, UI metadata, related-Skill metadata, and other
+frontmatter are distribution- or runtime-owned fields. Include only keys that
+the selected adapter or publication policy supports. Context Kit keeps
+`license` in the portable top level and its other release metadata under
+`metadata.context-kit`; these are repository conventions, not universal
+requirements.
 
 ---
 
 ## Description Rules
 
-- **≤ 60 characters.** The system prompt index truncates at 57 chars + `...` — the trigger must be self-contained in that window.
-- One sentence. Ends with a period.
+- One concise sentence that fits the selected runtime adapter's discovery UI.
+- Ends with a period when the target format permits prose descriptions.
 - Starts with the trigger signal: "Use when...", or capability-first phrasing.
 - No marketing words: "powerful", "comprehensive", "seamless", "advanced".
 - Does not repeat the skill name.
-- If the description contains `:`, wrap in double quotes to prevent YAML parse errors.
+- If the description contains `:`, quote it when the target format uses YAML.
 
-**Good:** `Use when creating, refactoring, or auditing Hermes Skills.`
+**Good:** `Use when creating, refactoring, or auditing agent Skills.`
 **Bad:** `A comprehensive skill for all aspects of skill management and authoring workflows.` (too long, marketing)
 
 ---
@@ -95,22 +95,23 @@ Acceptable forms: `## Pitfalls` section, inline notes in procedure steps, or a d
 Before freezing a skill, confirm:
 
 - [ ] SKILL.md starts with `---` at byte 0
-- [ ] All required frontmatter fields present and valid
-- [ ] Description ≤ 60 chars, one sentence, ends with period, no marketing
+- [ ] Core required fields and adapter-required fields are present and valid
+- [ ] Description is concise, self-contained, and fits the adapter's limits
 - [ ] `When to Load` is precise; `When NOT to Load` has at least one counter-trigger
 - [ ] No normative rule duplicated across files (one canonical owner per rule)
 - [ ] References created only where navigation value exists
 - [ ] Each procedure step has a checkable completion criterion
 - [ ] At least one failure mode addressed
 - [ ] No unapproved machine-local paths or session-specific content in skill files. A user-required deployment canonical path is allowed only when marked deployment-specific and verified against the host-side canonical realpath
-- [ ] Expected Skill root was resolved before creation; `skill_manage create` omitted `category`; actual host-side root matches expected root
+- [ ] Expected Skill root and supported creation mechanism were resolved from
+      the selected runtime adapter; the actual runtime path matches
 - [ ] `related_skills` entries all resolve to existing skills
 
 ---
 
 ## Domain Invariants
 
-- **Description is the routing signal — it must fit in 57 visible chars.**
+- **Description is the routing signal; adapter constraints determine its field limits.**
 - **Trigger precision prevents over-loading and under-loading.**
 - **One canonical owner per rule — validation rules live here, not duplicated in architecture.md.**
 - **Verification checklist runs before freeze, not after.**

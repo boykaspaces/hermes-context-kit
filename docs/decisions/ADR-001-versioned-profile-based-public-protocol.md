@@ -1,7 +1,8 @@
 # ADR-001: Publish a Versioned, Profile-Based Public Protocol
 
-Status: Active
+Status: Superseded
 Decision Area: Public Protocol Architecture
+Superseded-By: ADR-002
 
 ## Context
 

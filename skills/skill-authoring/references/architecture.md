@@ -1,6 +1,8 @@
 # Skill Architecture Reference
 
-Defines skill qualification, complexity levels, file structure, and canonical ownership rules for personal Hermes Skills under the deployment-defined user-local Skill root.
+Defines runtime-neutral Skill qualification, complexity, structure, and
+canonical ownership. Runtime adapters own platform-specific destinations and
+creation mechanisms.
 
 ---
 
@@ -16,7 +18,7 @@ Defines skill qualification, complexity levels, file structure, and canonical ow
 
 ## Qualification
 
-Create a personal skill only when the workflow:
+Create a reusable Skill only when the workflow:
 - Recurs across multiple sessions
 - Involves non-obvious steps, pitfalls, or tool combinations
 - Has been successfully executed at least once (proven path)
@@ -44,7 +46,7 @@ Choose the smallest tier that fits. Do not pre-create references for future comp
 ## File Structure
 
 ```
-<canonical-skill-root>/
+<adapter-defined-skill-root>/
 └── <skill-name>/
     ├── SKILL.md              ← entry point; router or self-contained
     └── references/
@@ -62,14 +64,14 @@ Optional supporting directories (create only when needed):
 
 ## Skill Destination Resolution
 
-Resolve the approved Skill management mechanism and canonical user-local Skill
-root from the deployment contract in `SOUL.md` before any persistent creation.
-Do not hardcode or infer the root from a username, home directory, sandbox, or
-repository checkout. All newly created global personal Skills must be direct
-children of that deployment-defined root:
+Select the target runtime adapter before persistent creation. Resolve its
+approved Skill management mechanism and canonical Skill root from the
+adapter-owned runtime binding. Do not hardcode or infer the root from a
+username, home directory, sandbox, or repository checkout. Newly created
+global Skills must follow the selected adapter's placement contract:
 
 ```
-<canonical-skill-root>/<skill-name>/
+<adapter-defined-skill-root>/<skill-name>/
 ```
 
 Do not create, infer, or pass a category subdirectory during Skill creation. Existing nested Skills may remain where they are; do not move them as a side effect of this rule.
@@ -77,13 +79,17 @@ Do not create, infer, or pass a category subdirectory during Skill creation. Exi
 Before creation:
 
 1. Identify the Skill name.
-2. Resolve and state the expected canonical Skill root from `SOUL.md`.
+2. Resolve and state the expected canonical Skill root from the runtime
+   adapter's operator-owned binding.
 3. If the user specifies that exact root, honor it.
 4. If the user specifies a different path or a category, do not create the Skill and do not silently rewrite the destination. Report the conflict and obtain explicit direction.
 5. If the user specifies no path, use the deployment-defined canonical destination and make it explicit before writing.
-6. If the deployment contract does not define an approved mechanism and canonical root, stop and report Skill creation as Incomplete.
+6. If the runtime adapter or its binding does not define an approved mechanism
+   and canonical root, stop and report Skill creation as Incomplete.
 
-Create the Skill with `skill_manage(action='create', name='<skill-name>', content='<full SKILL.md>')` and omit the `category` argument. Do not use the generic sandboxed `write_file` tool for initial Skill creation.
+Create the Skill through the selected adapter's supported management operation.
+Do not substitute an unapproved generic filesystem write when the runtime owns
+a dedicated installation mechanism.
 
 After creation, verify:
 
@@ -93,7 +99,9 @@ After creation, verify:
 | Actual Skill root | `<canonical realpath returned or resolved by the host-side Skill runtime>` |
 | Match | YES / NO |
 
-Verify the created `skill_md` path from the `skill_manage` result, resolve its canonical realpath through the host-side Skill runtime, and confirm `skill_view('<skill-name>')` succeeds. The generic Docker `terminal` or `write_file` workspace is not evidence of host persistence.
+Verify the created Skill path from the adapter result, resolve its canonical
+realpath through the runtime, and confirm the installed Skill is discoverable.
+A sandbox or temporary workspace is not evidence of runtime persistence.
 
 If the actual Skill root does not match the expected canonical destination, or the host-side runtime cannot read it, treat Skill creation as **Incomplete**. Skill Index discoverability alone does not prove destination correctness.
 

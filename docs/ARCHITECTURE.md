@@ -7,6 +7,8 @@ versioned specification
   -> portable artifact and state contracts
 reference implementation
   -> Skills, profiles, schemas, templates, CLI, and fixtures
+runtime and workflow adapters
+  -> agent instructions, Skill installation, workspace binding, proposal acceptance
 consumer adoption
   -> pinned release, selected profile, extensions, and native validation
 ```
@@ -21,14 +23,14 @@ return as anonymized conformance fixtures.
 `minimal` supplies identity and current state. `repository` adds Tasks,
 decisions, and current-first navigation. `multi-repo` adds System Tasks and an
 immutable component graph. Optional features are explicit in
-`.hermes/context-kit.json` so filesystem leftovers do not silently enable
+`.context-kit/manifest.json` so filesystem leftovers do not silently enable
 behavior.
 
 ## Ownership layers
 
 ```text
-deployment SOUL.md
-  -> stable workspace identity and global behavioral boundary
+runtime adapter binding
+  -> instruction entry point, workspace identity, and Skill installation
 Skill SKILL.md
   -> trigger, guards, and operation routing
 Skill reference
@@ -70,11 +72,16 @@ Schema v2 separates source delivery, integration acceptance, verification, and
 deployment applicability. A component that is not deployable may still be
 locked and verified without a false deployed claim.
 
+Component proposals are accepted before the final System proposal. The System
+proposal then contains exact accepted revisions, verification, and completed
+Task state. Its acceptance activates that candidate state on the canonical ref;
+another proposal is not required merely to record the acceptance event.
+
 ## Repository versus runtime
 
 This repository owns reusable specifications, sources, profiles, schemas,
-templates, and fixtures. A consuming project owns its adoption manifest,
-extensions, current state, and native validation. A consuming deployment owns
-its actual `SOUL.md`, workspace identity, registry, runtime Skill copies, and
-permissions. Synchronization between repository, project, and runtime is a
-separate reviewed action.
+templates, adapters, and fixtures. A consuming project owns its adoption
+manifest, extensions, current state, and native validation. A consuming
+runtime owns its instruction entry points, workspace identity, registry,
+installed Skill copies, and permissions. Synchronization between repository,
+project, and runtime is a separate reviewed action.

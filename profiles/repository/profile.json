@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "name": "repository",
   "description": "Repository context with Tasks and durable decisions.",
   "features": [
@@ -10,14 +10,13 @@
     "checkpoints",
     "memory"
   ],
-  "required_paths": [
-    "PROJECT.md",
-    "AGENTS.md",
-    ".hermes/context-kit.json",
-    ".hermes/state.md",
-    ".hermes/context-index.md",
-    "tasks/README.md",
-    "tasks/current.md",
-    "docs/decisions/README.md"
+  "required_artifacts": [
+    "project",
+    "manifest",
+    "state",
+    "context-index",
+    "task-index",
+    "current-task",
+    "decision-index"
   ]
 }

@@ -2,8 +2,9 @@
 
 | Path | Purpose | Read when |
 |---|---|---|
-| [`SOUL.project-context.example.md`](./SOUL.project-context.example.md) | Placeholder contract between global instructions and the persistent workspace | Configuring a Hermes deployment |
-| [`project-context/`](./project-context/README.md) | Minimal index-first project skeleton | Creating a project |
+| [`project-context/`](./project-context/README.md) | Runtime-neutral project skeleton | Creating or reviewing a v2 project |
+| [`../adapters/runtime/hermes/`](../adapters/runtime/hermes/README.md) | Hermes `SOUL.md` deployment template | Configuring a Hermes runtime |
+| [`../adapters/runtime/codex/`](../adapters/runtime/codex/README.md) | Codex `AGENTS.md` project template | Configuring a Codex runtime |
 
 Prefer the deterministic `scripts/context_kit.py init` entry point. Templates
 remain inspectable examples, not live configuration. Replace every

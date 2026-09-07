@@ -52,16 +52,16 @@ Indexes form a navigation hierarchy. Descend one layer at a time.
   ↓
 <registered-project-path>/PROJECT.md             ← project manifest
   ↓
-project/.hermes/context-index.md                 ← project navigation router
+project/.context-kit/index.md                    ← project navigation router
   ↓
-domain index (tasks/README.md, docs/decisions/README.md, .hermes/memory/README.md)
+domain index (tasks/README.md, docs/decisions/README.md, .context-kit/memory/README.md)
   ↓
 specific artifact (TASK-014, ADR-007)
   ↓
 historical artifact — only when needed
 ```
 
-Not every project requires all layers. Small projects may navigate directly from `PROJECT.md` without an intermediate `context-index.md`.
+Not every project requires all layers. Small projects may navigate directly from `PROJECT.md` without an intermediate `.context-kit/index.md`.
 
 ---
 

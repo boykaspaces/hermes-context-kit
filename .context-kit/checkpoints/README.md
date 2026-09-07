@@ -1,6 +1,6 @@
 # Checkpoint Index
 
-Current: None
+Current: [`latest.md`](./latest.md)
 Current Task: None
 Status: Current
 Archive: `archive/`

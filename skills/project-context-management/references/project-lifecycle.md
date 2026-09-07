@@ -55,10 +55,12 @@ mutation and ask the user to identify the target project.
 
 ## Workspace Registry
 
-Resolve the canonical workspace root, identity file and exact identity value,
-Workspace Registry, and default project root from the deployment contract in
-`SOUL.md`. Do not hardcode or infer these values from the current user, home
-directory, container, or repository checkout.
+For repository-local work, resolve the project root from explicit user scope,
+the managed working directory, or `PROJECT.md`. Cross-project switching also
+requires a canonical workspace root, identity file and value, Workspace
+Registry, and default project root from the selected runtime adapter's
+operator-owned binding. Do not hardcode or infer those values from the current
+user, home directory, container, or repository checkout.
 
 Registry paths must be absolute, canonical, and accessible through the current
 file tools. The workspace identity marker is provisioned by the host deployment
@@ -110,23 +112,27 @@ Do not auto-create for one-off tasks.
 When starting from a Context Kit checkout, prefer the deterministic
 `scripts/context_kit.py init` flow described by the release's Adoption Guide.
 Review its dry-run before writing. The generated
-`.hermes/context-kit.json` records the explicit profile and enabled features;
+`.context-kit/manifest.json` records the explicit profile, enabled features,
+and runtime adapters;
 do not infer them from whichever template directories happen to exist.
 
 **Creation preflight:**
-1. Resolve the canonical workspace root, identity file and exact identity value, Workspace Registry, and default project root from `SOUL.md`.
-2. Verify the deployment-defined identity file exists and contains the exact configured value.
-3. Verify the canonical workspace root is accessible through the current file tools.
-4. Verify or create the deployment-defined Workspace Registry only after the workspace identity matches.
-5. Resolve the proposed project root explicitly.
-6. Verify the resolved path is inside the authenticated, accessible persistent workspace.
-7. If the user specified an exact path, do not silently rewrite it. If it is inaccessible, stop and request an accessible path or mount.
+1. Resolve the proposed project root explicitly.
+2. Verify the root is accessible through the current file tools.
+3. If the operation registers or switches projects, resolve the runtime
+   adapter's workspace identity and registry binding.
+4. Verify any adapter-defined identity marker before creating or changing its
+   registry.
+5. Verify the project root is inside that authenticated workspace when such a
+   workspace boundary applies.
+6. If the user specified an exact path, do not silently rewrite it. If it is
+   inaccessible, stop and request an accessible path or mount.
 
 **Creation flow:**
 1. Choose stable `project_id` and root path.
 2. Check Workspace Registry for duplicate `project_id`, path, or equivalent purpose.
 3. Create the minimum profile artifacts, including
-   `.hermes/context-kit.json` when adopting Context Kit.
+   `.context-kit/manifest.json` when adopting Context Kit.
 4. Register in `WORKSPACES.md`.
 5. Add further layers (`tasks/`, `decisions/`, `memory/`, `checkpoints/`) only when navigation value appears.
 

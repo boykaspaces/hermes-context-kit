@@ -11,7 +11,7 @@ Evidence Mutability: Comment may be edited, hidden, or deleted by authorized Git
 Reviewer Identity / Independence: Agent author record is not independent; user review requested separately
 Enforcement Boundary: Repository rules apply only to actors without configured bypass
 Bypass Boundary: Configured bypass actors may accept without the ordinary approval path
-Review Mode: Delta Review
+Review Mode: Final Audit
 
 ## Supported Review Scope
 
@@ -39,14 +39,16 @@ Review Mode: Delta Review
 
 | Gate | Target Revision | Evidence | Result |
 |---|---|---|---|
-| Focused Hermes runtime tests | Reviewed working candidate after R-001 and R-002 | 21 local unit tests | Pass |
-| Complete repository validation | Candidate | Local `./scripts/validate.sh` output | Pending |
+| Focused Hermes runtime tests | f276f5ed6f685fd057a74c74d40da120404e39ee | 21 local unit tests, including inventory, package expansion, failure rollback, and interruption recovery | Pass |
+| Accepted-base-to-candidate upgrade | 4c31db3605739d3afd4769f17c20135a2b66ef18 -> f276f5ed6f685fd057a74c74d40da120404e39ee | Isolated operator-route install and verify output | Pass |
+| Complete repository validation | f276f5ed6f685fd057a74c74d40da120404e39ee | Local `./scripts/validate.sh` output: 39 core tests, 42 extended tests, and Markdown links | Pass |
 | Exact-head repository validation | GitHub pull-request head | GitHub workflow checks | Pending |
 
 ## Gate Summary
 
 - Capability Gate 0: Pass after contract reduction
 - Open P0/P1: 0
-- Required Validation: Focused Pass; remaining gates Pending
+- Required Validation: Local Pass; exact-head CI Pending
 - Final Audit: Pending
-- Candidate readiness: Not Ready
+- Convergence Guard: Not triggered
+- Candidate readiness: Not Ready until exact-head CI and Final Audit pass

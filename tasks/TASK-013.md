@@ -1,7 +1,6 @@
 # TASK-013: Package Advisory Governance as an Installable Toolset
 
-Status: In Progress
-Delivery Stage: Validate
+Status: Completed
 Governance: Required
 Priority: High
 Depends-On:
@@ -104,14 +103,34 @@ Ledger: `tasks/evidence/TASK-013/review.md`
 - Resolved R-002 with a direct `configure --capability delivery-governance`
   parser regression test.
 - Delta Review verified both fixes and the 21 focused Hermes runtime tests.
+- Passed an isolated upgrade from accepted base
+  `4c31db3605739d3afd4769f17c20135a2b66ef18` to candidate
+  `f276f5ed6f685fd057a74c74d40da120404e39ee`; the existing Skill remained
+  identical, the governance Skill installed fresh, and verification returned
+  ready with all four runtime files.
+- Verified ordinary-failure rollback restores the previous ready package and
+  interrupted governance installation fails closed until explicit rollback.
+- Passed the complete repository validation after Delta Review.
+- Prepared the exact-head Final Audit boundary for GitHub workflow evidence
+  and separate user acceptance.
 
 ## Remaining
 
-- Run required validation and exact-head Final Audit.
+None.
 
 ## Blockers
 
 None.
+
+## Result
+
+The advisory governance procedure is now packaged as version `0.1.0` of the
+independent optional `ai-delivery-governance` Skill. The existing Hermes v3
+installer selects it through the `delivery-governance` capability, records its
+complete runtime inventory, expands an accepted base package transactionally,
+restores the prior ready package after ordinary failure, and fails closed on
+interruption. Installation remains distinct from project adoption and from a
+live Hermes deployment.
 
 ## Relevant Files
 
@@ -127,5 +146,5 @@ None.
 
 ## Next Step
 
-Run the isolated accepted-base-to-candidate package upgrade and complete the
-repository validation against the reviewed fixes.
+None for TASK-013. After this proposal is accepted, create a new project-owned
+Task for the existing-project adoption pilot described as Increment 6.

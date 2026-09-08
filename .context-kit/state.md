@@ -2,7 +2,7 @@
 
 Project: hermes-context-kit
 Status: Active
-Active Task: TASK-013
+Active Task: None
 
 ## Current summary
 
@@ -18,14 +18,15 @@ experimental extension. Its first manual dogfood candidate adds Task-linked
 evidence templates and moves exact-head Final Audit evidence to the workflow
 boundary. Its GitHub platform audit now separates exact-SHA binding from
 mutable comments, reviewer independence, policy enforcement, and configured
-bypass. TASK-013 is packaging that proven manual contract as an independent,
-versioned optional Skill through the existing Hermes transactional installer;
-no core protocol or automation is enabled.
+bypass. The proven manual contract is now packaged as the independent,
+versioned optional `ai-delivery-governance` Skill and is selectable through the
+existing Hermes transactional installer; no core protocol or automation is
+enabled.
 
 ## Primary focus
 
-Complete the bounded TASK-013 installable-toolset candidate, then stop at its
-pull request for user review and acceptance before any consumer adoption.
+After the TASK-013 candidate is accepted, begin the existing-project adoption
+pilot only through a new project-owned Task and pull request.
 
 ## Active constraints
 

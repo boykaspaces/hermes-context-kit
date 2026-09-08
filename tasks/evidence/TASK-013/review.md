@@ -2,7 +2,7 @@
 
 Task: TASK-013
 Contract Revision: ff13ca11623302e1d89dfcbd13e15f7e34f9c849
-Initial Audit Base Revision: Pending
+Initial Audit Base Revision: bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba
 Candidate Binding: GitHub pull-request head
 Validation Target: GitHub pull-request head
 Final Audit Evidence: Pending pull-request comment and user review
@@ -11,7 +11,7 @@ Evidence Mutability: Comment may be edited, hidden, or deleted by authorized Git
 Reviewer Identity / Independence: Agent author record is not independent; user review requested separately
 Enforcement Boundary: Repository rules apply only to actors without configured bypass
 Bypass Boundary: Configured bypass actors may accept without the ordinary approval path
-Review Mode: Not Started
+Review Mode: Initial Audit
 
 ## Supported Review Scope
 
@@ -23,11 +23,16 @@ Review Mode: Not Started
 
 ## Findings
 
-None recorded before Initial Audit.
+| ID | Severity | Origin | Contract / Evidence | Observed Revision | Disposition | Status | Introduced By |
+|---|---|---|---|---|---|---|---|
+| R-001 | P1 | Baseline | AC-3 public setup route conflates runtime capability installation with current project/Task load eligibility, which can block preparing a runtime for the next adoption pilot | bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba | FIX | Open | Not Applicable |
+| R-002 | P2 | Baseline | The hard-coded `configure --capability` parser choice lacks a direct regression assertion for `delivery-governance` | bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba | FIX | Open | Not Applicable |
 
 ## Review Rounds
 
-None recorded before Initial Audit.
+| Round | Mode | Target | New Blocking | Closed Blocking | Result |
+|---|---|---|---:|---:|---|
+| 1 | Initial Audit | bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba | 1 | 0 | Delta Review |
 
 ## Validation
 
@@ -40,7 +45,7 @@ None recorded before Initial Audit.
 ## Gate Summary
 
 - Capability Gate 0: Pass after contract reduction
-- Open P0/P1: Not yet audited
+- Open P0/P1: 1
 - Required Validation: Pending
 - Final Audit: Pending
 - Candidate readiness: Not Ready

@@ -1,7 +1,7 @@
 # TASK-013: Package Advisory Governance as an Installable Toolset
 
 Status: In Progress
-Delivery Stage: Plan
+Delivery Stage: Fix
 Governance: Required
 Priority: High
 Depends-On:
@@ -94,14 +94,17 @@ Ledger: `tasks/evidence/TASK-013/review.md`
 - Verified that `SKILL.md`, one reference, and one template enter the selected
   runtime inventory and produce `ready: true` in an isolated install.
 - Reduced the formal design to the existing installer and inventory model.
+- Implemented the standalone Skill, canonical compatibility routes, optional
+  Hermes capability mapping, and capability-specific transaction tests in
+  candidate `bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba`.
+- Completed Initial Audit with one P1 installation-versus-load boundary
+  finding and one P2 command-parser coverage finding.
 
 ## Remaining
 
-- Freeze this Task contract.
-- Implement the portable Skill and compatibility routes.
-- Register the optional Hermes capability and update its public inventory.
-- Add capability-specific installation, upgrade, rollback, and recovery tests.
-- Run Initial Audit, required validation, and exact-head Final Audit.
+- Resolve R-001 and R-002 without expanding the frozen contract.
+- Run Delta Review against those fixes.
+- Run required validation and exact-head Final Audit.
 
 ## Blockers
 
@@ -121,5 +124,5 @@ None.
 
 ## Next Step
 
-Commit the frozen Task contract, bind the review ledger to that exact revision,
-then implement only the accepted criteria above.
+Resolve R-001 and R-002, run focused regression tests, and perform Delta Review
+before the isolated cross-revision validation.

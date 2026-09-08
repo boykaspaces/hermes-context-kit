@@ -45,4 +45,3 @@ Gate Result: `Not Required | Pass | Blocked | Incomplete`
 `Pass` is valid only when every guarantee retained by the frozen contract is
 Supported or covered by explicit authorized risk acceptance. An unresolved
 dependency is `Blocked`; a required Unknown is `Incomplete`.
-

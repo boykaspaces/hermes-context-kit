@@ -29,4 +29,3 @@ reviews the exact candidate proposed for acceptance.
 
 PASS — the unsupported self-reference guarantee was removed before template
 implementation, and no retained required guarantee remains Unknown.
-

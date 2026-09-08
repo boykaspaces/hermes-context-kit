@@ -52,4 +52,3 @@ durable external workflow evidence after the final candidate is pushed.
 Do not mutate the candidate after Final Audit. Any later push invalidates the
 Final Audit and every affected validation or verified finding; review the new
 exact head before acceptance.
-

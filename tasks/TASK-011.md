@@ -1,7 +1,6 @@
 # TASK-011: Dogfood the Advisory Governance Contract
 
-Status: In Progress
-Delivery Stage: Initial Audit
+Status: Completed
 Governance: Required
 Priority: High
 
@@ -69,15 +68,28 @@ Ledger: `tasks/evidence/TASK-011/review.md`
 - Added experimental capability-audit and review-ledger templates.
 - Corrected the advisory contract to use external exact-head Final Audit
   evidence.
+- Completed Initial Audit with no P0/P1 findings and one P3 formatting finding.
+- Resolved the tracked trailing-blank-line finding.
+- Delta Review verified R-001 without a regression.
+- Passed the complete repository validation after the reviewed fix.
+- Prepared Final Audit as external workflow evidence against the exact
+  pull-request head.
 
 ## Remaining
 
-- Run Initial Audit, fix any blocking findings, and validate the candidate.
-- Prepare the exact pull-request head for external Final Audit.
+None.
 
 ## Blockers
 
 None.
+
+## Result
+
+The first manual dogfood cycle produced two reusable experimental evidence
+templates and corrected an unsupported self-referential revision rule. Initial
+Audit found no blockers, Delta Review verified the only P3 fix, and final
+readiness is intentionally left to exact-head workflow evidence and user
+review.
 
 ## Relevant Files
 
@@ -89,5 +101,5 @@ None.
 
 ## Next Step
 
-Run Initial Audit against the implementation candidate and record all findings
-before making review-driven changes.
+None for TASK-011. After this proposal is accepted, create a new Task for the
+platform-dependent dogfood cycle described as Increment 4 in the rollout plan.

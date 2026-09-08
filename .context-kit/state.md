@@ -2,7 +2,7 @@
 
 Project: hermes-context-kit
 Status: Active
-Active Task: TASK-011
+Active Task: None
 
 ## Current summary
 
@@ -13,14 +13,15 @@ SOUL remains optional and user-controlled. AI delivery governance has passed a
 minimum documentation-only feasibility check and now has a sequential,
 merge-gated experimental rollout covering source design, toolset installation,
 existing-project adoption, multi-repository acceptance, and live runtime
-verification. This repository now enables the advisory manual contract as an
-experimental extension. TASK-011 is dogfooding its evidence and exact-candidate
-review semantics; no core protocol or automation is enabled.
+verification. This repository enables the advisory manual contract as an
+experimental extension. Its first manual dogfood candidate adds Task-linked
+evidence templates and moves exact-head Final Audit evidence to the workflow
+boundary; no core protocol or automation is enabled.
 
 ## Primary focus
 
-Complete the bounded TASK-011 manual dogfood cycle, then stop at its pull
-request for user review and acceptance.
+After the TASK-011 candidate is accepted, begin the platform-dependent dogfood
+cycle only through a new Task and pull request.
 
 ## Active constraints
 

@@ -11,4 +11,3 @@ Copy only the template required by the current Task into
 `tasks/evidence/TASK-NNN/`, link it from the Task, and replace every
 placeholder. These files are advisory Phase 1 aids, not released runtime
 templates or machine-enforced schemas.
-

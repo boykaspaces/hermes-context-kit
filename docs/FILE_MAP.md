@@ -28,11 +28,14 @@ Status: Current index
 | `skills/multi-repo-system-management/tests/` | Validator happy/failure path tests | Changing validation behavior |
 | `skills/skill-authoring/SKILL.md` | Skill-authoring trigger and operation router | Creating or changing reusable Skills |
 | `skills/skill-authoring/references/` | Skill architecture, validation, and maintenance | Changing one routed authoring domain |
+| `skills/ai-delivery-governance/SKILL.md` | Explicit-adoption trigger, ownership guards, and advisory-cycle router | Running a governed Task |
+| `skills/ai-delivery-governance/references/` | Canonical advisory delivery cycle | Planning, reviewing, validating, or recovering a governed Task |
+| `skills/ai-delivery-governance/templates/` | Installable capability-audit and review-ledger templates | Creating Task-linked governance evidence |
 | `templates/project-context/` | Neutral v2 project skeleton | Bootstrapping a project |
 | `docs/ADOPTION.md` | Installation and runtime verification | Adopting the kit |
 | `docs/DELIVERY_GOVERNANCE_ROLLOUT.md` | Non-normative feasibility evidence, corrected semantics, and sequential rollout | Reviewing or continuing the delivery-governance experiment |
-| `docs/experiments/DELIVERY_GOVERNANCE_V1.md` | Optional advisory delivery Task contract and review workflow | A Task explicitly opts into the governance experiment |
-| `docs/experiments/templates/` | Non-runtime Phase 1 capability-audit and review-ledger examples | Creating Task-linked governance evidence during dogfood |
+| `docs/experiments/DELIVERY_GOVERNANCE_V1.md` | Compatibility route to the installable advisory delivery cycle | Following an accepted historical link |
+| `docs/experiments/templates/` | Compatibility routes to installable evidence templates | Following accepted historical template links |
 | `docs/ARCHITECTURE.md` | Ownership and retrieval model | Understanding the design |
 | `docs/SECURITY.md` | Trust and publication boundaries | Reviewing risk |
 | `scripts/validate.sh` | Static repository checks | Validating changes |

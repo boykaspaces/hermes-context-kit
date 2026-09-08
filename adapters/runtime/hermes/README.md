@@ -74,13 +74,16 @@ commit. Generate a configuration without guessing the current revision:
 python3 adapters/runtime/hermes/scripts/runtime_setup.py configure \
   --output /tmp/context-kit-hermes.json \
   --workspace-id my-hermes \
+  --capability delivery-governance \
   --capability skill-authoring
 ```
 
 `project-context` is always selected. Add `--capability multi-repo` only when
 this Hermes instance coordinates System Tasks, component locks, Handoffs, or
 cross-repository acceptance. Add `skill-authoring` only when it creates or
-maintains reusable Skills.
+maintains reusable Skills. Add `delivery-governance` only when at least one
+managed project explicitly adopts the advisory extension; installing the Skill
+does not enroll a project automatically.
 
 Preview the complete write set:
 
@@ -181,6 +184,7 @@ Skill installation remains pending.
 | Capability | Installed Skill | Required when |
 |---|---|---|
 | `project-context` | `project-context-management` | Always |
+| `delivery-governance` | `ai-delivery-governance` | A managed project's manifest and current Task explicitly opt into advisory delivery governance |
 | `skill-authoring` | `skill-authoring` | Hermes creates or materially changes reusable Skills |
 | `multi-repo` | `multi-repo-system-management` | Hermes coordinates more than one repository or an integration/deployment boundary |
 

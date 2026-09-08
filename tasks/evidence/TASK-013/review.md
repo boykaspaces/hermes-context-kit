@@ -1,7 +1,7 @@
 # Review Ledger — TASK-013
 
 Task: TASK-013
-Contract Revision: Pending contract-freeze commit
+Contract Revision: ff13ca11623302e1d89dfcbd13e15f7e34f9c849
 Initial Audit Base Revision: Pending
 Candidate Binding: GitHub pull-request head
 Validation Target: GitHub pull-request head

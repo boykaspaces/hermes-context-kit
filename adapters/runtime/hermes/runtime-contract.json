@@ -1,5 +1,11 @@
 {
   "capabilities": {
+    "delivery-governance": {
+      "description": "Run the explicitly adopted advisory AI delivery-governance cycle.",
+      "skills": [
+        "ai-delivery-governance"
+      ]
+    },
     "multi-repo": {
       "description": "Coordinate System Tasks, component locks, Handoffs, and cross-repository acceptance.",
       "skills": [

@@ -9,6 +9,7 @@
       "items": {
         "enum": [
           "project-context",
+          "delivery-governance",
           "skill-authoring",
           "multi-repo"
         ]

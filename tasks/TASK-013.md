@@ -1,7 +1,7 @@
 # TASK-013: Package Advisory Governance as an Installable Toolset
 
 Status: In Progress
-Delivery Stage: Fix
+Delivery Stage: Validate
 Governance: Required
 Priority: High
 Depends-On:
@@ -99,11 +99,14 @@ Ledger: `tasks/evidence/TASK-013/review.md`
   candidate `bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba`.
 - Completed Initial Audit with one P1 installation-versus-load boundary
   finding and one P2 command-parser coverage finding.
+- Resolved R-001 by separating runtime preparation from project/Task load
+  eligibility in the public installation route.
+- Resolved R-002 with a direct `configure --capability delivery-governance`
+  parser regression test.
+- Delta Review verified both fixes and the 21 focused Hermes runtime tests.
 
 ## Remaining
 
-- Resolve R-001 and R-002 without expanding the frozen contract.
-- Run Delta Review against those fixes.
 - Run required validation and exact-head Final Audit.
 
 ## Blockers
@@ -124,5 +127,5 @@ None.
 
 ## Next Step
 
-Resolve R-001 and R-002, run focused regression tests, and perform Delta Review
-before the isolated cross-revision validation.
+Run the isolated accepted-base-to-candidate package upgrade and complete the
+repository validation against the reviewed fixes.

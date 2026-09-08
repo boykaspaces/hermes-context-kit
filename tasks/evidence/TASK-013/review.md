@@ -11,7 +11,7 @@ Evidence Mutability: Comment may be edited, hidden, or deleted by authorized Git
 Reviewer Identity / Independence: Agent author record is not independent; user review requested separately
 Enforcement Boundary: Repository rules apply only to actors without configured bypass
 Bypass Boundary: Configured bypass actors may accept without the ordinary approval path
-Review Mode: Initial Audit
+Review Mode: Delta Review
 
 ## Supported Review Scope
 
@@ -25,27 +25,28 @@ Review Mode: Initial Audit
 
 | ID | Severity | Origin | Contract / Evidence | Observed Revision | Disposition | Status | Introduced By |
 |---|---|---|---|---|---|---|---|
-| R-001 | P1 | Baseline | AC-3 public setup route conflates runtime capability installation with current project/Task load eligibility, which can block preparing a runtime for the next adoption pilot | bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba | FIX | Open | Not Applicable |
-| R-002 | P2 | Baseline | The hard-coded `configure --capability` parser choice lacks a direct regression assertion for `delivery-governance` | bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba | FIX | Open | Not Applicable |
+| R-001 | P1 | Baseline | AC-3 public setup route conflates runtime capability installation with current project/Task load eligibility, which can block preparing a runtime for the next adoption pilot | bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba | FIX | Verified | Not Applicable |
+| R-002 | P2 | Baseline | The hard-coded `configure --capability` parser choice lacks a direct regression assertion for `delivery-governance` | bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba | FIX | Verified | Not Applicable |
 
 ## Review Rounds
 
 | Round | Mode | Target | New Blocking | Closed Blocking | Result |
 |---|---|---|---:|---:|---|
 | 1 | Initial Audit | bb223e8171a0d0a6d9d2c7d0e3ca482e38d9d3ba | 1 | 0 | Delta Review |
+| 2 | Delta Review | R-001 and R-002 fixes in the working candidate | 0 | 1 | Validate |
 
 ## Validation
 
 | Gate | Target Revision | Evidence | Result |
 |---|---|---|---|
-| Focused Hermes runtime tests | Candidate | Local test output | Pending |
+| Focused Hermes runtime tests | Reviewed working candidate after R-001 and R-002 | 21 local unit tests | Pass |
 | Complete repository validation | Candidate | Local `./scripts/validate.sh` output | Pending |
 | Exact-head repository validation | GitHub pull-request head | GitHub workflow checks | Pending |
 
 ## Gate Summary
 
 - Capability Gate 0: Pass after contract reduction
-- Open P0/P1: 1
-- Required Validation: Pending
+- Open P0/P1: 0
+- Required Validation: Focused Pass; remaining gates Pending
 - Final Audit: Pending
 - Candidate readiness: Not Ready

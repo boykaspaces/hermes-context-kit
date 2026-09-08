@@ -123,6 +123,20 @@ class HermesRuntimeSetupTest(unittest.TestCase):
         with self.assertRaisesRegex(setup.SetupError, "full lowercase"):
             setup.load_config_from_data(invalid, self.contract, label="test")
 
+    def test_configure_parser_accepts_delivery_governance(self) -> None:
+        args = setup.parser().parse_args(
+            [
+                "configure",
+                "--output",
+                "/tmp/context-kit-hermes.json",
+                "--workspace-id",
+                "test-hermes",
+                "--capability",
+                "delivery-governance",
+            ]
+        )
+        self.assertEqual(args.capability, ["delivery-governance"])
+
     def test_plan_contains_exact_inventory_and_never_requires_soul(self) -> None:
         plan = setup.build_plan(self.config, self.contract)
         self.assertEqual(plan["soul"]["status"], "optional-not-applied")

@@ -19,6 +19,9 @@ protocol or automation.
   deferred-finding semantics are corrected before dogfooding.
 - AC-4: Each later increment is bounded by its own Task and pull request, with
   an explicit stop after review readiness.
+- AC-5: The rollout separately validates toolset packaging and installation,
+  adoption by an existing project, multi-repository acceptance, and live
+  runtime installation.
 
 ## Capability Audit
 
@@ -43,6 +46,8 @@ No required guarantee for this documentation-only increment remains Unknown.
   project without modifying the validator.
 - Recorded corrected experimental semantics and existing ownership boundaries.
 - Split the rollout into independently reviewed increments.
+- Added explicit installability, existing-project adoption,
+  multi-repository-acceptance, and live-runtime verification increments.
 - Reserved core Skill, schema, CLI, CI, runtime, and autonomy changes for later
   evidence-gated Tasks.
 
@@ -79,10 +84,10 @@ None.
 
 The documentation-only advisory approach is feasible without changing the
 stable Task status model or current schemas. The rollout is divided into
-sequential, merge-gated Tasks.
+sequential, merge-gated Tasks, including separate installability,
+existing-project adoption, integration-acceptance, and live-runtime checks.
 
 ## Next Step
 
 None for TASK-008. After this proposal is accepted, create a new Task for the
 advisory manual contract described as Increment 2 in the rollout plan.
-

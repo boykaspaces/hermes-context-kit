@@ -124,11 +124,82 @@ Create this Task only after Increment 3 is accepted.
 - Exercise Stabilization only if its trigger occurs naturally; do not invent a
   false successful stabilization record.
 
-### Increment 5 — Phase 1 evidence decision
+Before the Phase 1 decision, the experiment must also prove that the resulting
+toolset can be packaged and installed and that an existing project can adopt
+it. Source completion alone is not sufficient consumer evidence.
 
-Create this Task only after Increment 4 is accepted.
+### Increment 5 — Installable toolset candidate
 
-- Compare the manual cycles against the stated Phase 1 readiness criteria.
+Create this Task only after the two manual dogfood increments are accepted.
+
+- Use the accumulated evidence to choose the experimental capability owner.
+  Do not assume in advance that it belongs inside
+  `project-context-management`.
+- Package the selected reference, templates, and any supporting scripts as one
+  versioned optional capability.
+- Update source and runtime inventories through their existing owners.
+- Validate a clean installation, an upgrade from the previously accepted Kit,
+  complete installed inventory, ordinary-failure rollback, and interrupted
+  installation recovery in isolated paths.
+- Keep source acceptance separate from installation into a live Hermes
+  runtime.
+
+### Increment 6 — Existing-project adoption pilot
+
+Create this Task only after the installable candidate is accepted.
+
+- Select one existing project through its explicit project identity and
+  accepted Context Kit pin.
+- Create the project-owned adoption Task and update only that project's
+  manifest, runtime routing, and native validation that are required for the
+  advisory capability.
+- Exercise one real bounded Task through recovery, contract freeze, review,
+  validation, and candidate completion without relying on conversation
+  history.
+- Record incompatibilities as evidence; do not patch the consumer by copying
+  or vendoring Context Kit source.
+- Submit the consumer change as its own pull request and stop until it is
+  accepted.
+
+### Increment 7 — Multi-repository acceptance
+
+Create this Task only after the pilot consumer pull request is accepted.
+
+- Create or update a System Task in the integration repository.
+- Record exact accepted component revisions and advance the component lock
+  only after source review and consumer validation.
+- Run clean-checkout, cross-component, and recovery validation against the
+  exact locked graph.
+- Keep source acceptance, integration verification, deployment applicability,
+  and actual deployment as separate facts.
+- Submit the integration-state change as its own pull request and stop until
+  it is accepted.
+
+### Increment 8 — Live Hermes installation and verification
+
+Create this Deployment Task only after the integration repository accepts the
+exact toolset revision.
+
+- Use the approved operator installation route; do not treat source merge or a
+  component-lock update as runtime installation.
+- Verify the installed package manifest, exact Kit revision, complete runtime
+  inventory, capability discovery, workspace routing, and readiness from the
+  live runtime boundary.
+- Exercise the documented rollback or recovery route before declaring the
+  installation operationally accepted when the Task scope requires it.
+- Record deployment and rollback evidence in the integration repository
+  without storing credentials or live secret values.
+- Submit the resulting deployment evidence and state transition as a separate
+  pull request and stop until it is accepted.
+
+### Increment 9 — Phase 1 evidence decision
+
+Create this Task only after the installation and existing-project adoption
+increments are accepted.
+
+- Compare the repository dogfood, installability, existing-project adoption,
+  integration, and runtime evidence against the stated Phase 1 readiness
+  criteria.
 - Decide whether more dogfood is needed.
 - If the workflow is stable, propose the canonical owner and exact protocol
   patch through the applicable maintenance process.
@@ -137,7 +208,7 @@ Create this Task only after Increment 4 is accepted.
 
 ### Conditional Phase 2 increments
 
-Do not create these Tasks until Increment 5 concludes that Phase 1 evidence is
+Do not create these Tasks until Increment 9 concludes that Phase 1 evidence is
 sufficient:
 
 1. Freeze a machine-readable ledger schema.
@@ -158,4 +229,3 @@ For every increment:
    same pull request.
 5. Notify the user that review is ready.
 6. Stop. Do not begin the next Task until the user merges the pull request.
-

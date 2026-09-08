@@ -1,7 +1,7 @@
 # TASK-011: Dogfood the Advisory Governance Contract
 
 Status: In Progress
-Delivery Stage: Plan
+Delivery Stage: Initial Audit
 Governance: Required
 Priority: High
 
@@ -66,11 +66,12 @@ Ledger: `tasks/evidence/TASK-011/review.md`
 
 - Closed Capability Gate 0 and dispositioned the final-SHA self-reference
   limitation.
+- Added experimental capability-audit and review-ledger templates.
+- Corrected the advisory contract to use external exact-head Final Audit
+  evidence.
 
 ## Remaining
 
-- Add the two experimental evidence templates.
-- Correct the advisory contract's Final Audit evidence boundary.
 - Run Initial Audit, fix any blocking findings, and validate the candidate.
 - Prepare the exact pull-request head for external Final Audit.
 
@@ -88,6 +89,5 @@ None.
 
 ## Next Step
 
-Freeze this Task contract, then add the experimental evidence templates and
-run Initial Audit against the resulting candidate.
-
+Run Initial Audit against the implementation candidate and record all findings
+before making review-driven changes.

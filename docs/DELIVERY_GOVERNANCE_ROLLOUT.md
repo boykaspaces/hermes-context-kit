@@ -103,7 +103,7 @@ Owned by `TASK-010`.
 
 ### Increment 3 — First manual dogfood cycle
 
-Create this Task only after Increment 2 is accepted.
+Owned by `TASK-011`.
 
 - Apply the advisory contract to one bounded repository change.
 - Exercise Initial Audit, finding disposition, focused fixes, Delta Review,

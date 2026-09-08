@@ -16,6 +16,7 @@ None.
 
 | ID / File | Status | Title | Read when |
 |---|---|---|---|
+| [`TASK-012`](./TASK-012.md) | Completed | Validate GitHub review evidence semantics | Auditing exact-head checks, mutable review records, policy enforcement, or bypass limits |
 | [`TASK-011`](./TASK-011.md) | Completed | Dogfood the advisory governance contract | Reviewing the first manual governance cycle and exact-head evidence boundary |
 | [`TASK-010`](./TASK-010.md) | Completed | Define the advisory delivery governance contract | Executing or reviewing the experimental manual governance rules |
 | [`TASK-009`](./TASK-009.md) | Completed | Add installation and adoption gates to the rollout | Reviewing installability, consumer adoption, integration, or runtime rollout stages |

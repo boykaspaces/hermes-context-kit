@@ -114,7 +114,7 @@ Owned by `TASK-011`.
 
 ### Increment 4 — Platform-dependent dogfood cycle
 
-Create this Task only after Increment 3 is accepted.
+Owned by `TASK-012`.
 
 - Use a change whose correctness depends on a real platform or workflow
   primitive.

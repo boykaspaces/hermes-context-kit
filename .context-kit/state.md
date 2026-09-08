@@ -16,12 +16,14 @@ existing-project adoption, multi-repository acceptance, and live runtime
 verification. This repository enables the advisory manual contract as an
 experimental extension. Its first manual dogfood candidate adds Task-linked
 evidence templates and moves exact-head Final Audit evidence to the workflow
-boundary; no core protocol or automation is enabled.
+boundary. Its GitHub platform audit now separates exact-SHA binding from
+mutable comments, reviewer independence, policy enforcement, and configured
+bypass; no core protocol or automation is enabled.
 
 ## Primary focus
 
-After the TASK-011 candidate is accepted, begin the platform-dependent dogfood
-cycle only through a new Task and pull request.
+After the TASK-012 candidate is accepted, begin the installable-toolset
+candidate only through a new Task and pull request.
 
 ## Active constraints
 

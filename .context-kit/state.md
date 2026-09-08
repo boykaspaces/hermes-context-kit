@@ -13,14 +13,15 @@ SOUL remains optional and user-controlled. AI delivery governance has passed a
 minimum documentation-only feasibility check and now has a sequential,
 merge-gated experimental rollout covering source design, toolset installation,
 existing-project adoption, multi-repository acceptance, and live runtime
-verification. This repository now enables the advisory manual contract as an
-experimental extension; no core protocol or automation is enabled.
+verification. This repository enables the advisory manual contract as an
+experimental extension. Its first manual dogfood candidate adds Task-linked
+evidence templates and moves exact-head Final Audit evidence to the workflow
+boundary; no core protocol or automation is enabled.
 
 ## Primary focus
 
-Keep 0.5.0 consumer acceptance and runtime deployment independent. After the
-advisory-contract proposal is accepted, run the first manual dogfood cycle only
-through a new Task and pull request.
+After the TASK-011 candidate is accepted, begin the platform-dependent dogfood
+cycle only through a new Task and pull request.
 
 ## Active constraints
 

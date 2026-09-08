@@ -69,6 +69,7 @@ Matrix: tasks/evidence/TASK-NNN/capability.md
 ## Review
 
 Ledger: tasks/evidence/TASK-NNN/review.md
+Final Audit: External exact-head workflow evidence
 ```
 
 Acceptance Criteria describe observable results. Out of Scope prevents a
@@ -209,9 +210,9 @@ The Phase 1 Markdown ledger records at least:
 Task
 Contract Revision
 Initial Audit Base Revision
-Candidate Revision
-Validated Revision
-Final Audit Revision
+Candidate Binding
+Validation Target
+Final Audit Evidence
 Review Mode
 Findings
 Gate Summary
@@ -222,11 +223,19 @@ disposition, status, and observed candidate revision. Origin is `Baseline`,
 `Late Discovery`, or `Regression`; a Regression also identifies the fix or
 revision that introduced it.
 
-Initial and Delta review may inspect declared dirty working state, but Final
-Audit and readiness require an exact full commit SHA. Any later candidate
-change invalidates affected validation, verified findings, and Final Audit.
-Re-run only the evidence whose scope intersects the change, then bind the new
-result to the new candidate revision.
+Initial and Delta review may inspect declared dirty working state. An in-repo
+ledger cannot embed the SHA of the commit containing that exact ledger content:
+writing the SHA changes the tree and therefore the commit identity. The ledger
+therefore records the configured candidate binding, while durable external
+workflow evidence records the exact full pull-request head reviewed by Final
+Audit.
+
+Final Audit and readiness require that exact external head identity. No
+candidate mutation is allowed after Final Audit. Any later push invalidates
+affected validation, verified findings, and Final Audit. Re-run only the
+evidence whose scope intersects the change, then review the new exact head. If
+the workflow cannot expose an immutable candidate identity and durable review
+evidence, readiness is `Incomplete` rather than assumed.
 
 ## Convergent Review Loop
 
@@ -259,8 +268,8 @@ Acceptance Criteria satisfied
 Remaining empty or explicitly outside scope
 Blockers empty
 Open P0/P1 findings = 0
-Required validation passes for the exact candidate revision
-Final Audit passes for the exact candidate revision
+Required validation passes for the exact workflow candidate revision
+Final Audit passes for that exact revision in durable workflow evidence
 ```
 
 The candidate may contain the complete `Status: Completed` transition and all
@@ -283,4 +292,3 @@ This advisory version does not provide:
 
 Every rollout increment remains one bounded Task and pull request. Notify the
 user when review is ready and stop until that pull request is accepted.
-

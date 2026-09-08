@@ -2,7 +2,7 @@
 
 Project: hermes-context-kit
 Status: Active
-Active Task: None
+Active Task: TASK-012
 
 ## Current summary
 
@@ -16,12 +16,13 @@ existing-project adoption, multi-repository acceptance, and live runtime
 verification. This repository enables the advisory manual contract as an
 experimental extension. Its first manual dogfood candidate adds Task-linked
 evidence templates and moves exact-head Final Audit evidence to the workflow
-boundary; no core protocol or automation is enabled.
+boundary. TASK-012 is auditing the real GitHub evidence and bypass semantics;
+no core protocol or automation is enabled.
 
 ## Primary focus
 
-After the TASK-011 candidate is accepted, begin the platform-dependent dogfood
-cycle only through a new Task and pull request.
+Complete the bounded TASK-012 GitHub evidence audit, then stop at its pull
+request for user review and acceptance.
 
 ## Active constraints
 

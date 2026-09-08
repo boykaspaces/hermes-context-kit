@@ -2,7 +2,9 @@
 
 ## In Progress
 
-None.
+| ID / File | Status | Title | Read when |
+|---|---|---|---|
+| [`TASK-012`](./TASK-012.md) | In Progress | Validate GitHub review evidence semantics | Continuing the platform-dependent governance dogfood cycle |
 
 ## Blocked
 

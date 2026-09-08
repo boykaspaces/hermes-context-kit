@@ -16,6 +16,7 @@ None.
 
 | ID / File | Status | Title | Read when |
 |---|---|---|---|
+| [`TASK-009`](./TASK-009.md) | Completed | Add installation and adoption gates to the rollout | Reviewing installability, consumer adoption, integration, or runtime rollout stages |
 | [`TASK-008`](./TASK-008.md) | Completed | Validate AI delivery governance feasibility | Reviewing the feasibility result or staged rollout boundary |
 | [`TASK-007`](./TASK-007.md) | Completed | Make Hermes runtime installation transactional | Auditing Hermes runtime package installation, inventory boundaries, or rollback |
 | [`TASK-006`](./TASK-006.md) | Completed | Make Hermes adoption Skill-first | Auditing Hermes cold-start installation or optional SOUL reinforcement |

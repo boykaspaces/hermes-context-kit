@@ -826,7 +826,12 @@ def parser() -> argparse.ArgumentParser:
     configure.add_argument(
         "--capability",
         action="append",
-        choices=["project-context", "skill-authoring", "multi-repo"],
+        choices=[
+            "project-context",
+            "delivery-governance",
+            "skill-authoring",
+            "multi-repo",
+        ],
         default=[],
     )
     configure.add_argument(

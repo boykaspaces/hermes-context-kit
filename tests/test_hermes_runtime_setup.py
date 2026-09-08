@@ -83,15 +83,35 @@ class HermesRuntimeSetupTest(unittest.TestCase):
             setup.selected_skills(self.config, self.contract),
             ["project-context-management"],
         )
-        self.config["capabilities"].extend(["skill-authoring", "multi-repo"])
+        self.config["capabilities"].extend(
+            ["delivery-governance", "skill-authoring", "multi-repo"]
+        )
         self.assertEqual(
             setup.selected_skills(self.config, self.contract),
             [
                 "project-context-management",
+                "ai-delivery-governance",
                 "skill-authoring",
                 "multi-repo-system-management",
             ],
         )
+
+    def test_delivery_governance_inventory_is_complete(self) -> None:
+        self.config["capabilities"].append("delivery-governance")
+        plan = setup.build_plan(self.config, self.contract)
+        skill = next(
+            item for item in plan["skills"] if item["name"] == "ai-delivery-governance"
+        )
+        self.assertEqual(
+            set(skill["runtime_inventory"]),
+            {
+                "SKILL.md",
+                "references/delivery-cycle.md",
+                "templates/capability-audit.md",
+                "templates/review-ledger.md",
+            },
+        )
+        self.assertEqual(skill["source_validation_inventory"], {})
 
     def test_configuration_requires_project_context_and_full_revision(self) -> None:
         invalid = dict(self.config)
@@ -102,6 +122,20 @@ class HermesRuntimeSetupTest(unittest.TestCase):
         invalid["source_revision"] = "main"
         with self.assertRaisesRegex(setup.SetupError, "full lowercase"):
             setup.load_config_from_data(invalid, self.contract, label="test")
+
+    def test_configure_parser_accepts_delivery_governance(self) -> None:
+        args = setup.parser().parse_args(
+            [
+                "configure",
+                "--output",
+                "/tmp/context-kit-hermes.json",
+                "--workspace-id",
+                "test-hermes",
+                "--capability",
+                "delivery-governance",
+            ]
+        )
+        self.assertEqual(args.capability, ["delivery-governance"])
 
     def test_plan_contains_exact_inventory_and_never_requires_soul(self) -> None:
         plan = setup.build_plan(self.config, self.contract)
@@ -184,6 +218,73 @@ class HermesRuntimeSetupTest(unittest.TestCase):
             (Path(plan["skills"][1]["target"]) / "tests").exists()
         )
 
+    def test_delivery_governance_capability_expands_ready_package(self) -> None:
+        base_plan = setup.build_plan(self.config, self.contract)
+        setup.install_runtime(base_plan, apply=True)
+        restored = setup.verify_runtime(base_plan)
+        self.assertTrue(restored["ready"], restored["problems"])
+
+        expanded_config = copy.deepcopy(self.config)
+        expanded_config["capabilities"].append("delivery-governance")
+        expanded_plan = setup.build_plan(expanded_config, self.contract)
+        actions = setup.install_runtime(expanded_plan, apply=True)
+        self.assertTrue(
+            any("identical: unchanged" in action for action in actions), actions
+        )
+        self.assertTrue(
+            any(
+                "fresh: install" in action and "ai-delivery-governance" in action
+                for action in actions
+            ),
+            actions,
+        )
+        result = setup.verify_runtime(expanded_plan)
+        self.assertTrue(result["ready"], result["problems"])
+        manifest = json.loads(
+            Path(expanded_plan["installation"]["manifest"]).read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            manifest["capabilities"],
+            ["project-context", "delivery-governance"],
+        )
+        installed = (
+            Path(expanded_plan["paths"]["skill_root"]) / "ai-delivery-governance"
+        )
+        self.assertTrue((installed / "references/delivery-cycle.md").is_file())
+        self.assertTrue((installed / "templates/review-ledger.md").is_file())
+
+    def test_delivery_governance_upgrade_failure_restores_ready_base(self) -> None:
+        base_plan = setup.build_plan(self.config, self.contract)
+        setup.install_runtime(base_plan, apply=True)
+        manifest_path = Path(base_plan["installation"]["manifest"])
+        previous_manifest = manifest_path.read_text(encoding="utf-8")
+
+        expanded_config = copy.deepcopy(self.config)
+        expanded_config["capabilities"].append("delivery-governance")
+        expanded_plan = setup.build_plan(expanded_config, self.contract)
+        original_workspace = setup.configure_workspace
+
+        def fail_after_activation(candidate, *, apply):
+            if apply:
+                raise setup.SetupError("injected governance upgrade failure")
+            return original_workspace(candidate, apply=False)
+
+        with mock.patch.object(
+            setup, "configure_workspace", side_effect=fail_after_activation
+        ):
+            with self.assertRaisesRegex(setup.SetupError, "rolled back"):
+                setup.install_runtime(expanded_plan, apply=True)
+
+        self.assertEqual(
+            manifest_path.read_text(encoding="utf-8"), previous_manifest
+        )
+        governance_target = (
+            Path(expanded_plan["paths"]["skill_root"]) / "ai-delivery-governance"
+        )
+        self.assertFalse(governance_target.exists())
+        restored = setup.verify_runtime(base_plan)
+        self.assertTrue(restored["ready"], restored["problems"])
+
     def test_install_classifies_fresh_identical_and_unexpected_files(self) -> None:
         plan = setup.build_plan(self.config, self.contract)
         actions, _ = setup.classify_install(plan, replace=False)
@@ -246,6 +347,7 @@ class HermesRuntimeSetupTest(unittest.TestCase):
         self.assertEqual(result["install_state"], "incomplete")
 
     def test_interrupted_transaction_blocks_install_until_rollback(self) -> None:
+        self.config["capabilities"].append("delivery-governance")
         plan = setup.build_plan(self.config, self.contract)
         setup.install_runtime(plan, apply=True)
         manifest_path = Path(plan["installation"]["manifest"])
@@ -262,6 +364,7 @@ class HermesRuntimeSetupTest(unittest.TestCase):
         self.assertFalse(setup.verify_runtime(plan)["ready"])
         setup.rollback_runtime(plan, apply=True)
         self.assertFalse(Path(plan["skills"][0]["target"]).exists())
+        self.assertFalse(Path(plan["skills"][1]["target"]).exists())
 
     def test_tampered_transaction_paths_are_not_rolled_back(self) -> None:
         plan = setup.build_plan(self.config, self.contract)
@@ -329,6 +432,10 @@ class HermesRuntimeSetupTest(unittest.TestCase):
             (adapter / "templates" / "runtime-config.example.json").read_text()
         )
         self.assertEqual(schema["properties"]["schema_version"]["const"], 1)
+        self.assertIn(
+            "delivery-governance",
+            schema["properties"]["capabilities"]["items"]["enum"],
+        )
         self.assertEqual(example["soul_preference"], "offer")
 
 

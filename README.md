@@ -32,6 +32,10 @@ coordination, and reusable Skill authoring.
 4. Initialize, then run `python3 scripts/context_kit.py validate --root <project>`.
 5. Select only the runtime adapters and Skills needed by the consumer.
 
+The experimental `delivery-governance` capability is optional. Installing its
+Skill makes the procedure available but does not enroll a project; adoption
+still requires explicit manifest metadata and a governed current Task.
+
 For a first Hermes installation, go directly to the
 [`Skill-first setup`](./adapters/runtime/hermes/README.md#skill-first-setup).
 The supported operator route installs the selected Skills as one journaled

@@ -75,6 +75,7 @@ agent runtime's supported Skill mechanism:
 | Capability | Skill | Selection |
 |---|---|---|
 | Durable project context | `project-context-management` | Required for Context Kit operations |
+| Advisory AI delivery governance | `ai-delivery-governance` | Optional runtime preparation; actual loading requires explicit project-manifest and current-Task adoption |
 | Reusable Skill creation or maintenance | `skill-authoring` | Optional; authoring-time only |
 | System Tasks and cross-repository delivery | `multi-repo-system-management` | Required only for multi-repository coordination |
 

@@ -130,7 +130,7 @@ it. Source completion alone is not sufficient consumer evidence.
 
 ### Increment 5 — Installable toolset candidate
 
-Create this Task only after the two manual dogfood increments are accepted.
+Owned by `TASK-013` after both manual dogfood increments were accepted.
 
 - Use the accumulated evidence to choose the experimental capability owner.
   Do not assume in advance that it belongs inside

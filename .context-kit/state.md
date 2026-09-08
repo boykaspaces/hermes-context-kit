@@ -18,12 +18,15 @@ experimental extension. Its first manual dogfood candidate adds Task-linked
 evidence templates and moves exact-head Final Audit evidence to the workflow
 boundary. Its GitHub platform audit now separates exact-SHA binding from
 mutable comments, reviewer independence, policy enforcement, and configured
-bypass; no core protocol or automation is enabled.
+bypass. The proven manual contract is now packaged as the independent,
+versioned optional `ai-delivery-governance` Skill and is selectable through the
+existing Hermes transactional installer; no core protocol or automation is
+enabled.
 
 ## Primary focus
 
-After the TASK-012 candidate is accepted, begin the installable-toolset
-candidate only through a new Task and pull request.
+After the TASK-013 candidate is accepted, begin the existing-project adoption
+pilot only through a new project-owned Task and pull request.
 
 ## Active constraints
 

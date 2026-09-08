@@ -16,6 +16,7 @@ None.
 
 | ID / File | Status | Title | Read when |
 |---|---|---|---|
+| [`TASK-013`](./TASK-013.md) | Completed | Package advisory governance as an installable toolset | Installing or auditing the optional governance capability |
 | [`TASK-012`](./TASK-012.md) | Completed | Validate GitHub review evidence semantics | Auditing exact-head checks, mutable review records, policy enforcement, or bypass limits |
 | [`TASK-011`](./TASK-011.md) | Completed | Dogfood the advisory governance contract | Reviewing the first manual governance cycle and exact-head evidence boundary |
 | [`TASK-010`](./TASK-010.md) | Completed | Define the advisory delivery governance contract | Executing or reviewing the experimental manual governance rules |

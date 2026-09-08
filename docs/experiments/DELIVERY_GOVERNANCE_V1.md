@@ -160,9 +160,11 @@ Status, progress, blockers, and Next Step; evidence files do not duplicate
 that narrative state.
 
 An evidence claim identifies a stable repository-relative file, immutable
-revision, authoritative source, or durable external URL. A prose summary alone
-does not prove a state transition. Never store credentials, tokens, private
-keys, secret values, or authority-bearing material in evidence.
+revision, authoritative source, or retrievable external URL. A stable URL does
+not make its target immutable: record the evidence kind, mutability, retention
+boundary, and relevant authority. A prose summary alone does not prove a state
+transition. Never store credentials, tokens, private keys, secret values, or
+authority-bearing material in evidence.
 
 ## Review Boundary
 
@@ -213,6 +215,9 @@ Initial Audit Base Revision
 Candidate Binding
 Validation Target
 Final Audit Evidence
+Evidence Kind and Mutability
+Reviewer Identity or Independence Claim
+Enforcement and Bypass Boundary
 Review Mode
 Findings
 Gate Summary
@@ -226,16 +231,19 @@ revision that introduced it.
 Initial and Delta review may inspect declared dirty working state. An in-repo
 ledger cannot embed the SHA of the commit containing that exact ledger content:
 writing the SHA changes the tree and therefore the commit identity. The ledger
-therefore records the configured candidate binding, while durable external
-workflow evidence records the exact full pull-request head reviewed by Final
-Audit.
+therefore records the configured candidate binding, while an external workflow
+record identifies the exact full pull-request head reviewed by Final Audit.
+The record must disclose whether it is a mutable comment, submitted review,
+required check, attestation, or another mechanism; exact-SHA binding does not
+by itself prove immutability, reviewer independence, or enforcement.
 
 Final Audit and readiness require that exact external head identity. No
 candidate mutation is allowed after Final Audit. Any later push invalidates
 affected validation, verified findings, and Final Audit. Re-run only the
 evidence whose scope intersects the change, then review the new exact head. If
-the workflow cannot expose an immutable candidate identity and durable review
-evidence, readiness is `Incomplete` rather than assumed.
+the workflow cannot expose an immutable candidate identity and a retrievable
+review record with known enforcement and mutability boundaries, readiness is
+`Incomplete` rather than assumed.
 
 ## Convergent Review Loop
 
@@ -269,7 +277,8 @@ Remaining empty or explicitly outside scope
 Blockers empty
 Open P0/P1 findings = 0
 Required validation passes for the exact workflow candidate revision
-Final Audit passes for that exact revision in durable workflow evidence
+Final Audit records a pass for that exact revision with disclosed evidence,
+identity, mutability, enforcement, and bypass boundaries
 ```
 
 The candidate may contain the complete `Status: Completed` transition and all

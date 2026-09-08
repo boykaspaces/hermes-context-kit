@@ -1,7 +1,7 @@
 # TASK-012: Validate GitHub Review Evidence Semantics
 
 Status: In Progress
-Delivery Stage: Plan
+Delivery Stage: Initial Audit
 Governance: Required
 Priority: High
 
@@ -68,11 +68,12 @@ Ledger: `tasks/evidence/TASK-012/review.md`
 
 - Closed Capability Gate 0 against the live GitHub repository boundary.
 - Identified one late Capability Miss from TASK-011.
+- Corrected the advisory evidence language to separate exact identity,
+  mutability, independence, enforcement, and bypass.
+- Added the GitHub adapter's delivery-governance evidence mapping.
 
 ## Remaining
 
-- Correct the advisory governance and template evidence language.
-- Add the GitHub adapter's delivery-governance evidence mapping.
 - Run Initial Audit, Delta Review if needed, and exact-head validation.
 
 ## Blockers
@@ -89,6 +90,5 @@ None.
 
 ## Next Step
 
-Freeze this Task contract, then correct the GitHub evidence mapping and run
-Initial Audit against the implementation candidate.
-
+Run Initial Audit against the implementation candidate and record all findings
+before any review-driven change.

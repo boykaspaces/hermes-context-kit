@@ -1,5 +1,11 @@
 {
-  "extensions": {},
+  "extensions": {
+    "delivery-governance": {
+      "mode": "advisory",
+      "reference": "docs/experiments/DELIVERY_GOVERNANCE_V1.md",
+      "version": 1
+    }
+  },
   "features": [
     "tasks",
     "decisions",

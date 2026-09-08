@@ -16,6 +16,7 @@ None.
 
 | ID / File | Status | Title | Read when |
 |---|---|---|---|
+| [`TASK-010`](./TASK-010.md) | Completed | Define the advisory delivery governance contract | Executing or reviewing the experimental manual governance rules |
 | [`TASK-009`](./TASK-009.md) | Completed | Add installation and adoption gates to the rollout | Reviewing installability, consumer adoption, integration, or runtime rollout stages |
 | [`TASK-008`](./TASK-008.md) | Completed | Validate AI delivery governance feasibility | Reviewing the feasibility result or staged rollout boundary |
 | [`TASK-007`](./TASK-007.md) | Completed | Make Hermes runtime installation transactional | Auditing Hermes runtime package installation, inventory boundaries, or rollback |

@@ -31,6 +31,7 @@ Status: Current index
 | `templates/project-context/` | Neutral v2 project skeleton | Bootstrapping a project |
 | `docs/ADOPTION.md` | Installation and runtime verification | Adopting the kit |
 | `docs/DELIVERY_GOVERNANCE_ROLLOUT.md` | Non-normative feasibility evidence, corrected semantics, and sequential rollout | Reviewing or continuing the delivery-governance experiment |
+| `docs/experiments/DELIVERY_GOVERNANCE_V1.md` | Optional advisory delivery Task contract and review workflow | A Task explicitly opts into the governance experiment |
 | `docs/ARCHITECTURE.md` | Ownership and retrieval model | Understanding the design |
 | `docs/SECURITY.md` | Trust and publication boundaries | Reviewing risk |
 | `scripts/validate.sh` | Static repository checks | Validating changes |

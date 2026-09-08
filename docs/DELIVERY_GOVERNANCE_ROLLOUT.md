@@ -91,7 +91,7 @@ Owned by `TASK-008`.
 
 ### Increment 2 — Advisory manual contract
 
-Create the next Task only after Increment 1 is accepted.
+Owned by `TASK-010`.
 
 - Add one concise, explicitly experimental delivery-governance reference.
 - Enable advisory adoption for this repository through manifest extension

@@ -1,7 +1,6 @@
 # TASK-012: Validate GitHub Review Evidence Semantics
 
-Status: In Progress
-Delivery Stage: Initial Audit
+Status: Completed
 Governance: Required
 Priority: High
 
@@ -71,14 +70,30 @@ Ledger: `tasks/evidence/TASK-012/review.md`
 - Corrected the advisory evidence language to separate exact identity,
   mutability, independence, enforcement, and bypass.
 - Added the GitHub adapter's delivery-governance evidence mapping.
+- Completed Initial Audit with one P1 matrix-enum finding and one P3 formatting
+  finding.
+- Resolved R-001 and R-002 without expanding the reviewed implementation.
+- Delta Review verified both findings without a regression.
+- Passed the complete repository validation after the reviewed fixes.
+- Prepared an exact-head Final Audit record with explicit mutability,
+  independence, enforcement, and bypass boundaries.
 
 ## Remaining
 
-- Run Initial Audit, Delta Review if needed, and exact-head validation.
+None.
 
 ## Blockers
 
 None.
+
+## Result
+
+The GitHub platform audit preserved exact PR-head and check-run SHA binding but
+removed stronger unsupported claims. Pull-request comments are now classified
+as mutable advisory records, review enforcement is repository-policy-specific,
+and configured bypass and reviewer independence are reported separately. One
+Capability Miss, one P1 finding, and one P3 finding were recorded without
+rewriting accepted historical evidence.
 
 ## Relevant Files
 
@@ -90,5 +105,5 @@ None.
 
 ## Next Step
 
-Run Initial Audit against the implementation candidate and record all findings
-before any review-driven change.
+None for TASK-012. After this proposal is accepted, create a new Task for the
+installable toolset candidate described as Increment 5 in the rollout plan.

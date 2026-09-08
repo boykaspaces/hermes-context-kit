@@ -21,7 +21,7 @@ Gate Result: Pass
 | CAP-1 | A GitHub pull request exposes its exact candidate commit | Pull request `head.sha` | PR #10 API returned `cd09d4f59d1d2fc1d56f137043430f80d8ce6dae` | Mutable branch name without resolving head | Supported | Keep |
 | CAP-2 | Check runs identify the exact commit they validated | Check Run `head_sha` | All three PR #10 check runs returned the same full candidate SHA | Reading only a check name or latest branch run | Supported | Keep |
 | CAP-3 | A pull-request comment is immutable trusted Final Audit evidence | Immutable append-only review record | GitHub permits authorized users to edit, hide, or delete comments | Post-audit comment mutation or deletion | Unsupported | Reduce Contract |
-| CAP-4 | A new push invalidates approvals before merge | Stale-review policy enforced without bypass | `protect-main` enables `dismiss_stale_reviews_on_push` and one required approval | Administrative bypass actor or different repository policy | Supported only inside the non-bypass policy boundary | Reduce Contract |
+| CAP-4 | For actors subject to `protect-main`, a new push dismisses stale approval before merge | Stale-review policy enforced without bypass | `protect-main` enables `dismiss_stale_reviews_on_push` and one required approval | Administrative bypass actor or different repository policy | Supported | Reduce Contract |
 | CAP-5 | The observed Final Audit was independently approved through GitHub review | A distinct authorized reviewer and submitted approval review | PR #10 had no submitted reviews; its audit comment used the contributor identity | Same identity and administrator bypass | Unsupported | Reduce Contract |
 
 ## Evidence
@@ -67,4 +67,3 @@ PASS — exact-head identity and check binding are supported. Unsupported
 immutability, independence, and universal enforcement claims were removed from
 the Task contract before implementation. No retained required guarantee is
 Unknown.
-

@@ -5,7 +5,7 @@
     "decisions",
     "checkpoints"
   ],
-  "kit_version": "0.3.0",
+  "kit_version": "0.4.0",
   "profile": "repository",
   "runtime_adapters": [
     {

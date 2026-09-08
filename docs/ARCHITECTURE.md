@@ -29,8 +29,8 @@ behavior.
 ## Ownership layers
 
 ```text
-runtime adapter binding
-  -> instruction entry point, workspace identity, and Skill installation
+runtime adapter contract + consumer configuration
+  -> required runtime entry points, workspace identity, and Skill installation
 Skill SKILL.md
   -> trigger, guards, and operation routing
 Skill reference
@@ -82,6 +82,7 @@ another proposal is not required merely to record the acceptance event.
 This repository owns reusable specifications, sources, profiles, schemas,
 templates, adapters, and fixtures. A consuming project owns its adoption
 manifest, extensions, current state, and native validation. A consuming
-runtime owns its instruction entry points, workspace identity, registry,
-installed Skill copies, and permissions. Synchronization between repository,
-project, and runtime is a separate reviewed action.
+runtime owns its required entry points, optional standing instructions,
+workspace identity, registry, installed Skill copies, and permissions.
+Synchronization between repository, project, and runtime is a separate
+reviewed action.

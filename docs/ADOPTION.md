@@ -72,16 +72,24 @@ The checkout is the release source; it is not automatically the runtime Skill
 directory. Install only the required Skill directories through the consuming
 agent runtime's supported Skill mechanism:
 
-```text
-skills/project-context-management/
-skills/skill-authoring/
-skills/multi-repo-system-management/   # multi-repo profile only
-```
+| Capability | Skill | Selection |
+|---|---|---|
+| Durable project context | `project-context-management` | Required for Context Kit operations |
+| Reusable Skill creation or maintenance | `skill-authoring` | Optional; authoring-time only |
+| System Tasks and cross-repository delivery | `multi-repo-system-management` | Required only for multi-repository coordination |
 
 Preserve each directory without flattening it. Record the exact Context Kit
 release, verify the installed file inventory, and keep the previous immutable
 version available for rollback. Do not infer a runtime Skill path from a
-container home directory or copy Skills into the project root.
+container home directory or copy Skills into the project root. A runtime
+adapter must define a complete installation plan and a verification route; an
+operator-private repository must not be required to discover those inputs.
+
+For Hermes, follow the adapter's
+[`Sixty-second Skill-first setup`](../adapters/runtime/hermes/README.md#sixty-second-skill-first-setup).
+It fixes the solution paths, selects Skills by capability, validates the exact
+source revision and inventory, and reports missing host authority as a specific
+Pending user action.
 
 ## Optional deployment workspace
 
@@ -95,6 +103,19 @@ This deployment layer is optional. Repository-local adoption and validation do
 not depend on a global registry, a particular home directory, cloud provider,
 or private operations repository.
 
+## Optional runtime instructions
+
+Runtime identity or standing-instruction files are not a prerequisite for
+Context Kit. Correctness, safety guards, and lifecycle behavior must remain in
+the installed Skills, public adapter contract, or project artifacts.
+
+An adapter may offer an optional reinforcement fragment after Skill
+verification. It must show the proposed content and application method, leave
+the choice to the user, preserve unrelated existing content, and report a
+declined or absent optional fragment without marking runtime adoption
+Incomplete. The [Hermes SOUL method](../adapters/runtime/hermes/README.md#optional-soul-reinforcement)
+is the reference implementation.
+
 ## Acceptance
 
 Before treating a release as adopted:
@@ -105,8 +126,9 @@ Before treating a release as adopted:
 4. run the consumer's native build/test validation;
 5. for multi-repository projects, verify exact component revisions and System
    Task relationships using accessible component roots or reviewed Handoffs.
-6. verify each selected runtime adapter's instruction entry point and one
-   runtime-specific failure path.
+6. verify each selected runtime adapter's required Skill discovery or runtime
+   entry point and one runtime-specific failure path; optional standing
+   instructions are verified only when the user chose to apply them.
 
 An inaccessible repository is not checked and must never be reported as
 passed.

@@ -1,14 +1,9 @@
 {
-  "description": "Bind Context Kit to a Hermes deployment contract.",
+  "description": "Install and verify Context Kit Skills for the fixed Hermes solution contract; SOUL reinforcement is optional.",
   "kind": "runtime",
   "name": "hermes",
-  "operator_templates": [
-    {
-      "source": "templates/SOUL.project-context.example.md",
-      "target": "SOUL.md"
-    }
-  ],
+  "operator_templates": [],
   "project_templates": [],
   "schema_version": 1,
-  "version": 1
+  "version": 2
 }

@@ -6,16 +6,15 @@ Active Task: None
 
 ## Current summary
 
-Context Kit 0.3.0 defines a v2 runtime-neutral core under `.context-kit/`,
+Context Kit 0.4.0 defines a v2 runtime-neutral core under `.context-kit/`,
 versioned Hermes and Codex runtime adapters, a GitHub workflow adapter, and a
-guarded v1-to-v2 migration path. A proposal carries its complete candidate
-state and its acceptance activates that state without a routine follow-up
-proposal.
+guarded v1-to-v2 migration path. Hermes adoption is now self-describing and
+Skill-first; SOUL reinforcement is optional and user-controlled.
 
 ## Primary focus
 
-No active Task. Consumer adoption should start as an explicit multi-repository
-System Task that selects adapters and preserves each consumer's extensions.
+Publish the 0.4.0 candidate and then adopt its accepted revision in consumers
+through their own reviewed integration Tasks.
 
 ## Active constraints
 

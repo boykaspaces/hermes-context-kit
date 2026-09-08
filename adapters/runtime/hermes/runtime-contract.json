@@ -1,0 +1,46 @@
+{
+  "capabilities": {
+    "multi-repo": {
+      "description": "Coordinate System Tasks, component locks, Handoffs, and cross-repository acceptance.",
+      "skills": [
+        "multi-repo-system-management"
+      ]
+    },
+    "project-context": {
+      "description": "Create and maintain durable project state, Tasks, ADRs, Checkpoints, memory, and indexes.",
+      "required": true,
+      "skills": [
+        "project-context-management"
+      ]
+    },
+    "skill-authoring": {
+      "description": "Create, refactor, validate, or maintain reusable Skills.",
+      "skills": [
+        "skill-authoring"
+      ]
+    }
+  },
+  "installation": {
+    "agent_mechanism": "skill_manage",
+    "manifest": "/home/hermes/.hermes/context-kit-install.json",
+    "operator_mechanism": "copy-from-immutable-checkout",
+    "preserve_skill_tree": true
+  },
+  "name": "hermes",
+  "paths": {
+    "hermes_home": "/home/hermes/.hermes",
+    "skill_root": "/home/hermes/.hermes/skills",
+    "soul": "/home/hermes/.hermes/SOUL.md",
+    "workspace_identity": "/workspace/.hermes/WORKSPACE_ID",
+    "workspace_registry": "/workspace/.hermes/WORKSPACES.md",
+    "workspace_root": "/workspace"
+  },
+  "schema_version": 1,
+  "soul": {
+    "default_action": "offer",
+    "managed_block_end": "<!-- context-kit:hermes:end -->",
+    "managed_block_start": "<!-- context-kit:hermes:start -->",
+    "required": false,
+    "template": "templates/SOUL.project-context.example.md"
+  }
+}

@@ -161,16 +161,22 @@ class ContextKitCliTest(unittest.TestCase):
         context_kit.validate_project(self.root)
 
     def test_hermes_adapter_does_not_copy_operator_soul(self) -> None:
-        context_kit.init_project(
-            self.init_args("minimal", runtime_adapter=["hermes"])
-        )
+        output = io.StringIO()
+        with redirect_stdout(output):
+            context_kit.init_project(
+                self.init_args("minimal", runtime_adapter=["hermes"])
+            )
         self.assertFalse((self.root / "SOUL.md").exists())
         manifest = context_kit.load_json(
             self.root / ".context-kit" / "manifest.json"
         )
         self.assertEqual(
-            manifest["runtime_adapters"], [{"name": "hermes", "version": 1}]
+            manifest["runtime_adapters"], [{"name": "hermes", "version": 2}]
         )
+        adapter = context_kit.runtime_adapter_definition("hermes")
+        self.assertEqual(adapter["operator_templates"], [])
+        self.assertIn("Hermes Skill-first setup", output.getvalue())
+        self.assertIn("optional after Skill verification", output.getvalue())
 
     def test_duplicate_runtime_adapter_is_rejected(self) -> None:
         with self.assertRaisesRegex(context_kit.ContextKitError, "must be unique"):

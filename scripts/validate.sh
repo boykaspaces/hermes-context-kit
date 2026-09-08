@@ -81,6 +81,7 @@ RUBY
 python3 "$repo_root/skills/multi-repo-system-management/scripts/validate_multi_repo_context.py" \
   --help >/dev/null
 python3 "$repo_root/scripts/context_kit.py" --help >/dev/null
+python3 "$repo_root/adapters/runtime/hermes/scripts/runtime_setup.py" --help >/dev/null
 python3 -m json.tool \
   "$repo_root/skills/multi-repo-system-management/templates/system-task.json" >/dev/null
 python3 -m json.tool \
@@ -100,6 +101,12 @@ for artifact in "$repo_root"/schemas/*.json "$repo_root"/profiles/*/profile.json
   "$repo_root"/adapters/workflow/*/adapter.json; do
   python3 -m json.tool "$artifact" >/dev/null
 done
+python3 -m json.tool \
+  "$repo_root/adapters/runtime/hermes/runtime-contract.json" >/dev/null
+python3 -m json.tool \
+  "$repo_root/adapters/runtime/hermes/runtime-config.schema.json" >/dev/null
+python3 -m json.tool \
+  "$repo_root/adapters/runtime/hermes/templates/runtime-config.example.json" >/dev/null
 
 if grep -R -n -E '(210122338617|i-[0-9a-f]{8,}|execute-api\.|@gmail\.com|personal-hermes-minimal)' \
   "$repo_root" --exclude-dir='.git' --exclude='validate.sh'; then

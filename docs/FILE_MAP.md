@@ -16,6 +16,8 @@ Status: Current index
 | `schemas/` | Machine-readable adoption, lock, and System Task structures | Implementing or integrating validators |
 | `profiles/` | Required logical artifacts and features for each adoption level | Bootstrapping or upgrading a project |
 | `adapters/` | Runtime and workflow bindings, templates, and integration guidance | Integrating a specific agent or forge |
+| `adapters/runtime/hermes/runtime-contract.json` | Fixed Hermes solution paths, capabilities, installation mechanisms, and optional SOUL policy | Discovering or validating Hermes runtime inputs |
+| `adapters/runtime/hermes/scripts/runtime_setup.py` | Hermes configuration, immutable Skill installation plan, host setup, verification, and optional SOUL method | Adopting Context Kit in Hermes |
 | `skills/README.md` | Skill routing index | Selecting a Skill |
 | `skills/project-context-management/SKILL.md` | Project-context trigger, guards, and operation router | Performing or changing persistent context operations |
 | `skills/project-context-management/references/` | Project lifecycle, indexes, Tasks, ADRs, Checkpoints, memory, consolidation, recovery, and protocol maintenance | Changing one routed project-context domain |

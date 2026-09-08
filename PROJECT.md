@@ -20,6 +20,9 @@ for durable project context and Skill authoring.
 - The matching `skills/<name>/references/` file owns detailed protocol rules.
 - `templates/` owns neutral bootstrap examples, not runtime state.
 - `adapters/` owns runtime- and workflow-specific bindings.
+- `adapters/runtime/<name>/runtime-contract.json` owns a packaged runtime's
+  public fixed paths, required inputs, capability mapping, and optional
+  instruction policy when that adapter supplies one.
 - `docs/FILE_MAP.md` routes maintainers to the owning artifact.
 - `tasks/` and `.context-kit/` own only this public repository's maintenance state.
 

@@ -78,24 +78,30 @@ agent runtime's supported Skill mechanism:
 | Reusable Skill creation or maintenance | `skill-authoring` | Optional; authoring-time only |
 | System Tasks and cross-repository delivery | `multi-repo-system-management` | Required only for multi-repository coordination |
 
-Preserve each directory without flattening it. Record the exact Context Kit
-release, verify the installed file inventory, and keep the previous immutable
-version available for rollback. Do not infer a runtime Skill path from a
-container home directory or copy Skills into the project root. A runtime
-adapter must define a complete installation plan and a verification route; an
-operator-private repository must not be required to discover those inputs.
+Preserve each runtime directory without flattening it. Record the exact Context
+Kit release, distinguish runtime files from source-only validation artifacts,
+verify the installed runtime inventory, and keep the previous immutable version
+available for rollback. Do not infer a runtime Skill path from a container home
+directory or copy Skills into the project root. A runtime adapter must define a
+complete installation plan and a verification route; an operator-private
+repository must not be required to discover those inputs.
 
 For Hermes, follow the adapter's
-[`Sixty-second Skill-first setup`](../adapters/runtime/hermes/README.md#sixty-second-skill-first-setup).
+[`Skill-first setup`](../adapters/runtime/hermes/README.md#skill-first-setup).
 It fixes the solution paths, selects Skills by capability, validates the exact
-source revision and inventory, and reports missing host authority as a specific
-Pending user action.
+source revision and split inventories, and installs the complete selection as a
+journaled operator transaction. Current Hermes `skill_manage` is not a
+supported release transport because it cannot import the immutable checkout
+and cannot make a multi-Skill package atomic. Missing host authority is a
+specific `Pending user` action, not permission to leave a mixed installation.
 
 ## Optional deployment workspace
 
 A long-running runtime may manage several projects through a workspace
-registry. Its selected adapter defines where the operator supplies the
-canonical workspace root, identity marker, registry, and Skill root. See the
+registry. Its selected adapter defines the canonical workspace root, identity
+marker, registry, Skill root, and any installation-source cache. A checkout
+used only as immutable installation source is not a managed project and does
+not need a registry row. See the
 [`Hermes`](../adapters/runtime/hermes/README.md) and
 [`Codex`](../adapters/runtime/codex/README.md) reference adapters.
 

@@ -2,7 +2,7 @@
 
 Use this adapter when Hermes manages Context Kit projects. It is self-contained:
 no private operations repository is required to discover the configuration,
-paths, Skills, or validation steps.
+paths, supported installation mechanism, or validation steps.
 
 ## Contract
 
@@ -13,8 +13,12 @@ adapter contract. The Hermes solution fixes these locations:
 |---|---|
 | Hermes home | `/home/hermes/.hermes` |
 | Global Skills | `/home/hermes/.hermes/skills/<skill-name>/` |
+| Install manifest | `/home/hermes/.hermes/context-kit-install.json` |
+| Install transactions | `/home/hermes/.hermes/context-kit-transactions/` |
 | Global SOUL | `/home/hermes/.hermes/SOUL.md` |
 | Persistent workspace | `/workspace` |
+| Installation source checkout | `/workspace/.context-kit/sources/hermes-context-kit` |
+| Managed projects | `/workspace/projects/<project_id>` |
 | Workspace identity | `/workspace/.hermes/WORKSPACE_ID` |
 | Workspace registry | `/workspace/.hermes/WORKSPACES.md` |
 
@@ -22,10 +26,49 @@ The operator or deployment supplies only a stable `workspace_id`, an immutable
 Context Kit revision, and optional capabilities. The accepted configuration
 shape is defined by [`runtime-config.schema.json`](./runtime-config.schema.json).
 
-## Sixty-second Skill-first setup
+## Checkout placement
 
-Start from a clean Git checkout at a reviewed commit. Generate a configuration
-without guessing the current revision:
+An immutable checkout used only to install Skills is distribution source, not a
+managed project. Put it at the contract's installation source path; it does not
+receive a Workspace Registry row.
+
+A checkout intentionally placed at
+`/workspace/projects/hermes-context-kit` is instead a managed Context Kit
+project. Its repository remains usable if registry approval is pending, but
+project navigation is Incomplete until the user approves its entry in
+`/workspace/.hermes/WORKSPACES.md`.
+
+## Installation support
+
+| Route | Support | Reason |
+|---|---|---|
+| Host operator runs `runtime_setup.py` | Required and supported | Reads the reviewed checkout directly, stages all selected Skills, verifies hashes, and records one package transaction |
+| Agent uses `skill_manage` with model-supplied files | Unsupported for a complete release install | Cannot import an immutable checkout tree; supporting paths are allowlisted; multiple Skills exceed one package-wide atomic call |
+| `skill_view` | Supplemental verification | Confirms discovery and rendered metadata after the operator package is ready |
+
+`skill_manage` remains the correct tool for ordinary Hermes Skill authoring. It
+is not a reliable transport for installing this multi-file release. If Hermes
+later exposes a trusted immutable-tree import operation, a future adapter may
+add a supported Agent route after conformance testing.
+
+## Skill-first setup
+
+Start from a clean Git checkout at a reviewed commit. An installation-only
+checkout belongs at the fixed source-cache path, not below `projects/`:
+
+```sh
+mkdir -p /workspace/.context-kit/sources
+git clone https://github.com/boykaspaces/hermes-context-kit.git \
+  /workspace/.context-kit/sources/hermes-context-kit
+git -C /workspace/.context-kit/sources/hermes-context-kit \
+  checkout <reviewed-commit>
+cd /workspace/.context-kit/sources/hermes-context-kit
+./scripts/validate.sh
+```
+
+If that destination already exists, inspect it and update it through a reviewed
+Git workflow; do not overwrite it or substitute mutable `main` for the selected
+commit. Generate a configuration without guessing the current revision:
 
 ```sh
 python3 adapters/runtime/hermes/scripts/runtime_setup.py configure \
@@ -48,9 +91,12 @@ python3 adapters/runtime/hermes/scripts/runtime_setup.py install \
   --config /tmp/context-kit-hermes.json
 ```
 
-The second command is also a dry-run. If its paths and Skill inventory are
-correct, run the host-side installation as the `hermes` service user (or
-through an operator that preserves that ownership), then verify it:
+The second command is also a dry-run. It classifies every target as `fresh`,
+`identical`, or `different`. A different target requires an explicit reviewed
+`--replace`.
+
+Run the mutation on the Hermes host as the `hermes` service user, or through an
+operator that preserves that ownership:
 
 ```sh
 python3 adapters/runtime/hermes/scripts/runtime_setup.py install \
@@ -60,30 +106,75 @@ python3 adapters/runtime/hermes/scripts/runtime_setup.py verify \
   --config /tmp/context-kit-hermes.json
 ```
 
-Installation refuses a dirty source checkout or one whose HEAD differs from
-the configured commit. It also refuses to replace a different installed Skill
-unless the operator reviews the difference and explicitly supplies `--replace`.
-Replaced copies are retained under the Hermes home for rollback.
+Only `verify` returning `"ready": true` proves installation. It checks the
+ready manifest, exact Context Kit revision and capabilities, complete rendered
+runtime inventories, transaction journal, workspace identity, and registry.
+
+## Inventories and runtime metadata
+
+Every plan publishes two disjoint inventories:
+
+- `runtime_inventory`: `SKILL.md` plus files below `references/`, `templates/`,
+  `scripts/`, and `assets/`; only these files are installed.
+- `source_validation_inventory`: source-only tests or other release validation
+  artifacts; these remain in the reviewed checkout and are never copied into
+  the Hermes Skill root.
+
+Before installation, run the Context Kit repository validator so both
+inventories are backed by accepted source validation.
+
+The operator renders generic top-level `version`, `author`, `platforms`,
+`tags`, and `related_skills` fields into the installed `SKILL.md`, derived from
+the portable `metadata.context-kit` values. The portable source metadata is
+retained. Runtime hashes describe this deterministic rendered artifact, so
+Hermes discovery metadata is verified without adding `metadata.hermes` to the
+common Skill sources.
+
+## Transaction and recovery states
+
+| State | Meaning | Action |
+|---|---|---|
+| Fresh | Target Skill does not exist | Install without `--replace` |
+| Identical | Runtime inventory already matches | No-op; manifest may be reconciled transactionally |
+| Different | Target differs or is from another release | Review, then use `install --replace --apply` |
+| Staging | A package transaction did not finish | Do not use as ready; inspect and run rollback |
+| Ready | Manifest, all selected Skills, and workspace verify | Runtime may use the package |
+| Failed | No verified package is active after rollback/failure | Repair and retry from an immutable checkout |
+
+The installer stages every changed Skill before touching the active Skill root.
+It journals all targets and restores every prior Skill if an ordinary failure
+occurs. The canonical manifest remains `staging` after abrupt interruption, so
+verification fails closed. Preview and apply its explicit recovery route:
+
+```sh
+python3 adapters/runtime/hermes/scripts/runtime_setup.py rollback \
+  --config /tmp/context-kit-hermes.json
+python3 adapters/runtime/hermes/scripts/runtime_setup.py rollback \
+  --config /tmp/context-kit-hermes.json \
+  --apply
+```
+
+Rollback restores the previous manifest when one existed. A first installation
+that is rolled back records `failed` and is not ready.
 
 ## When the agent cannot write the host runtime
 
 Hermes commonly runs file and terminal tools inside a sandbox. A sandbox path
-that resembles `~/.hermes` is not evidence that the host runtime changed.
+that resembles `~/.hermes` is not evidence that the host runtime changed. The
+agent must not fall back to inline `skill_manage` release installation.
 
-If the agent has the host-side `skill_manage` tool, it may install the plan's
-selected Skill tree through `create` plus `write_file`, preserving every
-inventory entry, then verify discovery with `skill_view`. If it lacks either
-host-side mechanism, it must not write a sandbox substitute. Report:
+Report the unresolved owner action explicitly:
 
 ```text
 Runtime setup: Pending user
+Waiting On: User
 Required action: run the printed runtime_setup.py install --apply command on
 the Hermes host, then run verify.
-Resume evidence: verify returns "ready": true.
+Resume evidence: verify returns "ready": true for the selected source revision.
 ```
 
-The missing host write does not make the project initialization itself fail;
-it leaves only runtime Skill installation pending.
+The missing host write does not make project initialization fail; only runtime
+Skill installation remains pending.
 
 ## Skill selection
 
@@ -93,19 +184,15 @@ it leaves only runtime Skill installation pending.
 | `skill-authoring` | `skill-authoring` | Hermes creates or materially changes reusable Skills |
 | `multi-repo` | `multi-repo-system-management` | Hermes coordinates more than one repository or an integration/deployment boundary |
 
-The common Skills use portable `name` and `description` frontmatter. Hermes may
-ignore the `metadata.context-kit` namespace while retaining it for release and
-related-Skill validation. Use [`SKILL_AUTHORING.md`](./SKILL_AUTHORING.md) for
-Hermes-specific authoring and destination rules.
+Use [`SKILL_AUTHORING.md`](./SKILL_AUTHORING.md) for Hermes-specific authoring
+and destination rules.
 
 ## Optional SOUL reinforcement
 
 SOUL is not required for Context Kit readiness. The Skills contain the complete
 behavior; the optional fragment only reinforces when Hermes should load them.
 
-Successful verification returns `"ready": true` independently of SOUL and
-includes an optional next action. At that point, show the user the proposed
-block:
+After Skill verification, show the user the proposed block:
 
 ```sh
 python3 adapters/runtime/hermes/scripts/runtime_setup.py soul \

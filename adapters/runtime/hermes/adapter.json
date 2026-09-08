@@ -1,9 +1,9 @@
 {
-  "description": "Install and verify Context Kit Skills for the fixed Hermes solution contract; SOUL reinforcement is optional.",
+  "description": "Install and verify transactional Context Kit runtime packages for Hermes; SOUL reinforcement is optional.",
   "kind": "runtime",
   "name": "hermes",
   "operator_templates": [],
   "project_templates": [],
   "schema_version": 1,
-  "version": 2
+  "version": 3
 }

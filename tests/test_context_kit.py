@@ -171,7 +171,7 @@ class ContextKitCliTest(unittest.TestCase):
             self.root / ".context-kit" / "manifest.json"
         )
         self.assertEqual(
-            manifest["runtime_adapters"], [{"name": "hermes", "version": 2}]
+            manifest["runtime_adapters"], [{"name": "hermes", "version": 3}]
         )
         adapter = context_kit.runtime_adapter_definition("hermes")
         self.assertEqual(adapter["operator_templates"], [])

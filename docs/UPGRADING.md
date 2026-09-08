@@ -14,6 +14,34 @@ version. A change that rejects a previously conforming artifact, changes
 canonical ownership, or changes state meaning requires a new specification
 version.
 
+## Context Kit 0.5 and Hermes adapter v3
+
+Context Kit 0.5 keeps project specification v2 and changes only the Hermes
+runtime-adoption contract. Hermes adapter v3 separates runtime payloads from
+source validation, renders Hermes discovery fields deterministically, and
+installs the selected Skills as one journaled runtime package. Only a verified
+`ready` manifest is accepted; `staging` and `failed` states fail closed.
+
+When upgrading a Hermes consumer from adapter v2:
+
+1. check out the accepted 0.5 commit at the adapter's fixed installation-source
+   path, separate from managed projects;
+2. run Context Kit source validation and generate a v3 runtime configuration;
+3. preview the complete package and review every `different` target;
+4. run the operator install with `--replace --apply` when replacement is
+   approved, then require `verify` to return `"ready": true`;
+5. if a previous or interrupted attempt reports `staging`, preview and apply
+   `rollback` before retrying;
+6. update the consumer manifest to Kit 0.5 and Hermes adapter version 3 only in
+   the consumer's separately reviewed acceptance proposal; and
+7. offer optional SOUL reinforcement after Skill verification without making
+   it an acceptance requirement.
+
+Existing adapter v2 manifests are not v3 readiness evidence. Agents that lack
+host installation authority must report `Pending user` with the exact install
+and verification commands; they must not attempt a partial release upgrade
+through `skill_manage`.
+
 ## Context Kit 0.4 and Hermes adapter v2
 
 Context Kit 0.4 keeps project specification v2 and changes only the Hermes

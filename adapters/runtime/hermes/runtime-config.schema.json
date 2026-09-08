@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "contains": {
+        "const": "project-context"
+      },
+      "items": {
+        "enum": [
+          "project-context",
+          "skill-authoring",
+          "multi-repo"
+        ]
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "soul_preference": {
+      "default": "offer",
+      "description": "Whether to offer, decline, or explicitly request the optional SOUL reinforcement. Applying it still requires an explicit command.",
+      "enum": [
+        "offer",
+        "declined",
+        "requested"
+      ]
+    },
+    "source_revision": {
+      "description": "Full immutable Context Kit commit selected by this consumer.",
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "workspace_id": {
+      "description": "Stable identity written by the operator to /workspace/.hermes/WORKSPACE_ID.",
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "workspace_id",
+    "source_revision",
+    "capabilities"
+  ],
+  "title": "Context Kit Hermes Runtime Configuration",
+  "type": "object"
+}

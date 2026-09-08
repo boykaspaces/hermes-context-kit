@@ -66,8 +66,9 @@ Optional supporting directories (create only when needed):
 
 Select the target runtime adapter before persistent creation. Resolve its
 approved Skill management mechanism and canonical Skill root from the
-adapter-owned runtime binding. Do not hardcode or infer the root from a
-username, home directory, sandbox, or repository checkout. Newly created
+adapter's public contract plus explicit consumer configuration. Do not infer
+the root from a private operations repository, optional standing-instruction
+file, username, home directory, sandbox, or repository checkout. Newly created
 global Skills must follow the selected adapter's placement contract:
 
 ```
@@ -80,7 +81,7 @@ Before creation:
 
 1. Identify the Skill name.
 2. Resolve and state the expected canonical Skill root from the runtime
-   adapter's operator-owned binding.
+   adapter's public contract plus explicit consumer configuration.
 3. If the user specifies that exact root, honor it.
 4. If the user specifies a different path or a category, do not create the Skill and do not silently rewrite the destination. Report the conflict and obtain explicit direction.
 5. If the user specifies no path, use the deployment-defined canonical destination and make it explicit before writing.

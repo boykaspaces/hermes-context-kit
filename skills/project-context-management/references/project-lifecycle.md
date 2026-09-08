@@ -58,9 +58,10 @@ mutation and ask the user to identify the target project.
 For repository-local work, resolve the project root from explicit user scope,
 the managed working directory, or `PROJECT.md`. Cross-project switching also
 requires a canonical workspace root, identity file and value, Workspace
-Registry, and default project root from the selected runtime adapter's
-operator-owned binding. Do not hardcode or infer those values from the current
-user, home directory, container, or repository checkout.
+Registry, and default project root from the selected runtime adapter's public
+contract plus explicit consumer configuration. Do not infer required values
+from a private operations repository, optional standing-instruction file,
+current user, home directory, container, or repository checkout.
 
 Registry paths must be absolute, canonical, and accessible through the current
 file tools. The workspace identity marker is provisioned by the host deployment

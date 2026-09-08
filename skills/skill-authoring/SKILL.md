@@ -4,7 +4,7 @@ description: "Use when creating, refactoring, or auditing agent Skills."
 license: MIT
 metadata:
   context-kit:
-    version: 2.0.0
+    version: 2.1.0
     author: Boyka Chen
     platforms: [linux, macos, windows]
     tags: [skills, authoring, meta, methodology, architecture]

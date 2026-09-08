@@ -4,7 +4,7 @@ description: "Protocol for project state, tasks, ADRs and checkpoints."
 license: MIT
 metadata:
   context-kit:
-    version: 2.0.0
+    version: 2.1.0
     author: Boyka Chen
     platforms: [linux, macos, windows]
     tags: [project-management, context, persistent-state, routing, protocol]
@@ -59,7 +59,7 @@ It is normally unnecessary for:
 
 **Unknown project scope write guard.** Never write project-scoped persistent context — Task, ADR, Checkpoint, Memory, Project State, or Index — when the target `project_id` is unresolved or ambiguous. Resolve project scope before any mutation. A read-only cross-project query does not require a project switch.
 
-**Persistent workspace boundary.** Resolve the project root explicitly. When an operation crosses projects, resolve the canonical Workspace identity, Workspace Registry, and project path from the selected runtime adapter's operator-owned binding. Before a persistent read or mutation, verify that the target is accessible through the current file tools. Do not invent an identity marker, silently substitute a user-home or ephemeral path, or create a second registry. If a required binding is absent, ambiguous, or inaccessible, the operation is Incomplete.
+**Persistent workspace boundary.** Resolve the project root explicitly. When an operation crosses projects, resolve the canonical Workspace identity, Workspace Registry, and project path from the selected runtime adapter's public contract plus explicit consumer configuration. Before a persistent read or mutation, verify that the target is accessible through the current file tools. Do not infer required values from a private operations repository, optional standing-instruction file, user home, or ephemeral path. Do not invent an identity marker or create a second registry. If required configuration is absent, ambiguous, or inaccessible, the operation is Incomplete.
 
 **Adoption contract.** When `.context-kit/manifest.json` exists, it owns the
 adopted specification version, immutable Kit version, profile, and enabled

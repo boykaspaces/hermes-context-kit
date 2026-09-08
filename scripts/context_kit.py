@@ -616,6 +616,7 @@ def init_project(args: argparse.Namespace) -> None:
         print(f"would initialize {args.project_id} with profile {args.profile}")
         for relative in pending:
             print(f"create {relative}")
+        print_runtime_next_steps(adapter_names)
         return
     root.mkdir(parents=True, exist_ok=True)
     for relative in pending:
@@ -623,6 +624,19 @@ def init_project(args: argparse.Namespace) -> None:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(files[relative], encoding="utf-8")
     validate_project(root)
+    print_runtime_next_steps(adapter_names)
+
+
+def print_runtime_next_steps(adapter_names: list[str]) -> None:
+    if "hermes" in adapter_names:
+        print(
+            "next: complete Hermes Skill-first setup with "
+            "adapters/runtime/hermes/scripts/runtime_setup.py"
+        )
+        print(
+            "optional after Skill verification: show the SOUL reinforcement "
+            "and apply it only if the user chooses"
+        )
 
 
 def infer_profile(root: Path) -> str:

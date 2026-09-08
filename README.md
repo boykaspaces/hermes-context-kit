@@ -32,6 +32,12 @@ coordination, and reusable Skill authoring.
 4. Initialize, then run `python3 scripts/context_kit.py validate --root <project>`.
 5. Select only the runtime adapters and Skills needed by the consumer.
 
+For a first Hermes installation, go directly to the
+[`Sixty-second Skill-first setup`](./adapters/runtime/hermes/README.md#sixty-second-skill-first-setup).
+It installs and verifies the required Skills at the fixed Hermes solution
+paths, then offers an optional SOUL reinforcement for the user to accept or
+decline. SOUL is never required for Context Kit readiness.
+
 The repository's own maintenance Tasks are public. It intentionally contains
 no consuming deployment's live runtime instructions, project state, credentials,
 deployment identifiers, or user-specific context.

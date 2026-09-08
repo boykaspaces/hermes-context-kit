@@ -8,7 +8,10 @@ Context Kit conformance tests observable contracts rather than exact prose.
 - A fresh minimal, repository, and multi-repository project initializes and
   validates without network access or an agent-specific instruction file.
 - Hermes and Codex adapter fixtures validate independently; selecting one does
-  not change core Task or State semantics.
+  not change core Task or State semantics. The Hermes fixture also verifies
+  fixed solution paths, capability-based Skill selection, immutable inventory,
+  Skill-first readiness without SOUL, and preservation of user SOUL content
+  when the optional reinforcement is explicitly applied.
 - Initialization dry-run performs no writes and normal initialization never
   overwrites different existing content.
 - Previous-version fixtures produce deterministic migration reports.

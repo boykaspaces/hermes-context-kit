@@ -1,0 +1,10 @@
+{
+  "capabilities": [
+    "project-context",
+    "skill-authoring"
+  ],
+  "schema_version": 1,
+  "soul_preference": "offer",
+  "source_revision": "0000000000000000000000000000000000000000",
+  "workspace_id": "replace-with-stable-workspace-id"
+}

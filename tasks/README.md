@@ -2,7 +2,9 @@
 
 ## In Progress
 
-None.
+| ID / File | Status | Title | Read when |
+|---|---|---|---|
+| [`TASK-013`](./TASK-013.md) | In Progress | Package advisory governance as an installable toolset | Packaging or validating the optional governance capability |
 
 ## Blocked
 

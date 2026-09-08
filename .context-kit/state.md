@@ -9,12 +9,16 @@ Active Task: None
 Context Kit 0.5.0 keeps project specification v2 and defines Hermes adapter v3
 as a transactional runtime-package contract. Runtime and source-validation
 inventories are separate, current complete installation is operator-only, and
-SOUL remains optional and user-controlled.
+SOUL remains optional and user-controlled. AI delivery governance has passed a
+minimum documentation-only feasibility check and now has a sequential,
+merge-gated experimental rollout; no governance protocol or automation is yet
+enabled.
 
 ## Primary focus
 
-Publish the 0.5.0 candidate, then let each consumer independently accept the
-reviewed revision. Runtime deployment remains a separate operator boundary.
+Keep 0.5.0 consumer acceptance and runtime deployment independent. After the
+feasibility proposal is accepted, begin the advisory manual-contract increment
+only through a new Task and pull request.
 
 ## Active constraints
 

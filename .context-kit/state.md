@@ -6,15 +6,15 @@ Active Task: None
 
 ## Current summary
 
-Context Kit 0.4.0 defines a v2 runtime-neutral core under `.context-kit/`,
-versioned Hermes and Codex runtime adapters, a GitHub workflow adapter, and a
-guarded v1-to-v2 migration path. Hermes adoption is now self-describing and
-Skill-first; SOUL reinforcement is optional and user-controlled.
+Context Kit 0.5.0 keeps project specification v2 and defines Hermes adapter v3
+as a transactional runtime-package contract. Runtime and source-validation
+inventories are separate, current complete installation is operator-only, and
+SOUL remains optional and user-controlled.
 
 ## Primary focus
 
-Publish the 0.4.0 candidate and then adopt its accepted revision in consumers
-through their own reviewed integration Tasks.
+Publish the 0.5.0 candidate, then let each consumer independently accept the
+reviewed revision. Runtime deployment remains a separate operator boundary.
 
 ## Active constraints
 

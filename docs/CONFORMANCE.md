@@ -9,9 +9,13 @@ Context Kit conformance tests observable contracts rather than exact prose.
   validates without network access or an agent-specific instruction file.
 - Hermes and Codex adapter fixtures validate independently; selecting one does
   not change core Task or State semantics. The Hermes fixture also verifies
-  fixed solution paths, capability-based Skill selection, immutable inventory,
-  Skill-first readiness without SOUL, and preservation of user SOUL content
-  when the optional reinforcement is explicitly applied.
+  fixed solution paths, capability-based Skill selection, disjoint runtime and
+  source-validation inventories, deterministic discovery metadata rendering,
+  package staging and rollback, fail-closed readiness, Skill-first readiness
+  without SOUL, and preservation of user SOUL content when the optional
+  reinforcement is explicitly applied. Its current Agent-only release route is
+  explicitly unsupported rather than simulated through partial `skill_manage`
+  batches.
 - Initialization dry-run performs no writes and normal initialization never
   overwrites different existing content.
 - Previous-version fixtures produce deterministic migration reports.

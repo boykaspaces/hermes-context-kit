@@ -21,21 +21,36 @@
     }
   },
   "installation": {
-    "agent_mechanism": "skill_manage",
+    "agent_mechanism": {
+      "name": "skill_manage",
+      "reason": "The current tool cannot import an immutable checkout tree and accepts only model-supplied file bodies in allowlisted runtime directories.",
+      "support": "unsupported-for-release-install"
+    },
     "manifest": "/home/hermes/.hermes/context-kit-install.json",
-    "operator_mechanism": "copy-from-immutable-checkout",
-    "preserve_skill_tree": true
+    "operator_mechanism": {
+      "name": "runtime_setup.py",
+      "support": "required",
+      "transactional": true
+    },
+    "runtime_directories": [
+      "references",
+      "templates",
+      "scripts",
+      "assets"
+    ],
+    "transaction_root": "/home/hermes/.hermes/context-kit-transactions"
   },
   "name": "hermes",
   "paths": {
     "hermes_home": "/home/hermes/.hermes",
+    "source_checkout": "/workspace/.context-kit/sources/hermes-context-kit",
     "skill_root": "/home/hermes/.hermes/skills",
     "soul": "/home/hermes/.hermes/SOUL.md",
     "workspace_identity": "/workspace/.hermes/WORKSPACE_ID",
     "workspace_registry": "/workspace/.hermes/WORKSPACES.md",
     "workspace_root": "/workspace"
   },
-  "schema_version": 1,
+  "schema_version": 2,
   "soul": {
     "default_action": "offer",
     "managed_block_end": "<!-- context-kit:hermes:end -->",

@@ -33,10 +33,13 @@ coordination, and reusable Skill authoring.
 5. Select only the runtime adapters and Skills needed by the consumer.
 
 For a first Hermes installation, go directly to the
-[`Sixty-second Skill-first setup`](./adapters/runtime/hermes/README.md#sixty-second-skill-first-setup).
-It installs and verifies the required Skills at the fixed Hermes solution
-paths, then offers an optional SOUL reinforcement for the user to accept or
-decline. SOUL is never required for Context Kit readiness.
+[`Skill-first setup`](./adapters/runtime/hermes/README.md#skill-first-setup).
+The supported operator route installs the selected Skills as one journaled
+runtime package at the fixed Hermes solution paths, verifies the complete
+rendered inventory, then offers an optional SOUL reinforcement for the user to
+accept or decline. SOUL is never required for Context Kit readiness. If the
+agent cannot run the host-side install, runtime setup remains `Pending user`
+rather than falling back to a partial inline installation.
 
 The repository's own maintenance Tasks are public. It intentionally contains
 no consuming deployment's live runtime instructions, project state, credentials,

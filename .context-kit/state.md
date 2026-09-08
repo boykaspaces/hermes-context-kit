@@ -2,7 +2,7 @@
 
 Project: hermes-context-kit
 Status: Active
-Active Task: None
+Active Task: TASK-011
 
 ## Current summary
 
@@ -14,13 +14,13 @@ minimum documentation-only feasibility check and now has a sequential,
 merge-gated experimental rollout covering source design, toolset installation,
 existing-project adoption, multi-repository acceptance, and live runtime
 verification. This repository now enables the advisory manual contract as an
-experimental extension; no core protocol or automation is enabled.
+experimental extension. TASK-011 is dogfooding its evidence and exact-candidate
+review semantics; no core protocol or automation is enabled.
 
 ## Primary focus
 
-Keep 0.5.0 consumer acceptance and runtime deployment independent. After the
-advisory-contract proposal is accepted, run the first manual dogfood cycle only
-through a new Task and pull request.
+Complete the bounded TASK-011 manual dogfood cycle, then stop at its pull
+request for user review and acceptance.
 
 ## Active constraints
 

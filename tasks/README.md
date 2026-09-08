@@ -2,7 +2,9 @@
 
 ## In Progress
 
-None.
+| ID / File | Status | Title | Read when |
+|---|---|---|---|
+| [`TASK-011`](./TASK-011.md) | In Progress | Dogfood the advisory governance contract | Continuing the first manual governance cycle |
 
 ## Blocked
 
